@@ -1,0 +1,22 @@
+# environments
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# data and large artefacts stay off git (watford: ~/descatter_data, ~/descatter_runs)
+data/
+runs/
+*.h5
+*.hdf5
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+*.zip
+*.7z
+
+# macOS
+.DS_Store
+._*

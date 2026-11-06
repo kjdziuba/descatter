@@ -1,0 +1,10 @@
+# Install torch separately: pick the CUDA build that matches the driver (see docs/machines.md).
+numpy
+scipy
+h5py
+matplotlib
+pytest
+miepython
+dynesty
+emcee
+zenodo-get
