@@ -1,10 +1,13 @@
 {
+  "phi_prior": [0.05, 0.3],
   "n_draws": 20000,
-  "valid_fraction": 0.4969,
-  "ks_f_beta_valid_vs_uniform": 0.006595642138319646,
-  "ks_f_beta_all_vs_uniform": 0.006309639769262687,
-  "question": "is the physically valid part of the prior (phi*Q_ext < 1 everywhere) still uniform in f_beta?",
-  "answer": "yes. P(valid) is 0.48-0.51 in every f_beta decile and KS(f_beta | valid, Uniform) = 0.0066, at the sampling floor. So the rejection does NOT bias the f_beta marginal, and it is not why the negative control misses KS < 0.1.",
-  "side_finding": "only 49.7 % of the 7-D prior volume is physically valid. The wasted half is phi and a combinations where the 'all scattered light is lost' model removes more light than arrives.",
-  "method": "20000 uniform prior draws, forward model evaluated on each, 950-1800 cm^-1 grid"
+  "valid_fraction": 1.0,
+  "ks_f_beta_valid_vs_uniform": 0.0063,
+  "p_valid_by_radius_band": {
+    "0.25-1": 1.0, "1-2": 1.0, "2-3": 1.0, "3-4": 1.0, "4-6": 1.0, "6-8": 1.0
+  },
+  "question": "after narrowing phi to [0.05, 0.30], does the phi*Q_ext < 1 rejection still distort the effective prior?",
+  "answer": "no. Nothing is rejected at all: 20000/20000 draws are physically valid, so the effective prior on a and on f_beta is exactly the uniform prior. Under the old phi <= 0.9 only 49.7 % of draws survived, and the mac measured the survivors to favour small a at the H1 radii. Narrowing phi removes the mechanism rather than reducing it.",
+  "method": "20000 uniform prior draws over the seven E1 parameters, forward model evaluated on each, 950-1800 cm^-1 grid",
+  "supersedes": "results/e1/superseded_phi_0.05_0.90/prior_valid_fraction.json"
 }

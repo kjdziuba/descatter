@@ -1,0 +1,10 @@
+{
+  "n_draws": 20000,
+  "valid_fraction": 0.4969,
+  "ks_f_beta_valid_vs_uniform": 0.006595642138319646,
+  "ks_f_beta_all_vs_uniform": 0.006309639769262687,
+  "question": "is the physically valid part of the prior (phi*Q_ext < 1 everywhere) still uniform in f_beta?",
+  "answer": "yes. P(valid) is 0.48-0.51 in every f_beta decile and KS(f_beta | valid, Uniform) = 0.0066, at the sampling floor. So the rejection does NOT bias the f_beta marginal, and it is not why the negative control misses KS < 0.1.",
+  "side_finding": "only 49.7 % of the 7-D prior volume is physically valid. The wasted half is phi and a combinations where the 'all scattered light is lost' model removes more light than arrives.",
+  "method": "20000 uniform prior draws, forward model evaluated on each, 950-1800 cm^-1 grid"
+}

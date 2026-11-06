@@ -39,6 +39,10 @@ PREPROCESSED_ASSUMPTION = (
 
 #: Uniform priors. f_beta, a, n_inf and phi are pre-registered; the amplitude and
 #: baseline ranges are only "wide" in the draft, so they are fixed here.
+#: phi was narrowed to [0.05, 0.30] on 2026-11-06 (Chris, relayed by mac): the
+#: old upper bound of 0.9 was mostly unreachable, because A_app needs
+#: phi * Q_ext < 1 and Q_ext peaks near 3.2, and the resulting rejection put a
+#: non-uniform effective prior on the radius at exactly the H1 radii.
 PARAM_NAMES = (
     "f_beta",
     "a_um",
@@ -52,7 +56,7 @@ PRIOR_BOUNDS: dict[str, tuple[float, float]] = {
     "f_beta": (0.0, 1.0),
     "a_um": (0.25, 8.0),
     "n_inf": (1.30, 1.60),
-    "phi": (0.05, 0.9),
+    "phi": (0.05, 0.30),  # narrowed from 0.9 on 2026-11-06; see the phi note in E1
     "amplitude": (0.2, 3.0),
     "baseline_offset": (-0.5, 0.5),
     "baseline_slope": (-1.0, 1.0),  # AU per 1000 cm^-1
