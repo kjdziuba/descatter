@@ -433,6 +433,25 @@ Nothing in the request was implemented.
   σ table, options, calibration gate, controls) are useful under every option.
   Only task 6 depends on the choice.
 
+**Chris decided: "Grid, then E1b"** (option (a), then (c)).
+- **E1:** the grid runs as written under σ(a), after the calibration gate and
+  both controls pass and Chris marks E1 `APPROVED`. The prediction recorded in
+  EXPERIMENTS.md stands.
+- **Queued watford request:** taken off hold, tasks unchanged. It is still
+  QUEUED behind chat's request 01.
+- **E1b:** an outline section in EXPERIMENTS.md, between E1 and E2. Design is
+  requested from chat in `comms/2026-11-06_mac_to_chat_01.md`:
+  - ranked model candidates, with chemistry and scatter options;
+  - a target definition for free chemistry;
+  - a critical-SNR screening rule;
+  - a DRAFT pre-registration.
+- **E2's outline** now notes that E1b decides what its "ambiguous regime" is.
+
+**Open for Chris:**
+1. Pass `comms/2026-11-06_mac_to_chat_01.md` to the chat. It also asks chat
+   to close its request 01, which unblocks watford.
+2. Or tell the mac to close request 01 on chat's behalf.
+
 ## 2026-11-05 (chat): repo scaffolded
 
 **Background,** from the Spectra Research chat:

@@ -373,7 +373,13 @@ thresholds stay as written.
 
 ### Note 2026-11-06 (watford, mac): the grid's outcome is predictable under σ(a)
 
-The grid is **on hold** until Chris decides what E1 is for.
+**Decided 2026-11-06 (Chris, relayed by mac): run the grid as written, then
+E1b.**
+- E1 keeps σ(a) and the redesigned controls. The grid runs once the
+  calibration gate and both controls pass and Chris marks E1 `APPROVED`.
+- The prediction below stands as written. The grid result is reported against
+  the H1 thresholds whichever way it falls.
+- The harder-model question moves to E1b (below), pre-registered separately.
 
 **The calculation** (`results/e1/degeneracy_review.json`, 138265b):
 - the min χ² between the α truth and the whole β family, profiling a′, n∞′,
@@ -393,9 +399,39 @@ recommendation are in the WORKLOG (2026-11-06, mac).
 
 ---
 
+## E1b: does the confusion survive a harder model? (simulation only)
+
+**Status:** OUTLINE. Design requested from chat in
+`comms/2026-11-06_mac_to_chat_01.md`.
+
+**Question.** At tissue SNR (~295), can "α-helix + one scatterer size" be
+confused with "β-sheet + another size"? This is asked once the model is
+harder than E1's, in two ways:
+- the chemistry is no longer fixed except for f_β;
+- the scatter model is richer: a size distribution, Lesson 1's oscillators,
+  exact Mie, or layered spheres.
+
+**Why.** E1's one-parameter chemistry and single homogeneous sphere put the
+α and β families 4×10⁴–7×10⁵ χ² apart at tissue SNR (see the E1 note above).
+So E1 can't show the confusion H1 and E2 are built on.
+
+**Shape.**
+1. Screen each candidate model cheaply, using watford's degeneracy check
+   (`scripts/e1_degeneracy_review.py`): the min χ² between the α truth and
+   the whole β family, and the critical SNR it implies.
+2. Run a posterior grid only on models whose critical SNR comes near tissue
+   level.
+
+**The crux is the chemistry prior.** Unconstrained chemistry makes anything
+non-identifiable trivially. The prior has to be realistic, and that is the
+same problem E2's learned prior faces.
+
+**Budget:** CPU only. Design first; no compute until a DRAFT exists.
+
 ## E2: regression vs posterior sampling on simulations (H2)
 
-**Status:** OUTLINE. To be designed after E1.
+**Status:** OUTLINE. To be designed after E1. Its "ambiguous regime" may not
+exist at tissue SNR under E1's model, so E1b decides what E2 oversamples.
 
 - Use the same simulator as E1, with broader chemistry (mixtures of component
   spectra) and size distributions.
