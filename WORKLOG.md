@@ -116,10 +116,59 @@ set in flight samples [0.05, 0.9], so re-run it under the new prior once it
 finishes. Put the new numbers in the reply, and label the old set as superseded
 or drop it. `descatter/infer_e1.py` `PRIOR_BOUNDS["phi"]` needs the change.
 
+**Review of watford's E1 controls (9903848): both fail.** 240 runs in 32 min,
+sampled with φ ∈ [0.05, 0.9] (they ran before the φ change).
+
+- **Positive control, raw: PASS.** W = 0 in 40/40 runs, with a recovered at
+  0.28–0.46 µm.
+- **Positive control, preprocessed: FAIL** (11/40 runs with W > 0.05). The mac
+  read differs from watford's "not yet attributed":
+  - All 11 have f_β,true = 0 (α).
+  - Their posteriors put a at about 5–7.3 µm, near or past the fallback set's
+    inversion (≈ 6.5 µm), where the apparent shift turns upward.
+  - So "β + large scatterer" explains "α + no scatter" in the preprocessed
+    window. This is the H1 ambiguity itself. It shows up even at
+    a_true = 0.25 µm because the window can't rule out large a.
+  - The control is confounded with the hypothesis, so this is not a sampler
+    failure. watford's a-fixed diagnostic should confirm it.
+  - It's an observation from a control, not H1 evidence.
+- **Negative control, preprocessed: FAIL. This is the mac's design error.**
+  σ_pp = σ / ‖y_w‖ is valid only when signal dominates. Under heavy noise
+  ‖y_w‖ ∝ σ, so σ_eff saturates (about 0.049) and the likelihood never goes
+  flat. watford's diagnosis is right.
+- **Negative control, raw: FAIL** (KS < 0.1 in 62 % of draws; 90 % needed).
+  - The Δχ² ≤ 0.1 rule is computed at a = 0.25 µm, but the posterior also
+    roams to large a, where f_β carries far more information.
+  - So the rule is necessary but not sufficient.
+  - KS is still falling with noise (median 0.84, 0.24, 0.18, 0.093 at ×1, ×10,
+    ×30, ×100). watford's ladder to ×10000 is running.
+- watford's `prior_valid_fraction` check shows the φ rejection doesn't bias
+  f_β. The mac's concern was the bias on a, which narrowing φ has already
+  fixed.
+- **Timing:** about 78 s per run. The grid projects to ≥ 1.2 h on 14 workers.
+
+**Mac proposals for the control redesign.** E1 is DRAFT and the grid hasn't
+run. These change the controls only, not the H1 criteria. Log them as
+post-hoc, made after seeing control failures.
+
+1. **Preprocessed likelihood.** Fit the rubberband-corrected 1600–1700 window
+   as s · (model window), with a free scale s and noise σ, instead of dividing
+   by ‖y_w‖. This keeps the same information as vector normalisation and gives
+   an exact noise model at any SNR. watford's alternative is a fixed reference
+   norm.
+2. **Positive control.** Fix a at its true value in both conditions, so the
+   control tests only the sampler and likelihood. Keep the free-a runs as a
+   labelled observation.
+3. **Negative control.** Make f_β inert: identical α and β lineshapes in both
+   data and model, at the E0 noise level. The posterior must then equal the
+   prior, so any KS ≥ 0.1 is a bug. This replaces the noise-ladder approach.
+
 **Open for Chris:**
-1. Mark E1 `APPROVED`. The grid waits for this.
-2. Tell watford in one line to pull: the φ prior changed, and the controls need
-   re-running under it.
+1. Accept proposals 1–3, or edit them. The mac then writes them into the E1
+   DRAFT and sends watford a request to re-run the controls under the φ prior
+   [0.05, 0.30].
+2. Mark E1 `APPROVED` once the redesigned controls pass. The grid waits for
+   this.
 3. Add `rmies_sim.py` if you have it somewhere other than this Mac.
 4. Pass the paraffin point to the chat when E3 is designed.
 
