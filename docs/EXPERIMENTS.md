@@ -107,7 +107,8 @@ slope).
 - f_β ∈ [0, 1]
 - a ∈ [0.25, 8] µm
 - n∞ ∈ [1.30, 1.60]
-- φ ∈ [0.05, 0.9]
+- φ ∈ [0.05, 0.30] (narrowed from [0.05, 0.9] on 2026-11-06; see the φ note
+  at the end of E1)
 - amplitude and baseline over wide ranges
 
 **Noise:** σ is the median noise estimate from E0. Fall back to 1e-3 AU if E0
@@ -194,7 +195,8 @@ inference with ADA. This shows how much the approximation alone costs.
 - the step order and noise model of the preprocessed condition;
 - the negative control's noise rule (Δχ² ≤ 0.1; σ × 100 turns out to meet
   it);
-- draw counts for the controls, and pooling of draws for H1.
+- draw counts for the controls, and pooling of draws for H1;
+- the φ prior, narrowed to [0.05, 0.30] (see the φ note below).
 
 The reasoning is in the 2026-11-06 (mac) WORKLOG entry. E1 still needs
 Chris's APPROVED before the grid runs.
@@ -251,6 +253,20 @@ Q_ext peaks near 3.2, so `A_app = −log10(1 − φ·Q_ext)` needs `φ < 1/max Q
 region where the model is undefined. `descatter/physics.py` flags it and the
 likelihood rejects it, so the runs are correct, but roughly two thirds of the
 φ prior volume is wasted. Worth narrowing before the step-4 grid.
+
+**Resolved 2026-11-06** (mac, Chris agreed; E1 still DRAFT): the φ prior is
+now **[0.05, 0.30]**.
+- **The bigger reason was bias, not wasted volume.** Rejecting φ·Q_ext ≥ 1
+  made the effective prior on a non-uniform. Relative to a ≤ 1 µm, a = 3, 4
+  and 6 µm got only 0.42, 0.34 and 0.32 of the prior mass (mac numpy check:
+  ADA, n∞ ~ U[1.3, 1.6]). That favoured "β + small scatterer" at exactly the
+  H1 radii.
+- **The new range removes the bias.** ADA's Q_ext peaks at about 3.17, so
+  φ ≤ 0.30 keeps φ·Q_ext < 1 everywhere, and the prior on a is flat. The
+  simulation truth φ = 0.2 stays inside.
+- **The controls must run under this prior.** Any control set sampled with
+  [0.05, 0.9] is superseded; report it, if at all, only as a labelled
+  comparison.
 
 ---
 

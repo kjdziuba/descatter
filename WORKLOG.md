@@ -108,10 +108,18 @@ in yet, and the 240-run controls are still running.
   amylacea, which can contain amyloid (β-sheet) and are roughly spherical. That
   would be the real-tissue version of E1's confound. Check against the H&E.
 
+**Update: the φ prior is narrowed to [0.05, 0.30] in the E1 DRAFT,** at
+Chris's request. The note is at the end of E1.
+
+**For watford:** request 01's controls (task 4) must use φ ∈ [0.05, 0.30]. The
+set in flight samples [0.05, 0.9], so re-run it under the new prior once it
+finishes. Put the new numbers in the reply, and label the old set as superseded
+or drop it. `descatter/infer_e1.py` `PRIOR_BOUNDS["phi"]` needs the change.
+
 **Open for Chris:**
-1. Should the E1 φ prior narrow to [0.05, 0.30]? Decide before marking E1
-   `APPROVED`.
-2. Mark E1 `APPROVED`. The grid waits for this.
+1. Mark E1 `APPROVED`. The grid waits for this.
+2. Tell watford in one line to pull: the φ prior changed, and the controls need
+   re-running under it.
 3. Add `rmies_sim.py` if you have it somewhere other than this Mac.
 4. Pass the paraffin point to the chat when E3 is designed.
 
