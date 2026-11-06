@@ -1,0 +1,88 @@
+{
+  "note": "Amide I band depth in the simulated A_app at phi=0.2, amplitude=1, f_beta=0",
+  "sigma_E0_AU": 0.001097,
+  "measured_tissue_amide_i_AU": 0.324,
+  "measured_tissue_snr": 295.35095715587966,
+  "per_radius": [
+    {
+      "a_um": 0.25,
+      "mean_qext": 0.026821383109470895,
+      "qext_max": 0.07606119906712805,
+      "amide_i_depth_AU": 0.003815537519923412,
+      "snr": 3.4781563536220705,
+      "phi_needed_for_tissue_level": 6.912302477321531
+    },
+    {
+      "a_um": 0.5,
+      "mean_qext": 0.08297817105881693,
+      "qext_max": 0.18719031790397986,
+      "amide_i_depth_AU": 0.007607572639002344,
+      "snr": 6.934888458525381,
+      "phi_needed_for_tissue_level": 2.808681670221028
+    },
+    {
+      "a_um": 1.0,
+      "mean_qext": 0.27609091682433257,
+      "qext_max": 0.4992441504518129,
+      "amide_i_depth_AU": 0.014892246786783865,
+      "snr": 13.575430069994406,
+      "phi_needed_for_tissue_level": 1.0531080119094987
+    },
+    {
+      "a_um": 2.0,
+      "mean_qext": 0.9077260918838913,
+      "qext_max": 1.343083056992723,
+      "amide_i_depth_AU": 0.02552514884859787,
+      "snr": 23.268139333270618,
+      "phi_needed_for_tissue_level": 0.3914560696767125
+    },
+    {
+      "a_um": 3.0,
+      "mean_qext": 1.6761471460671868,
+      "qext_max": 2.2457920350409655,
+      "amide_i_depth_AU": 0.025239761066283117,
+      "snr": 23.007986386766742,
+      "phi_needed_for_tissue_level": 0.23410805922203967
+    },
+    {
+      "a_um": 3.5,
+      "mean_qext": 2.037288987616343,
+      "qext_max": 2.6607531556584734,
+      "amide_i_depth_AU": 0.019509431918711906,
+      "snr": 17.78434997147849,
+      "phi_needed_for_tissue_level": 0.19759744101840318
+    },
+    {
+      "a_um": 4.0,
+      "mean_qext": 2.3495745792968705,
+      "qext_max": 2.958764371765409,
+      "amide_i_depth_AU": 0.01107884175296131,
+      "snr": 10.099217641714958,
+      "phi_needed_for_tissue_level": 0.17769512833022616
+    },
+    {
+      "a_um": 5.0,
+      "mean_qext": 2.7650229863005045,
+      "qext_max": 3.1303854193729963,
+      "amide_i_depth_AU": 0.0,
+      "snr": 0.0,
+      "phi_needed_for_tissue_level": 0.16795312535191356
+    },
+    {
+      "a_um": 6.0,
+      "mean_qext": 2.872465665292117,
+      "qext_max": 3.0707547402246402,
+      "amide_i_depth_AU": 0.0,
+      "snr": 0.0,
+      "phi_needed_for_tissue_level": 0.17121459029362068
+    },
+    {
+      "a_um": 8.0,
+      "mean_qext": 2.4580788437154424,
+      "qext_max": 3.153324430000431,
+      "amide_i_depth_AU": 0.01952303009192785,
+      "snr": 17.79674575380843,
+      "phi_needed_for_tissue_level": 0.16673134224241035
+    }
+  ]
+}

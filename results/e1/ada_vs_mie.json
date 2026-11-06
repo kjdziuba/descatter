@@ -237,7 +237,7 @@
       "relative_rmse": 0.2081539788365543,
       "max_abs_error": 0.8905789487596651,
       "correlation": 0.9942491819300955,
-      "amide_i_shift_ada_cm1": -55.934,
+      "amide_i_shift_ada_cm1": null,
       "amide_i_shift_mie_cm1": -50.346
     },
     {
@@ -250,8 +250,8 @@
       "relative_rmse": 0.21262591441561035,
       "max_abs_error": 0.9204833422867238,
       "correlation": 0.9696481693222575,
-      "amide_i_shift_ada_cm1": -55.934,
-      "amide_i_shift_mie_cm1": -55.934
+      "amide_i_shift_ada_cm1": null,
+      "amide_i_shift_mie_cm1": null
     },
     {
       "a_um": 7.0,

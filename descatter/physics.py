@@ -393,12 +393,21 @@ def amide_i_position(
     window's two endpoints (the "perfect baseline removal" of Lesson 1).
 
     Refined to sub-grid precision by a 3-point parabola.
+
+    Returns ``nan`` when the maximum lands on a window edge. Around
+    a = 5-6 um the resonant distortion flattens the apparent band completely,
+    leaving no interior maximum; a bare argmax then rails against 1600 cm^-1
+    and reports a spurious -56 cm^-1 "shift". Callers must treat nan as
+    "no apparent band", not as zero shift.
     """
     sel = (nu >= window[0]) & (nu <= window[1])
     w, s = nu[sel], spectrum[sel]
     base = s[0] + (s[-1] - s[0]) * (w - w[0]) / (w[-1] - w[0])
     y = (s - base).detach().cpu().numpy()
-    return _parabolic_extremum(w.detach().cpu().numpy(), y, int(np.argmax(y)))
+    idx = int(np.argmax(y))
+    if idx == 0 or idx == len(y) - 1:
+        return float("nan")
+    return _parabolic_extremum(w.detach().cpu().numpy(), y, idx)
 
 
 def amide_i_second_derivative_position(
@@ -408,10 +417,17 @@ def amide_i_second_derivative_position(
     sg_window: int = 13,
     sg_poly: int = 3,
 ) -> float:
-    """Apparent Amide I position from the second-derivative minimum."""
+    """Apparent Amide I position from the second-derivative minimum.
+
+    Returns ``nan`` on a window edge, for the same reason as
+    :func:`amide_i_position`.
+    """
     from scipy.signal import savgol_filter
 
     d2 = savgol_filter(spectrum.detach().cpu().numpy(), sg_window, sg_poly, deriv=2)
     sel = ((nu >= window[0]) & (nu <= window[1])).detach().cpu().numpy()
     w, y = nu.detach().cpu().numpy()[sel], d2[sel]
-    return _parabolic_extremum(w, -y, int(np.argmin(y)))
+    idx = int(np.argmin(y))
+    if idx == 0 or idx == len(y) - 1:
+        return float("nan")
+    return _parabolic_extremum(w, -y, idx)

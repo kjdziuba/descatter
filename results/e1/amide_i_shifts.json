@@ -1,4 +1,5 @@
 {
+  "null_means": "the resonant distortion has flattened the apparent Amide I band away entirely, leaving no interior maximum in 1600-1700 cm^-1. Not a zero shift.",
   "note": "legacy/rmies_sim.py is absent, so the pre-registered Lesson 1 reproduction test is SKIPPED. These are the shifts the fallback oscillator set gives, listed next to the Lesson 1 targets for comparison only -- they are not a pass/fail check.",
   "reference_position_cm1": 1655.9983518782394,
   "per_radius": [
@@ -64,13 +65,13 @@
     },
     {
       "a_um": 5.0,
-      "peak_max_shift_cm1": -55.934,
+      "peak_max_shift_cm1": null,
       "second_derivative_shift_cm1": -34.842,
       "lesson1_peak_max_shift_cm1": null
     },
     {
       "a_um": 6.0,
-      "peak_max_shift_cm1": -55.934,
+      "peak_max_shift_cm1": null,
       "second_derivative_shift_cm1": 30.972,
       "lesson1_peak_max_shift_cm1": 62.0
     },

@@ -232,19 +232,31 @@ number in RESEARCH_BRIEF §1.
 
 **How it compares with Lesson 1** (`results/e1/amide_i_shifts.json`):
 
-| a / µm | fallback peak-max shift | Lesson 1 target |
-|---|---|---|
-| 1 | −6.0 cm⁻¹ | −8 cm⁻¹ |
-| 2 | −13.1 cm⁻¹ | −18 cm⁻¹ |
-| 3 | −22.4 cm⁻¹ | −32 cm⁻¹ |
-| 4 | −35.8 cm⁻¹ | −50 cm⁻¹ |
-| 6 | −55.9 cm⁻¹ | +62 cm⁻¹ |
+| a / µm | fallback peak-max shift | fallback 2nd-derivative shift | Lesson 1 target |
+|---|---|---|---|
+| 1 | −6.0 cm⁻¹ | −4.3 cm⁻¹ | −8 cm⁻¹ |
+| 2 | −13.1 cm⁻¹ | −9.2 cm⁻¹ | −18 cm⁻¹ |
+| 3 | −22.4 cm⁻¹ | −15.3 cm⁻¹ | −32 cm⁻¹ |
+| 4 | −35.8 cm⁻¹ | −23.3 cm⁻¹ | −50 cm⁻¹ |
+| 5 | *no apparent band* | −34.8 cm⁻¹ | direction inverts |
+| 6 | *no apparent band* | +31.0 cm⁻¹ | +62 cm⁻¹ |
+| 7 | +31.5 cm⁻¹ | +25.0 cm⁻¹ | — |
 
-The shape is right — shift grows with a, then inverts — but the magnitude is
-about 70 % of Lesson 1's and the inversion is near 6.5 µm rather than 5 µm.
+The shape is right — the shift grows with a, the band then flattens away near
+a = 5 µm and re-emerges on the positive side by a ≈ 6.5 µm, which is where
+Lesson 1 puts the inversion. The magnitude is about 70 % of Lesson 1's.
 **So E1 under this set is a slightly easier problem than Lesson 1.** If Chris
 adds `legacy/rmies_sim.py`, port its set and re-run; the pre-registered test
 will then be active.
+
+*Corrected 2026-11-06 (watford).* The first version of this table reported
+−55.9 cm⁻¹ at a = 5 and 6 µm. That was an artefact: at those radii the
+resonant distortion flattens the apparent Amide I band completely, and a bare
+argmax rails against the 1600 cm⁻¹ window edge (1656 − 55.9 = 1600.1).
+`descatter.physics.amide_i_position` now returns `nan` on a window edge, and
+the earlier claim that the inversion sits "near 6.5 µm rather than 5 µm" was
+wrong — it rests on the artefact. The second-derivative picker still works
+there, which is why it is tabulated alongside.
 
 ### Note 2026-11-06 (watford): the φ prior is partly unreachable
 

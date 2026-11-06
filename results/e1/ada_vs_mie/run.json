@@ -2,7 +2,7 @@
   "exp": "e1",
   "run_id": "ada_vs_mie",
   "git": {
-    "commit": "9980320c1b18187947136800a6fec59d17709685",
+    "commit": "9903848859552b207400cc3f5590695b02adda1f",
     "branch": "main",
     "dirty": true
   },
@@ -42,11 +42,11 @@
     "emcee": "3.1.6"
   },
   "env": {
-    "OMP_NUM_THREADS": "16",
-    "OPENBLAS_NUM_THREADS": "16",
-    "MKL_NUM_THREADS": "16"
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
   },
-  "wall_time_s": 1.619,
+  "wall_time_s": 1.694,
   "peak_vram_mib": null,
   "status": "ok",
   "notes": {

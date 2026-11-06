@@ -85,6 +85,10 @@ def main() -> None:
 
         # ---- Amide I shift table, the fallback set's analogue of Lesson 1 ----
         shifts = {
+            "null_means": (
+                "the resonant distortion has flattened the apparent Amide I band away "
+                "entirely, leaving no interior maximum in 1600-1700 cm^-1. Not a zero shift."
+            ),
             "note": (
                 "legacy/rmies_sim.py is absent, so the pre-registered Lesson 1 "
                 "reproduction test is SKIPPED. These are the shifts the fallback "
@@ -137,10 +141,16 @@ def main() -> None:
         ax[1, 0].invert_xaxis()
         ax[1, 0].legend(fontsize=8)
 
-        ada_sh = [r["amide_i_shift_ada_cm1"] for r in rows]
-        mie_sh = [r["amide_i_shift_mie_cm1"] for r in rows]
+        nan = float("nan")
+        ada_sh = [nan if r["amide_i_shift_ada_cm1"] is None else r["amide_i_shift_ada_cm1"]
+                  for r in rows]
+        mie_sh = [nan if r["amide_i_shift_mie_cm1"] is None else r["amide_i_shift_mie_cm1"]
+                  for r in rows]
         ax[1, 1].plot(a_arr, ada_sh, "o-", label="ADA")
         ax[1, 1].plot(a_arr, mie_sh, "s--", label="exact Mie")
+        gone = [a for a, v in zip(a_arr, ada_sh) if np.isnan(v)]
+        for g in gone:
+            ax[1, 1].axvline(g, color="grey", alpha=0.35, lw=6)
         la = sorted(LESSON1_SHIFTS)
         ax[1, 1].plot(la, [LESSON1_SHIFTS[a] for a in la], "k^:", label="Lesson 1 target")
         ax[1, 1].axhline(0.0, color="k", lw=0.8)
@@ -164,9 +174,13 @@ def main() -> None:
         tgt = "" if r["lesson1_peak_max_shift_cm1"] is None else (
             f"   (Lesson 1: {r['lesson1_peak_max_shift_cm1']:+.0f})"
         )
+
+        def f(v: float | None) -> str:
+            return "  no band" if v is None else f"{v:+7.1f}"
+
         print(
-            f"  a = {r['a_um']:4.2f} um: peak max {r['peak_max_shift_cm1']:+7.1f} cm^-1, "
-            f"2nd deriv {r['second_derivative_shift_cm1']:+7.1f} cm^-1{tgt}"
+            f"  a = {r['a_um']:4.2f} um: peak max {f(r['peak_max_shift_cm1'])} cm^-1, "
+            f"2nd deriv {f(r['second_derivative_shift_cm1'])} cm^-1{tgt}"
         )
 
 
@@ -176,7 +190,7 @@ def _shift(
     second_derivative: bool = False,
     exact_mie: bool = False,
     absolute: bool = False,
-) -> float:
+) -> float | None:
     """Apparent Amide I position shift relative to the vanishing-scatter limit."""
     fn = (
         ph.amide_i_second_derivative_position if second_derivative else ph.amide_i_position
@@ -186,7 +200,10 @@ def _shift(
     if absolute:
         return pos
     ref = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=1e-4, phi=0.2), exact_mie=False)
-    return round(pos - fn(nu, ref["A_app"]), 3)
+    shift = pos - fn(nu, ref["A_app"])
+    # nan means the apparent band has been flattened away; keep it as null in
+    # the JSON rather than letting a railed argmax masquerade as a shift
+    return None if np.isnan(shift) else round(shift, 3)
 
 
 if __name__ == "__main__":

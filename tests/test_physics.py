@@ -184,3 +184,47 @@ def test_lesson1_amide_i_shifts():
         out = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=a_um, phi=0.2))
         got = ph.amide_i_position(nu, out["A_app"]) - pos0
         assert abs(got - want) <= 3.0, f"a={a_um} um: shift {got:+.1f}, expected {want:+.1f}"
+
+
+# --------------------------------------------------------------------------
+# Peak pickers must not rail against the window edge
+# --------------------------------------------------------------------------
+def test_amide_i_position_returns_nan_when_the_band_is_gone():
+    """Regression. Near a = 5-6 um the resonant distortion flattens the
+    apparent Amide I band away, leaving no interior maximum in 1600-1700. A
+    bare argmax then returns the window edge, which reads as a spurious
+    -56 cm^-1 shift (1656 - 55.9 = 1600.1). It must report nan instead.
+    """
+    nu = ph.wavenumber_grid()
+    for a_um in (5.0, 5.5, 6.0):
+        out = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=a_um, phi=0.2))
+        assert np.isnan(ph.amide_i_position(nu, out["A_app"])), a_um
+    # either side of that band there is a genuine interior maximum
+    for a_um in (4.0, 7.0):
+        out = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=a_um, phi=0.2))
+        pos = ph.amide_i_position(nu, out["A_app"])
+        assert np.isfinite(pos) and 1600.0 < pos < 1700.0, a_um
+
+
+def test_simulated_amide_i_is_far_weaker_than_real_tissue():
+    """Documents a realism gap, not a defect.
+
+    In this forward model all absorbance arrives through Q_ext, so a small
+    sphere means a small band as well as little scattering. At phi = 0.2 the
+    Amide I depth is 0.004 AU at a = 0.25 um and peaks near 0.026 AU, against
+    0.324 AU measured on tissue in E0 (results/e0/summary.json). At the E0
+    noise level that is SNR 3.5 at the positive-control radius, versus ~295 in
+    the data. See results/e1/simulator_amplitude_check.json.
+    """
+    nu = ph.wavenumber_grid()
+    sel = (nu >= 1600.0) & (nu <= 1700.0)
+
+    def depth(a_um: float) -> float:
+        s = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=a_um, phi=0.2))["A_app"][sel]
+        w = nu[sel]
+        base = s[0] + (s[-1] - s[0]) * (w - w[0]) / (w[-1] - w[0])
+        return float((s - base).max())
+
+    assert depth(0.25) < 0.01
+    assert max(depth(a) for a in (1.0, 2.0, 3.0, 4.0)) < 0.05
+    assert depth(0.25) / 1.097e-3 < 5.0  # SNR at the positive-control radius

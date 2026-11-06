@@ -1,0 +1,126 @@
+{
+  "exp": "e1",
+  "run_id": "sigma_ladder",
+  "git": {
+    "commit": "9903848859552b207400cc3f5590695b02adda1f",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "pre_registered": false,
+    "sigma_multipliers": [
+      300,
+      1000,
+      3000,
+      10000
+    ],
+    "draws_per_cell": 5,
+    "a_control_um": 0.25,
+    "sigma_e0_AU": 0.0011,
+    "n_jobs": 80
+  },
+  "data_files": [],
+  "seeds": {
+    "base": 4000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 305.291,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "extended_ladder": [
+      {
+        "sigma_mult": 300,
+        "sigma_AU": 0.33,
+        "raw": {
+          "n": 10,
+          "ks_median": 0.05232781061627462,
+          "ks_max": 0.11484007336415175,
+          "frac_ks_below_0.1": 0.8,
+          "W_median": 0.49630573039162607
+        },
+        "preprocessed": {
+          "n": 10,
+          "ks_median": 0.2816005941279998,
+          "ks_max": 0.49398900518898115,
+          "frac_ks_below_0.1": 0.0,
+          "W_median": 0.48147836681849565
+        }
+      },
+      {
+        "sigma_mult": 1000,
+        "sigma_AU": 1.1,
+        "raw": {
+          "n": 10,
+          "ks_median": 0.04363486996154933,
+          "ks_max": 0.0707135700145538,
+          "frac_ks_below_0.1": 1.0,
+          "W_median": 0.49647305734540004
+        },
+        "preprocessed": {
+          "n": 10,
+          "ks_median": 0.2692223119428098,
+          "ks_max": 0.5009599584181519,
+          "frac_ks_below_0.1": 0.0,
+          "W_median": 0.5178483976895887
+        }
+      },
+      {
+        "sigma_mult": 3000,
+        "sigma_AU": 3.3000000000000003,
+        "raw": {
+          "n": 10,
+          "ks_median": 0.03435902279424227,
+          "ks_max": 0.04191605890360428,
+          "frac_ks_below_0.1": 1.0,
+          "W_median": 0.4964028776978417
+        },
+        "preprocessed": {
+          "n": 10,
+          "ks_median": 0.2854824411102627,
+          "ks_max": 0.5086672351404653,
+          "frac_ks_below_0.1": 0.0,
+          "W_median": 0.49809475398263814
+        }
+      },
+      {
+        "sigma_mult": 10000,
+        "sigma_AU": 11.0,
+        "raw": {
+          "n": 10,
+          "ks_median": 0.03990029471627832,
+          "ks_max": 0.0429197030042513,
+          "frac_ks_below_0.1": 1.0,
+          "W_median": 0.49962092494313876
+        },
+        "preprocessed": {
+          "n": 10,
+          "ks_median": 0.27574864597619186,
+          "ks_max": 0.50179162780642,
+          "frac_ks_below_0.1": 0.0,
+          "W_median": 0.511052050416547
+        }
+      }
+    ]
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_sigma_ladder.py"
+  ]
+}
