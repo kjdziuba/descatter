@@ -1,0 +1,54 @@
+{
+  "exp": "e1",
+  "run_id": "degeneracy_review",
+  "git": {
+    "commit": "f2ead77f9a2e4d1d1717912b2886fcd5765cb97b",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "snr_tissue": 295.0,
+    "phi": 0.2,
+    "profiled": [
+      "a_prime",
+      "n_inf_prime",
+      "phi_prime",
+      "amplitude",
+      "scale",
+      "baseline"
+    ],
+    "search": "coarse grid (a' 0.25 um, 4 n_inf, 3 phi) then 3x Nelder-Mead"
+  },
+  "data_files": [],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 1.037,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "min_chi2_range": [
+      40500.0,
+      729000.0
+    ]
+  },
+  "argv": [
+    "-"
+  ]
+}

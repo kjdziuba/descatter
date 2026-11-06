@@ -1,0 +1,112 @@
+{
+  "status": "REVIEW of the QUEUED comms/2026-11-06_mac_to_watford_01.md. Nothing from that request was implemented.",
+  "question": "under the proposed sigma(a) = D(a)/295, is the alpha-vs-beta + size confusion that H1 is about still present?",
+  "method": "minimise chi^2 between the f_beta=0 truth and the WHOLE f_beta=1 model family, profiling a', n_inf', phi', amplitude and the linear nuisance terms. This is the real H1 confusion ('alpha + large scatterer' vs 'beta + small scatterer'), not f_beta=0 vs 1 at a fixed radius.",
+  "D_a_rule_checks": {
+    "monotone_increasing": true,
+    "min_D_AU": 0.00494,
+    "below_1e-4_anywhere": false,
+    "verdict": "D(a) passes the checks the request asks for. The objection below is not to D(a)."
+  },
+  "finding": "the two manifolds are separated by min chi^2 = 4.0e4 to 7.3e5 in BOTH conditions at EVERY radius. chi^2 = 9 is 3 sigma, so these are hundreds of sigma apart. W will be ~0 everywhere, so H1's raw clause passes trivially and its preprocessed clause fails with W ~ 0 -- an outcome fixed by arithmetic before the grid runs.",
+  "snr_at_which_the_confusion_appears": "1.0-4.4 across all radii and both conditions. Tissue is 295. Even E0's own noise gives 4.5-85.",
+  "caveat": "this is about THIS forward model and the fallback oscillator set, which gives ~70 % of Lesson 1's shift magnitude. A stronger scatter model (Lesson 1's set, exact Mie, a size distribution, or layered spheres) could bring the manifolds closer. The finding is 'E1 as specified will not test H1', not 'H1 is false'.",
+  "per_radius": [
+    {
+      "a_um": 0.25,
+      "D_AU": 0.004938,
+      "sigma_a_AU": 1.674e-05,
+      "min_chi2_raw": 257000.0,
+      "min_chi2_preprocessed": 90600.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.002829,
+      "sigma_for_3sigma_separation_pp_AU": 0.00168,
+      "snr_at_which_confusion_appears_raw": 1.75,
+      "snr_at_which_confusion_appears_pp": 2.94,
+      "snr_at_E0_noise": 4.5
+    },
+    {
+      "a_um": 1.0,
+      "D_AU": 0.01914,
+      "sigma_a_AU": 6.488e-05,
+      "min_chi2_raw": 563000.0,
+      "min_chi2_preprocessed": 85400.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.016227,
+      "sigma_for_3sigma_separation_pp_AU": 0.00632,
+      "snr_at_which_confusion_appears_raw": 1.18,
+      "snr_at_which_confusion_appears_pp": 3.03,
+      "snr_at_E0_noise": 17.4
+    },
+    {
+      "a_um": 2.0,
+      "D_AU": 0.036698,
+      "sigma_a_AU": 0.0001244,
+      "min_chi2_raw": 512000.0,
+      "min_chi2_preprocessed": 70400.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.029671,
+      "sigma_for_3sigma_separation_pp_AU": 0.011002,
+      "snr_at_which_confusion_appears_raw": 1.24,
+      "snr_at_which_confusion_appears_pp": 3.34,
+      "snr_at_E0_noise": 33.5
+    },
+    {
+      "a_um": 3.0,
+      "D_AU": 0.052776,
+      "sigma_a_AU": 0.0001789,
+      "min_chi2_raw": 599000.0,
+      "min_chi2_preprocessed": 54000.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.046153,
+      "sigma_for_3sigma_separation_pp_AU": 0.013858,
+      "snr_at_which_confusion_appears_raw": 1.14,
+      "snr_at_which_confusion_appears_pp": 3.81,
+      "snr_at_E0_noise": 48.1
+    },
+    {
+      "a_um": 3.5,
+      "D_AU": 0.060298,
+      "sigma_a_AU": 0.0002044,
+      "min_chi2_raw": 632000.0,
+      "min_chi2_preprocessed": 46700.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.054165,
+      "sigma_for_3sigma_separation_pp_AU": 0.014724,
+      "snr_at_which_confusion_appears_raw": 1.11,
+      "snr_at_which_confusion_appears_pp": 4.1,
+      "snr_at_E0_noise": 55.0
+    },
+    {
+      "a_um": 4.0,
+      "D_AU": 0.067496,
+      "sigma_a_AU": 0.0002288,
+      "min_chi2_raw": 589000.0,
+      "min_chi2_preprocessed": 40500.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.058532,
+      "sigma_for_3sigma_separation_pp_AU": 0.015348,
+      "snr_at_which_confusion_appears_raw": 1.15,
+      "snr_at_which_confusion_appears_pp": 4.4,
+      "snr_at_E0_noise": 61.5
+    },
+    {
+      "a_um": 5.0,
+      "D_AU": 0.080889,
+      "sigma_a_AU": 0.0002742,
+      "min_chi2_raw": 729000.0,
+      "min_chi2_preprocessed": 50700.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.078039,
+      "sigma_for_3sigma_separation_pp_AU": 0.02058,
+      "snr_at_which_confusion_appears_raw": 1.04,
+      "snr_at_which_confusion_appears_pp": 3.93,
+      "snr_at_E0_noise": 73.7
+    },
+    {
+      "a_um": 6.0,
+      "D_AU": 0.093073,
+      "sigma_a_AU": 0.0003155,
+      "min_chi2_raw": 717000.0,
+      "min_chi2_preprocessed": 69600.0,
+      "sigma_for_3sigma_separation_raw_AU": 0.089051,
+      "sigma_for_3sigma_separation_pp_AU": 0.027745,
+      "snr_at_which_confusion_appears_raw": 1.05,
+      "snr_at_which_confusion_appears_pp": 3.35,
+      "snr_at_E0_noise": 84.8
+    }
+  ]
+}
