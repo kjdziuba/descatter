@@ -2,7 +2,7 @@
   "exp": "e1",
   "run_id": "diagnostics",
   "git": {
-    "commit": "8a1f40a752aa2bec6510361492a5280b2edcfd4f",
+    "commit": "f0fc9cf7250a41afa97893a7d249c5572b68dec4",
     "branch": "main",
     "dirty": true
   },
@@ -57,7 +57,7 @@
     "OPENBLAS_NUM_THREADS": "1",
     "MKL_NUM_THREADS": "1"
   },
-  "wall_time_s": 1328.379,
+  "wall_time_s": 1246.392,
   "peak_vram_mib": null,
   "status": "ok",
   "notes": {
@@ -67,16 +67,16 @@
         "W_median": 0.0,
         "W_max": 0.0,
         "frac_draws_W_below_0.05": 1.0,
-        "f_beta_sd_median": 0.04209620857500159,
-        "wall_s_median": 168.02499999999998
+        "f_beta_sd_median": 0.0402846800823031,
+        "wall_s_median": 153.57999999999998
       },
       "preprocessed": {
         "n_draws": 40,
         "W_median": 0.0,
-        "W_max": 0.005186089078706529,
+        "W_max": 0.0026908846283215607,
         "frac_draws_W_below_0.05": 1.0,
-        "f_beta_sd_median": 0.0361844486311993,
-        "wall_s_median": 35.91
+        "f_beta_sd_median": 0.03625047264135951,
+        "wall_s_median": 34.175
       }
     }
   },
