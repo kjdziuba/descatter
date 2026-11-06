@@ -284,6 +284,68 @@ post-hoc, made after seeing control failures.
 3. Add `rmies_sim.py` if you have it somewhere other than this Mac.
 4. Pass the paraffin point to the chat when E3 is designed.
 
+**Review of watford's reply 01** (`comms/2026-11-06_watford_to_mac_01.md`,
+3f65407; results b0fd271). Status DONE. The grid was correctly not run.
+
+- **The φ narrowing changed little.** The controls re-ran under φ ∈ [0.05, 0.30]
+  and the verdicts are unchanged: positive raw PASS (40/40); positive pp FAIL
+  (W < 0.05 in 0.70); negative raw FAIL (KS < 0.1 in 0.75); negative pp FAIL
+  (0.00). Raw negative now fires from σ × 300. Rejection is gone (20,000/20,000
+  prior draws valid), so the prior on a and f_β is exactly uniform.
+- **The machinery is sound.** With a held at its true value, the positive
+  control passes in both conditions (W < 0.05 in 40/40). The mac checked these
+  numbers against `results/e1/controls.json` and `diagnostics.json`.
+- **Correction (mac): the preprocessed likelihood is misspecified at the
+  truth. It's not only an H1 ambiguity, as said above.**
+  - In watford's pp profile grid at truth (f_β = 0, a = 0.25 µm), the best fit
+    (a = 8 µm) beats the truth by **39.7** log-likelihood. With ~5 free
+    parameters a correct likelihood gives ≈ 2.5, rarely more than 10. The other
+    five grids have gaps of 0–1.3.
+  - Cause, reproduced on the mac with a numpy stand-in spectrum (scratch
+    script, not committed): the rubberband hull anchors on the noisy data's
+    lowest points. That lifts the data window by about +2σ relative to the
+    noise-free model.
+  - χ² at the truth then averages 184 against 51 expected at band/σ 3.5, 134 at
+    24, and 90 at 295. The bias does not go away at tissue SNR.
+  - So part of the pp positive failure — maybe most — is a large-a model
+    absorbing a preprocessing bias, not the β-vs-α physics. The mac said
+    otherwise in 01834cb and to Chris, and that was premature.
+- **Proposal 1, extended.** Fit the rubberbanded window as
+  `s · m_w + c0 + c1 · (ν − 1650)` with Gaussian σ. Profile or marginalise s,
+  c0 and c1 analytically, since all three are linear.
+  - In the stand-in, χ² at truth returns to 48.8/49.1/49.4 against 49 expected,
+    at band/σ 3.5/24/295.
+  - This fixes the norm saturation and the anchor bias together. The local
+    line loses almost nothing, because the rubberband has already removed
+    offset and slope (watford's surprise 9).
+  - watford should confirm it in its own simulator before any control re-runs.
+- **watford's surprise 8 is a heads-up for H1, not a result.** At a = 3.5 µm
+  the pp condition separated f_β decisively (wrong f_β penalised by 1148 in
+  log-likelihood). That's 3 cases, under the biased likelihood. If it holds on
+  the grid, H1's pp-ambiguity half fails, which is a legitimate outcome. The H1
+  thresholds stay as written.
+- **Accepted deviations.**
+  - Total disk is 7.6 GB, against the request's 5 GB, because E0 required the
+    CUDA torch build. That's well inside the 100 GB budget.
+  - `scripts/__init__.py` was added.
+  - The φ ≤ 0.9 results are archived in `results/e1/superseded_phi_0.05_0.90/`.
+- **Request 01 is answered, but only chat can close it** (COMMS.md: the
+  requester sets `CLOSED`). A mac → watford request can't open until it does.
+- **Messaging:** watford reached the mac through Remote Control
+  ("Follow Watford worker kickoff documentation"), so the mac can nudge it
+  directly now.
+
+**Open for Chris (supersedes the list above):**
+1. Accept the redesign: proposal 1 as extended here, plus proposals 2–4. Then
+   the mac writes them into the E1 DRAFT as dated, post-hoc control changes.
+2. Have chat close request 01, or tell the mac to close it on chat's behalf.
+   Then the mac sends watford request 02: confirm the χ² fix, implement
+   proposals 1–4, re-run the controls.
+3. Proposal 4 is the research-design call. One option is SNR-matched σ per
+   case. watford's alternatives are a path-length/concentration term, or
+   restricting E1's claim to low SNR.
+4. Unchanged: `rmies_sim.py`, and the paraffin point for E3.
+
 ## 2026-11-05 (chat): repo scaffolded
 
 **Background,** from the Spectra Research chat:
