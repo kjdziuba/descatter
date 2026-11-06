@@ -1,0 +1,90 @@
+{
+  "note": "legacy/rmies_sim.py is absent, so the pre-registered Lesson 1 reproduction test is SKIPPED. These are the shifts the fallback oscillator set gives, listed next to the Lesson 1 targets for comparison only -- they are not a pass/fail check.",
+  "reference_position_cm1": 1655.9983518782394,
+  "per_radius": [
+    {
+      "a_um": 0.25,
+      "peak_max_shift_cm1": -1.437,
+      "second_derivative_shift_cm1": -1.031,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 0.5,
+      "peak_max_shift_cm1": -2.894,
+      "second_derivative_shift_cm1": -2.096,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 0.75,
+      "peak_max_shift_cm1": -4.412,
+      "second_derivative_shift_cm1": -3.18,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 1.0,
+      "peak_max_shift_cm1": -5.989,
+      "second_derivative_shift_cm1": -4.302,
+      "lesson1_peak_max_shift_cm1": -8.0
+    },
+    {
+      "a_um": 1.5,
+      "peak_max_shift_cm1": -9.349,
+      "second_derivative_shift_cm1": -6.648,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 2.0,
+      "peak_max_shift_cm1": -13.093,
+      "second_derivative_shift_cm1": -9.224,
+      "lesson1_peak_max_shift_cm1": -18.0
+    },
+    {
+      "a_um": 2.5,
+      "peak_max_shift_cm1": -17.375,
+      "second_derivative_shift_cm1": -12.06,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 3.0,
+      "peak_max_shift_cm1": -22.357,
+      "second_derivative_shift_cm1": -15.274,
+      "lesson1_peak_max_shift_cm1": -32.0
+    },
+    {
+      "a_um": 3.5,
+      "peak_max_shift_cm1": -28.383,
+      "second_derivative_shift_cm1": -18.956,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 4.0,
+      "peak_max_shift_cm1": -35.829,
+      "second_derivative_shift_cm1": -23.273,
+      "lesson1_peak_max_shift_cm1": -50.0
+    },
+    {
+      "a_um": 5.0,
+      "peak_max_shift_cm1": -55.934,
+      "second_derivative_shift_cm1": -34.842,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 6.0,
+      "peak_max_shift_cm1": -55.934,
+      "second_derivative_shift_cm1": 30.972,
+      "lesson1_peak_max_shift_cm1": 62.0
+    },
+    {
+      "a_um": 7.0,
+      "peak_max_shift_cm1": 31.53,
+      "second_derivative_shift_cm1": 24.974,
+      "lesson1_peak_max_shift_cm1": null
+    },
+    {
+      "a_um": 8.0,
+      "peak_max_shift_cm1": 20.724,
+      "second_derivative_shift_cm1": 20.032,
+      "lesson1_peak_max_shift_cm1": null
+    }
+  ]
+}

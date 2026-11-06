@@ -1,0 +1,283 @@
+{
+  "note": "E1 step 2 asks for the ADA-vs-exact-Mie agreement to be reported, not thresholded. ADA (van de Hulst anomalous diffraction) assumes a large, optically soft sphere, so it is worst at small radii.",
+  "model": {
+    "n_inf": 1.4,
+    "f_beta": 0.0,
+    "oscillators": [
+      {
+        "centre_cm1": 1030.0,
+        "fwhm_cm1": 40.0,
+        "peak_k": 0.012,
+        "assignment": "glycogen / C-O stretch"
+      },
+      {
+        "centre_cm1": 1080.0,
+        "fwhm_cm1": 35.0,
+        "peak_k": 0.022,
+        "assignment": "symmetric PO2- stretch (nucleic acid)"
+      },
+      {
+        "centre_cm1": 1170.0,
+        "fwhm_cm1": 30.0,
+        "peak_k": 0.01,
+        "assignment": "C-O stretch / ester"
+      },
+      {
+        "centre_cm1": 1240.0,
+        "fwhm_cm1": 55.0,
+        "peak_k": 0.026,
+        "assignment": "asymmetric PO2- stretch / Amide III"
+      },
+      {
+        "centre_cm1": 1310.0,
+        "fwhm_cm1": 30.0,
+        "peak_k": 0.009,
+        "assignment": "Amide III"
+      },
+      {
+        "centre_cm1": 1340.0,
+        "fwhm_cm1": 30.0,
+        "peak_k": 0.01,
+        "assignment": "CH deformation / collagen"
+      },
+      {
+        "centre_cm1": 1398.0,
+        "fwhm_cm1": 35.0,
+        "peak_k": 0.016,
+        "assignment": "symmetric COO- stretch / CH3 bend"
+      },
+      {
+        "centre_cm1": 1450.0,
+        "fwhm_cm1": 35.0,
+        "peak_k": 0.018,
+        "assignment": "CH2 bend"
+      },
+      {
+        "centre_cm1": 1468.0,
+        "fwhm_cm1": 20.0,
+        "peak_k": 0.008,
+        "assignment": "CH2 scissoring (lipid)"
+      },
+      {
+        "centre_cm1": 1545.0,
+        "fwhm_cm1": 50.0,
+        "peak_k": 0.045,
+        "assignment": "Amide II"
+      },
+      {
+        "centre_cm1": 1740.0,
+        "fwhm_cm1": 25.0,
+        "peak_k": 0.01,
+        "assignment": "ester C=O (lipid)"
+      },
+      {
+        "centre_cm1": 1656.0,
+        "fwhm_cm1": 45.0,
+        "peak_k": 0.08,
+        "assignment": "Amide I alpha-helix"
+      },
+      {
+        "centre_cm1": 1630.0,
+        "fwhm_cm1": 25.0,
+        "peak_k": 0.0,
+        "assignment": "Amide I beta-sheet major"
+      },
+      {
+        "centre_cm1": 1690.0,
+        "fwhm_cm1": 20.0,
+        "peak_k": 0.0,
+        "assignment": "Amide I beta-sheet minor"
+      }
+    ],
+    "grid": {
+      "lo_cm1": 950.0,
+      "hi_cm1": 1798.74812,
+      "n": 441,
+      "spacing_cm1": 1.9289729999999998
+    }
+  },
+  "per_radius": [
+    {
+      "a_um": 0.25,
+      "x_at_1000cm1": 0.15707963267948966,
+      "mean_qext_ada": 0.02688221691208755,
+      "mean_qext_mie": 0.010073915041228836,
+      "mean_ratio": 2.668497481075481,
+      "rmse": 0.01758785415733599,
+      "relative_rmse": 1.7458807311115254,
+      "max_abs_error": 0.029578180046061345,
+      "correlation": 0.961166634275838,
+      "amide_i_shift_ada_cm1": -1.437,
+      "amide_i_shift_mie_cm1": 0.496
+    },
+    {
+      "a_um": 0.5,
+      "x_at_1000cm1": 0.3141592653589793,
+      "mean_qext_ada": 0.08321589225437648,
+      "mean_qext_mie": 0.026937512247519436,
+      "mean_ratio": 3.0892196536092333,
+      "rmse": 0.05809710475247388,
+      "relative_rmse": 2.156736086786329,
+      "max_abs_error": 0.08465857663193214,
+      "correlation": 0.9423638833997114,
+      "amide_i_shift_ada_cm1": -2.894,
+      "amide_i_shift_mie_cm1": 0.006
+    },
+    {
+      "a_um": 0.75,
+      "x_at_1000cm1": 0.47123889803846897,
+      "mean_qext_ada": 0.1673263726987466,
+      "mean_qext_mie": 0.0644993597971951,
+      "mean_ratio": 2.594233078047128,
+      "rmse": 0.10481772860645949,
+      "relative_rmse": 1.6250971937711813,
+      "max_abs_error": 0.13864061606146946,
+      "correlation": 0.9633687463485086,
+      "amide_i_shift_ada_cm1": -4.412,
+      "amide_i_shift_mie_cm1": -1.02
+    },
+    {
+      "a_um": 1.0,
+      "x_at_1000cm1": 0.6283185307179586,
+      "mean_qext_ada": 0.2769737511143177,
+      "mean_qext_mie": 0.13822611913821609,
+      "mean_ratio": 2.0037728964767076,
+      "rmse": 0.14001427467155977,
+      "relative_rmse": 1.0129364518405937,
+      "max_abs_error": 0.169128583623885,
+      "correlation": 0.9804024536932673,
+      "amide_i_shift_ada_cm1": -5.989,
+      "amide_i_shift_mie_cm1": -2.512
+    },
+    {
+      "a_um": 1.5,
+      "x_at_1000cm1": 0.9424777960769379,
+      "mean_qext_ada": 0.5615099549059027,
+      "mean_qext_mie": 0.4045753765207313,
+      "mean_ratio": 1.3878994805239457,
+      "rmse": 0.15997892806334968,
+      "relative_rmse": 0.3954242827112639,
+      "max_abs_error": 0.1844783017991282,
+      "correlation": 0.992238522971954,
+      "amide_i_shift_ada_cm1": -9.349,
+      "amide_i_shift_mie_cm1": -5.905
+    },
+    {
+      "a_um": 2.0,
+      "x_at_1000cm1": 1.2566370614359172,
+      "mean_qext_ada": 0.910426478811671,
+      "mean_qext_mie": 0.8415843532720908,
+      "mean_ratio": 1.0818006243484937,
+      "rmse": 0.13070647348247394,
+      "relative_rmse": 0.15531000900181366,
+      "max_abs_error": 0.1972423236285345,
+      "correlation": 0.9944068798842145,
+      "amide_i_shift_ada_cm1": -13.093,
+      "amide_i_shift_mie_cm1": -11.152
+    },
+    {
+      "a_um": 2.5,
+      "x_at_1000cm1": 1.5707963267948966,
+      "mean_qext_ada": 1.2935401231915216,
+      "mean_qext_mie": 1.3590297072260868,
+      "mean_ratio": 0.9518115139894654,
+      "rmse": 0.15680861028670356,
+      "relative_rmse": 0.11538276864216997,
+      "max_abs_error": 0.3298127134395541,
+      "correlation": 0.9979120828105196,
+      "amide_i_shift_ada_cm1": -17.375,
+      "amide_i_shift_mie_cm1": -14.043
+    },
+    {
+      "a_um": 3.0,
+      "x_at_1000cm1": 1.8849555921538759,
+      "mean_qext_ada": 1.6799428145660962,
+      "mean_qext_mie": 1.9156954229311192,
+      "mean_ratio": 0.876936278312808,
+      "rmse": 0.2876258187997415,
+      "relative_rmse": 0.15014172678851953,
+      "max_abs_error": 0.5152766453435276,
+      "correlation": 0.9972734794355225,
+      "amide_i_shift_ada_cm1": -22.357,
+      "amide_i_shift_mie_cm1": -20.657
+    },
+    {
+      "a_um": 3.5,
+      "x_at_1000cm1": 2.199114857512855,
+      "mean_qext_ada": 2.0409340581724407,
+      "mean_qext_mie": 2.429418030027627,
+      "mean_ratio": 0.840091755698887,
+      "rmse": 0.4262622764468647,
+      "relative_rmse": 0.17545859591814147,
+      "max_abs_error": 0.6759688743050405,
+      "correlation": 0.9982787126873923,
+      "amide_i_shift_ada_cm1": -28.383,
+      "amide_i_shift_mie_cm1": -24.851
+    },
+    {
+      "a_um": 4.0,
+      "x_at_1000cm1": 2.5132741228718345,
+      "mean_qext_ada": 2.352521613956305,
+      "mean_qext_mie": 2.8693224647400726,
+      "mean_ratio": 0.8198874970887653,
+      "rmse": 0.5456739510038179,
+      "relative_rmse": 0.19017519212614872,
+      "max_abs_error": 0.7704090641003685,
+      "correlation": 0.9967875019190239,
+      "amide_i_shift_ada_cm1": -35.829,
+      "amide_i_shift_mie_cm1": -32.715
+    },
+    {
+      "a_um": 5.0,
+      "x_at_1000cm1": 3.141592653589793,
+      "mean_qext_ada": 2.7652433856584375,
+      "mean_qext_mie": 3.4791620510405306,
+      "mean_ratio": 0.7948015485025833,
+      "rmse": 0.7242014239412334,
+      "relative_rmse": 0.2081539788365543,
+      "max_abs_error": 0.8905789487596651,
+      "correlation": 0.9942491819300955,
+      "amide_i_shift_ada_cm1": -55.934,
+      "amide_i_shift_mie_cm1": -50.346
+    },
+    {
+      "a_um": 6.0,
+      "x_at_1000cm1": 3.7699111843077517,
+      "mean_qext_ada": 2.869426985625855,
+      "mean_qext_mie": 3.6393762021263623,
+      "mean_ratio": 0.7884392341603342,
+      "rmse": 0.773825692879529,
+      "relative_rmse": 0.21262591441561035,
+      "max_abs_error": 0.9204833422867238,
+      "correlation": 0.9696481693222575,
+      "amide_i_shift_ada_cm1": -55.934,
+      "amide_i_shift_mie_cm1": -55.934
+    },
+    {
+      "a_um": 7.0,
+      "x_at_1000cm1": 4.39822971502571,
+      "mean_qext_ada": 2.7246363772024966,
+      "mean_qext_mie": 3.4433120994450768,
+      "mean_ratio": 0.7912835951297004,
+      "rmse": 0.7319655078386722,
+      "relative_rmse": 0.21257599854414463,
+      "max_abs_error": 0.9351990600650129,
+      "correlation": 0.9907068538950596,
+      "amide_i_shift_ada_cm1": 31.53,
+      "amide_i_shift_mie_cm1": 33.536
+    },
+    {
+      "a_um": 8.0,
+      "x_at_1000cm1": 5.026548245743669,
+      "mean_qext_ada": 2.453460084030142,
+      "mean_qext_mie": 3.0666382327149417,
+      "mean_ratio": 0.8000487497535881,
+      "rmse": 0.6410663682769301,
+      "relative_rmse": 0.20904531921568859,
+      "max_abs_error": 0.9364702470037503,
+      "correlation": 0.9956349106568555,
+      "amide_i_shift_ada_cm1": 20.724,
+      "amide_i_shift_mie_cm1": 21.302
+    }
+  ]
+}

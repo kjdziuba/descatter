@@ -1,0 +1,58 @@
+{
+  "exp": "e1",
+  "run_id": "ada_vs_mie",
+  "git": {
+    "commit": "9980320c1b18187947136800a6fec59d17709685",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "radii_um": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0
+    ],
+    "n_inf": 1.4,
+    "f_beta": 0.0
+  },
+  "data_files": [],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "16",
+    "OPENBLAS_NUM_THREADS": "16",
+    "MKL_NUM_THREADS": "16"
+  },
+  "wall_time_s": 1.619,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "figure": "results/e1/ada_vs_mie.png"
+  },
+  "argv": [
+    "scripts/e1_ada_vs_mie.py"
+  ]
+}
