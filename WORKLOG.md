@@ -124,8 +124,10 @@ sampled with φ ∈ [0.05, 0.9] (they ran before the φ change).
 - **Positive control, preprocessed: FAIL** (11/40 runs with W > 0.05). The mac
   read differs from watford's "not yet attributed":
   - All 11 have f_β,true = 0 (α).
-  - Their posteriors put a at about 5–7.3 µm, near or past the fallback set's
-    inversion (≈ 6.5 µm), where the apparent shift turns upward.
+  - Their posteriors put a at about 5–7.3 µm. That is at or past the
+    inversion: the band flattens near 5 µm and is shifted upward again by
+    ≈ 6.5 µm, with +25 to +31 cm⁻¹ at 7 µm (watford's corrected table,
+    8a1f40a).
   - So "β + large scatterer" explains "α + no scatter" in the preprocessed
     window. This is the H1 ambiguity itself. It shows up even at
     a_true = 0.25 µm because the window can't rule out large a.
@@ -141,7 +143,11 @@ sampled with φ ∈ [0.05, 0.9] (they ran before the φ change).
     roams to large a, where f_β carries far more information.
   - So the rule is necessary but not sufficient.
   - KS is still falling with noise (median 0.84, 0.24, 0.18, 0.093 at ×1, ×10,
-    ×30, ×100). watford's ladder to ×10000 is running.
+    ×30, ×100).
+  - *Settled by the ladder (8a1f40a):* the raw negative control fires at
+    σ × 1000, where 10/10 draws have KS < 0.1. That is 25× more noise than the
+    Δχ² rule predicts. The preprocessed one never fires, even at σ × 10000
+    (KS 0.27–0.29, σ_eff stuck at 0.049), which confirms the mac's error.
 - watford's `prior_valid_fraction` check shows the φ rejection doesn't bias
   f_β. The mac's concern was the bias on a, which narrowing φ has already
   fixed.
@@ -162,10 +168,27 @@ post-hoc, made after seeing control failures.
 3. **Negative control.** Make f_β inert: identical α and β lineshapes in both
    data and model, at the E0 noise level. The posterior must then equal the
    prior, so any KS ≥ 0.1 is a bug. This replaces the noise-ladder approach.
+   (σ × 1000 works for raw, but the rule that predicted 40× missed by 25×.)
+4. **The SNR mismatch, a research-design question.** watford's
+   `simulator_amplitude_check.json` (8a1f40a) shows the simulated Amide I band
+   is far too faint.
+   - At φ = 0.2 the band depth is 0.0038 AU at a = 0.25 µm and at most
+     0.026 AU near 2–3 µm. Tissue measures 0.324 AU.
+   - At σ_E0 that makes E1's SNR 3.5–24, against about 295 in real data. So
+     E1 would test identifiability with roughly 12–85× less signal than real
+     spectra carry.
+   - The cause: in the sphere model all absorbance comes through Q_ext, so a
+     small sphere is also a faint absorber.
+   - Proposal: set σ for each case so that the Amide I band depth divided by σ
+     equals E0's tissue value (≈ 295). This keeps the sphere model and matches
+     the information content.
+   - The alternative is a slab-plus-scatterers forward model, which is a bigger
+     change and better suited to E2.
 
 **Open for Chris:**
-1. Accept proposals 1–3, or edit them. The mac then writes them into the E1
-   DRAFT and sends watford a request to re-run the controls under the φ prior
+1. Accept proposals 1–4, or edit them. Proposal 4 changes E1's noise spec, so
+   the chat may want a say. The mac then writes them into the E1 DRAFT and
+   sends watford a request to re-run the controls under the φ prior
    [0.05, 0.30].
 2. Mark E1 `APPROVED` once the redesigned controls pass. The grid waits for
    this.
