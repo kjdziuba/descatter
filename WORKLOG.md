@@ -359,6 +359,28 @@ post-hoc, made after seeing control failures.
    restricting E1's claim to low SNR.
 4. Unchanged: `rmies_sim.py`, and the paraffin point for E3.
 
+**Redesign written into E1** (Chris: "Yes, write it"). E1 is still DRAFT.
+- `docs/EXPERIMENTS.md` E1 step 3 now has:
+  - the preprocessed likelihood `s · m_w + c0`;
+  - σ(a) = D(a)/295 per radius;
+  - the controls: likelihood calibration, a-fixed positive, inert-f_β
+    negative.
+- The criteria gate on all three controls. A dated "Redesign 2026-11-06"
+  section records why, what changed, and that the H1 thresholds, grid, priors
+  and forward model did not change.
+- **SNR rule detail (mac's call, open to challenge).** σ is set from the
+  *absorption-only* Amide I depth of the α composition, i.e. the same sphere
+  with n∞ = 1 and Δn = 0.
+  - The apparent band flattens away near a = 5 µm, so it can't set σ.
+  - Using α only keeps σ independent of the true f_β.
+- **Queued** `comms/2026-11-06_mac_to_watford_01.md`: implement, run the
+  calibration gate, re-run the controls, project the grid cost. It is marked
+  QUEUED, not OPEN, until chat closes request 01.
+
+**Open for Chris:** have chat close request 01, or tell the mac to close it on
+chat's behalf. Then the mac flips the queued request to OPEN and nudges
+watford.
+
 ## 2026-11-05 (chat): repo scaffolded
 
 **Background,** from the Spectra Research chat:

@@ -111,8 +111,20 @@ slope).
   at the end of E1)
 - amplitude and baseline over wide ranges
 
-**Noise:** σ is the median noise estimate from E0. Fall back to 1e-3 AU if E0
-is not done, and say so.
+**Noise** (redesigned 2026-11-06; see the redesign at the end of E1): σ is set
+per radius so that the Amide I signal-to-noise matches tissue:
+σ(a) = D(a) / 295.
+- **295** is E0's tissue SNR: the median raw Amide I peak (0.324 AU, baseline
+  included) over the median noise (1.097e-3 AU), core s10_c048
+  (`results/e0/summary.json`).
+- **D(a)** is the Amide I *absorption* depth of the same sphere with
+  scattering switched off. Evaluate the forward model with n∞ = 1 and Δn = 0,
+  keeping κ(ν), φ = 0.2, amplitude 1 and the α composition (f_β = 0). Then
+  D = max over 1600–1700 cm⁻¹ of A_abs.
+- Why the absorption depth: the *apparent* band flattens away near a = 5 µm,
+  so its depth can't set σ.
+- Why the α composition: so σ depends on a only, not on the true f_β.
+- n∞ = 1 is used only to set σ. It is outside the inference prior.
 
 **Sampler:** dynesty nested sampling (it handles multimodal posteriors). On
 3 cases, cross-check it against a dense (f_β, a) grid profiled over the
@@ -126,26 +138,37 @@ nuisance parameters.
   3. vector normalisation of that window.
 
   Apply identical preprocessing to the model output inside the likelihood.
-  The Gaussian likelihood on the window uses σ_pp = σ / ‖y_w‖, where y_w is
-  the observed window after the rubberband and before normalisation. This is
-  first-order propagation and ignores the rubberband's effect on the noise.
 
-**Controls (may run before approval):**
-- *Positive:* a = 0.25 µm, where scattering is negligible. Both conditions
-  should recover f_β.
-- *Negative:* a = 0.25 µm, with the noise raised to σ_neg.
-  - Choose σ_neg so that, in each condition, the noise-free Δχ² between
-    f_β = 0 and f_β = 1 (minimised over the other parameters) is ≤ 0.1. Take
-    the larger of the two σ values and report it.
-  - The data then carry almost no information about f_β, so its posterior
-    should match the prior.
-  - Under this simulator, σ × 100 already meets the rule: Δχ² ≈ 0.016 (raw)
-    and 0.007 (preprocessed) (watford, c4fed7b). That is because the simulated
-    Amide I at a = 0.25 µm is only about 0.007 AU.
-  - *Correction (mac):* the mac's earlier estimate of 20–190 assumed a
-    tissue-level Amide I of 0.5 AU, so it was wrong for this model.
+  **Likelihood (redesigned 2026-11-06):** y_w ~ N(s · m_w + c0, σ² I).
+  - y_w and m_w are the observed and model windows after steps 1–2.
+  - s and c0 are free and profiled out by linear least squares at every
+    likelihood call; s is unconstrained.
+  - Step 3 is a rescaling, which s absorbs. So the likelihood is computed
+    before it, and σ stays exact at any SNR.
+  - c0 absorbs the lift that rubberbanding noisy data adds: the hull anchors
+    on noise minima, raising the window by +2.1σ (watford, 810bba6).
+
+**Controls (may run before approval; redesigned 2026-11-06):**
+- *Likelihood calibration:* χ² of the true model against its own noisy data.
+  - Cells: a ∈ {0.25, 3.5} µm × f_β ∈ {0, 1} × both conditions, 200 draws
+    each.
+  - Expected: N for raw and N − 2 for preprocessed, where N is the number of
+    channels in the likelihood.
+- *Positive:* a = 0.25 µm, with a fixed at its true value in the inference;
+  every other parameter is free. Both conditions should recover f_β.
+  - The free-a version runs alongside as a labelled observation and is not
+    thresholded.
+- *Negative:* a = 0.25 µm with f_β made inert.
+  - Replace the β lineshape (bands 13–14) with the α lineshape (band 12), in
+    both the simulation and the model. The likelihood then doesn't depend on
+    f_β at all.
+  - The f_β posterior must equal the prior, so any departure is a sampler or
+    KS bug.
+- *Noise:* both controls use σ(0.25 µm) from the SNR rule above.
 - *Draws:* for each control, f_β,true ∈ {0, 1} with 20 noise draws each, in
   both conditions. That is 40 draws per condition, the same count as the grid.
+  In the negative control the two f_β values give identical spectra; they are
+  kept for the count.
 
 ### 4. Grid run (only after APPROVED)
 
@@ -153,6 +176,7 @@ Run, for both conditions:
 - a_true ∈ {0.25, 1, 2, 3, 3.5, 4, 5, 6} µm
 - f_β,true ∈ {0, 1}
 - 20 noise draws for each combination
+- σ(a) from the SNR rule in step 3. Report the σ table.
 
 ### 5. Metrics for each case
 
@@ -163,11 +187,14 @@ Run, for both conditions:
 
 ### Pre-registered criteria (proposed; Chris to confirm)
 
-**The machinery is valid only if both hold:**
-- positive control: W < 0.05 in ≥ 95 % of the 40 draws, in each condition;
-- negative control: the KS distance between the f_β posterior and the prior
-  is < 0.1 in ≥ 90 % of the 40 draws, in each condition. Compute KS from
-  ≥ 2000 equal-weight posterior samples.
+**The machinery is valid only if all three hold** (redesigned 2026-11-06):
+- likelihood calibration: median χ² at the truth within ±10 % of its expected
+  value, in every calibration cell;
+- positive control (a fixed): W < 0.05 in ≥ 95 % of the 40 draws, in each
+  condition;
+- negative control (f_β inert): the KS distance between the f_β posterior and
+  the prior is < 0.1 in ≥ 90 % of the 40 draws, in each condition. Compute KS
+  from ≥ 2000 equal-weight posterior samples.
 
 **How draws are counted for H1.** Pool the 120 draws per condition: a_true ∈
 {3, 3.5, 4} µm × f_β,true ∈ {0, 1} × 20 draws. Always report the per-radius
@@ -194,9 +221,11 @@ inference with ADA. This shows how much the approximation alone costs.
 **Clarified 2026-11-06** (mac, at Chris's request, while still DRAFT):
 - the step order and noise model of the preprocessed condition;
 - the negative control's noise rule (Δχ² ≤ 0.1; σ × 100 turns out to meet
-  it);
+  it) — superseded by the redesign below;
 - draw counts for the controls, and pooling of draws for H1;
-- the φ prior, narrowed to [0.05, 0.30] (see the φ note below).
+- the φ prior, narrowed to [0.05, 0.30] (see the φ note below);
+- **redesigned:** the controls, the preprocessed likelihood and the noise
+  level (see the redesign at the end of E1).
 
 The reasoning is in the 2026-11-06 (mac) WORKLOG entry. E1 still needs
 Chris's APPROVED before the grid runs.
@@ -279,6 +308,68 @@ now **[0.05, 0.30]**.
 - **The controls must run under this prior.** Any control set sampled with
   [0.05, 0.9] is superseded; report it, if at all, only as a labelled
   comparison.
+
+### Redesign 2026-11-06 (mac; Chris approved the redesign; E1 still DRAFT)
+
+**This is post-hoc.** It was made after the first control runs failed. It
+changes the controls, the preprocessed likelihood and the noise level. It does
+not change:
+- the H1 thresholds or the "not viable" rule;
+- the grid, priors or metrics;
+- the forward model.
+
+**Why.** Under φ ∈ [0.05, 0.30] (watford, b0fd271; reply
+`comms/2026-11-06_watford_to_mac_01.md`):
+
+| Control | Raw | Preprocessed |
+|---|---|---|
+| Positive (W < 0.05) | 40/40, PASS | 0.70, FAIL |
+| Negative (KS < 0.1) | 0.75, FAIL | 0.00, FAIL |
+
+The causes:
+1. **The preprocessed likelihood was misspecified.**
+   - Rubberbanding noisy data lifts the window by +2.1σ, which is 58 % of the
+     Amide I depth at a = 0.25 µm.
+   - χ² of the truth against its own data was 99.7 on 52 points (810bba6). In
+     the profile grid the best fit beat the truth by 39.7 log-likelihood
+     (diagnostics.json).
+   - Separately, σ_pp = σ / ‖y_w‖ saturates at about 0.049 once noise
+     dominates, so the preprocessed negative control could never fire. That
+     was the mac's design error.
+2. **The positive control was confounded.**
+   - With a free, the preprocessed failures put the posterior at a ≈ 5–8 µm.
+   - With a fixed at its truth, both conditions pass in 40/40 draws
+     (diagnostics.json). So the sampler is sound.
+3. **The negative control's noise rule was too weak.** Δχ² ≤ 0.1 at
+   a = 0.25 µm predicted that σ × 40 would suffice. Raw needed σ × 300,
+   because the posterior roams to large a, where f_β carries more information.
+4. **E1's SNR was far below tissue.**
+   - In the sphere model all absorbance comes through Q_ext, so the simulated
+     Amide I depth is 0.0038–0.026 AU against 0.324 AU in tissue.
+   - At the E0 noise that is SNR 3.5–24, against about 295 in tissue
+     (`results/e1/simulator_amplitude_check.json`).
+
+**What changed.** Each fix is written into step 3 and the criteria above:
+1. **Preprocessed likelihood:** s · m_w + c0 with σ exact, replacing
+   σ / ‖y_w‖. watford's check (810bba6) gives χ² 49.2 against 50 expected.
+   A slope term bought only 1.5 χ², so it's left out of E1. Revisit it for
+   real data in E3.
+2. **Positive control:** a fixed at its truth. The free-a run is a labelled
+   observation.
+3. **Negative control:** f_β inert, replacing the noise ladder.
+4. **Noise:** σ(a) = D(a)/295, from the index-matched absorption depth.
+5. **New gate:** the likelihood-calibration check.
+
+**Status of earlier results.** The control runs in `results/e1/` from b0fd271
+and earlier are superseded. They stay in git as labelled history (the φ ≤ 0.9
+set in `results/e1/superseded_phi_0.05_0.90/`), not as evidence for or against
+H1.
+
+**Heads-up, not a result.** In three profile-grid cases at a = 3.5 µm, the
+preprocessed condition separated f_β decisively, at low SNR and under the old
+likelihood (watford's surprise 8). If that holds on the grid, the
+preprocessed half of H1 fails. That is a legitimate outcome, and the
+thresholds stay as written.
 
 ---
 
