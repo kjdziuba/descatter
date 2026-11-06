@@ -1,0 +1,40 @@
+{
+  "host": "Watford",
+  "python": "3.12.13",
+  "torch": "2.14.1+cu130",
+  "torch_cuda_build": "13.0",
+  "cuda_available": true,
+  "omp_num_threads": "16",
+  "nvidia_smi": {
+    "name": "NVIDIA RTX 5000 Ada Generation",
+    "driver_version": "580.159.03",
+    "vram_total_mib": 32760,
+    "vram_used_mib": 52,
+    "vram_free_mib": 32178
+  },
+  "lock": "ACQUIRED",
+  "memory_fraction_cap": 0.78125,
+  "device_name": "NVIDIA RTX 5000 Ada Generation",
+  "device_capability": [
+    8,
+    9
+  ],
+  "matmul": {
+    "shape": [
+      4096,
+      4096
+    ],
+    "dtype": "float32",
+    "wall_s": 0.035641,
+    "tflops": 3.856,
+    "checksum": 142177.53125,
+    "peak_vram_mib": 200.13
+  },
+  "nvidia_smi_after": {
+    "name": "NVIDIA RTX 5000 Ada Generation",
+    "driver_version": "580.159.03",
+    "vram_total_mib": 32760,
+    "vram_used_mib": 445,
+    "vram_free_mib": 31784
+  }
+}

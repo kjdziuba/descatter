@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "descatter"
+version = "0.0.1"
+description = "Physics-informed generative correction of resonant Mie scattering in IR tissue spectra"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = ["descatter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

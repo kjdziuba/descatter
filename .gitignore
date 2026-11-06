@@ -20,3 +20,8 @@ runs/
 # macOS
 .DS_Store
 ._*
+
+# packaging
+*.egg-info/
+build/
+dist/

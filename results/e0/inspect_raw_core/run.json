@@ -1,0 +1,67 @@
+{
+  "exp": "e0",
+  "run_id": "inspect_raw_core",
+  "git": {
+    "commit": "079f0dc242393e01d36be1922f035178551e75a0",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "core": "s10_c048",
+    "noise_window": [
+      1800.0,
+      1900.0
+    ]
+  },
+  "data_files": [
+    {
+      "path": "/home/u37314kd/descatter_data/pcuk2023_sample/s10_c048_raw.h5",
+      "bytes": 216328739,
+      "sha256": "e83a4c69b4c89a0c0e103b1e827a8ceabeb813c774df38f65b28ec3d49b65364"
+    },
+    {
+      "path": "/home/u37314kd/descatter_data/pcuk2023_sample/s10_c048.h5",
+      "bytes": 113712958,
+      "sha256": "c0c12ad048841a9e40d7485836eb57925cbd0802368d14906b7c961328e4166d"
+    },
+    {
+      "path": "/home/u37314kd/descatter_data/pcuk2023_sample/wavenumbers_raw.npy",
+      "bytes": 6148,
+      "sha256": "c74ef54805d78d8e48e46ddfea3326285b9c02682f1e07341d039eb976928d1c"
+    },
+    {
+      "path": "/home/u37314kd/descatter_data/pcuk2023_sample/wavenumbers.npy",
+      "bytes": 3988,
+      "sha256": "92e2aa5cffce53e0cc04e205158b74f3a068a959fcaf5c7624cbbb253d00454d"
+    }
+  ],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "16",
+    "OPENBLAS_NUM_THREADS": "16",
+    "MKL_NUM_THREADS": "16"
+  },
+  "wall_time_s": 2.298,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "figure": "results/e0/quicklook_s10_c048.png",
+    "noise_median_AU": 0.00109693391773438
+  },
+  "argv": [
+    "scripts/e0_inspect.py"
+  ]
+}
