@@ -119,14 +119,28 @@ nuisance parameters.
 
 **Two conditions, same simulated data:**
 - (i) **raw:** likelihood on the raw apparent absorbance over 950–1800 cm⁻¹;
-- (ii) **preprocessed:** rubberband baseline, vector normalisation and the
-  1600–1700 cm⁻¹ window, with identical preprocessing applied to the model
-  output inside the likelihood.
+- (ii) **preprocessed:** in this order:
+  1. a rubberband baseline over 950–1800 cm⁻¹;
+  2. a cut to 1600–1700 cm⁻¹;
+  3. vector normalisation of that window.
+
+  Apply identical preprocessing to the model output inside the likelihood.
+  The Gaussian likelihood on the window uses σ_pp = σ / ‖y_w‖, where y_w is
+  the observed window after the rubberband and before normalisation. This is
+  first-order propagation and ignores the rubberband's effect on the noise.
 
 **Controls (may run before approval):**
 - *Positive:* a = 0.25 µm, where scattering is negligible. Both conditions
   should recover f_β.
-- *Negative:* noise σ × 100. The f_β posterior should match the prior.
+- *Negative:* a = 0.25 µm, with the noise raised to σ_neg.
+  - Choose σ_neg so that, in each condition, the noise-free Δχ² between
+    f_β = 0 and f_β = 1 (minimised over the other parameters) is ≤ 0.1. Take
+    the larger of the two σ values and report it.
+  - The data then carry almost no information about f_β, so its posterior
+    should match the prior.
+  - σ × 100 is not enough: a rough estimate leaves Δχ² ≈ 20–190.
+- *Draws:* for each control, f_β,true ∈ {0, 1} with 20 noise draws each, in
+  both conditions. That is 40 draws per condition, the same count as the grid.
 
 ### 4. Grid run (only after APPROVED)
 
@@ -145,16 +159,21 @@ Run, for both conditions:
 ### Pre-registered criteria (proposed; Chris to confirm)
 
 **The machinery is valid only if both hold:**
-- positive control: W < 0.05 in ≥ 95 % of draws, in both conditions;
-- negative control: KS distance between the f_β posterior and the prior is
-  < 0.1.
+- positive control: W < 0.05 in ≥ 95 % of the 40 draws, in each condition;
+- negative control: the KS distance between the f_β posterior and the prior
+  is < 0.1 in ≥ 90 % of the 40 draws, in each condition. Compute KS from
+  ≥ 2000 equal-weight posterior samples.
 
-**H1 is supported if both hold, at a_true ∈ {3, 3.5, 4} µm:**
-- raw: W < 0.05 in ≥ 90 % of draws;
-- preprocessed: W > 0.2 in ≥ 50 % of draws.
+**How draws are counted for H1.** Pool the 120 draws per condition: a_true ∈
+{3, 3.5, 4} µm × f_β,true ∈ {0, 1} × 20 draws. Always report the per-radius
+table as well.
+
+**H1 is supported if both hold:**
+- raw: W < 0.05 in ≥ 90 % of the pooled draws;
+- preprocessed: W > 0.2 in ≥ 50 % of the pooled draws.
 
 **Single-spectrum correction is not viable under the sphere model if:**
-- raw W > 0.2 in ≥ 50 % of draws at those radii.
+- raw W > 0.2 in ≥ 50 % of the pooled draws.
 
 In that case a corrector needs extra evidence (spatial context, H&E
 morphology, or a second measurement geometry), and E2 is redesigned before
@@ -166,6 +185,14 @@ it runs.
 inference with ADA. This shows how much the approximation alone costs.
 
 **Budget:** CPU only (16 threads), ≤ 6 h wall time, ≤ 2 GB disk.
+
+**Clarified 2026-11-06** (mac, at Chris's request, while still DRAFT):
+- the step order and noise model of the preprocessed condition;
+- the negative control's noise level (σ × 100 left f_β identifiable);
+- draw counts for the controls, and pooling of draws for H1.
+
+The reasoning is in the 2026-11-06 (mac) WORKLOG entry. E1 still needs
+Chris's APPROVED before the grid runs.
 
 ---
 

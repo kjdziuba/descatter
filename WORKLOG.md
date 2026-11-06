@@ -48,12 +48,27 @@ still DRAFT, so these are clarifications, not amendments.
 The raw condition generates and infers with the same ADA model, so it is a best
 case. The exploratory exact-Mie → ADA run is what says how realistic it is.
 
+**Update: clarifications 1–3 are now in the E1 DRAFT,** at Chris's request.
+- **Correction to item 1.** Δχ² ≤ 1 is too loose once each draw's noise is
+  counted, because the noise tilts every posterior.
+  - Simulated per-draw KS when the likelihood is linear in f_β: P(KS < 0.1) is
+    0.52 at Δχ² = 1, 0.84 at 0.3, 0.98 at 0.1 and 1.00 at 0.05.
+  - So σ_neg is set for Δχ² ≤ 0.1. The pass rule is KS < 0.1 in ≥ 90 % of the
+    40 draws, using ≥ 2000 equal-weight samples.
+- **Choices the mac made that Chris can still change:**
+  - pooled H1 counting (120 draws per condition), with the per-radius table
+    always reported;
+  - the negative control at a = 0.25 µm;
+  - σ_neg chosen to satisfy both conditions.
+- Item 4 (runtime) is not in EXPERIMENTS.md. It is an operations note for
+  watford.
+
 **Open for Chris:**
-1. E1: approve as written, or have the mac write clarifications 1–3 into the
-   DRAFT first. Watford runs the controls under request 01, so decide before
-   it reaches task 4.
+1. Mark E1 `APPROVED` in docs/EXPERIMENTS.md, or edit it first. The grid waits
+   for this; the controls don't.
 2. Add `rmies_sim.py` if you have it somewhere other than this Mac.
-3. Start or nudge the watford session (prompt in docs/KICKOFF.md).
+3. Start or nudge the watford session (prompt in docs/KICKOFF.md). If watford has
+   already started, tell it to pull again before task 4 (the controls).
 
 ## 2026-11-05 (chat): repo scaffolded
 
