@@ -1,0 +1,51 @@
+{
+  "exp": "e1",
+  "run_id": "rubberband_bias_check",
+  "git": {
+    "commit": "3f65407cc9326beb02a185151533df6a3788eedb",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "a_um": 0.25,
+    "f_beta": 0.0,
+    "phi": 0.2,
+    "sigma_AU": 0.0011,
+    "n_noise_draws": 200,
+    "window": [
+      1600,
+      1700
+    ]
+  },
+  "data_files": [],
+  "seeds": {
+    "range": "0-199"
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 0.391,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "lift_in_sigma": 2.093456031708075
+  },
+  "argv": [
+    "-"
+  ]
+}

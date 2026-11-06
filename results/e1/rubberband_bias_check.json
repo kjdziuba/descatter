@@ -1,0 +1,35 @@
+{
+  "question": "the mac (b07b445) asks why the preprocessed profile at truth a = 0.25 um puts the best fit 39.7 log-likelihood above the truth, and proposes that the rubberband lifts noisy data by ~2 sigma",
+  "confirmed_39_7": {
+    "truth_grid_point_logL": 76.07,
+    "best_fit_logL": 115.73,
+    "difference": 39.66,
+    "source": "results/e1/diagnostics.json, preprocessed, truth f_beta=0 a=0.25"
+  },
+  "rubberband_lift": {
+    "definition": "mean of the rubberband-corrected 1600-1700 window, noisy data minus the same quantity for the noise-free model",
+    "mean_AU": 0.0023028016348788827,
+    "sd_AU": 0.0004191278306789026,
+    "mean_in_sigma": 2.093456031708075,
+    "sd_in_sigma": 0.38102530061718415,
+    "amide_i_band_depth_AU": 0.003946732586000869,
+    "lift_as_fraction_of_band_depth": 0.583470398538518,
+    "verdict": "confirmed: +2.09 sigma, as the mac predicted. The rubberband anchors on noise minima, so correcting noisy data lifts the window while the noise-free model is not lifted. At a = 0.25 um that bias is 58 % of the Amide I band depth, which is why the truth fits badly."
+  },
+  "chi2_of_the_truth_model_against_its_own_data": {
+    "n_data": 52,
+    "as_is_normalised": {
+      "median": 99.69815404698443,
+      "free_params": 0
+    },
+    "plus_free_constant": {
+      "median": 49.17004126807805,
+      "free_params": 2
+    },
+    "plus_constant_and_slope": {
+      "median": 47.72855899530052,
+      "free_params": 3
+    },
+    "verdict": "the pre-registered preprocessed likelihood is misspecified by about 2x in chi^2 even at the truth: 99.7 against 52 data points. A free scale plus a free CONSTANT fixes it outright (49.2, against 50 expected for 52 - 2). Adding the slope term buys 1.5 more chi^2 for one more parameter, i.e. nothing. So s*m + c0 is sufficient; c1*(nu-1650) is optional and may still be wanted for real data."
+  }
+}
