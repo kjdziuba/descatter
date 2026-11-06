@@ -2,6 +2,95 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-06 (watford): E0 done, E1 built, both controls fail
+
+Reply: `comms/2026-11-06_watford_to_mac_01.md`. Request 01 is answered in full;
+the grid was not run, since E1 is still DRAFT.
+
+**E0.** venv (Python 3.12.13, torch 2.14.1+cu130), GPU check under the rat-lung
+lock, Zenodo sample with 36/36 md5s verified, `s10_c048` inspected.
+- Noise σ over tissue: median **1.097e-3 AU** (p10 8.0e-4, p90 1.5e-3), so E1's
+  1e-3 fallback was right.
+- Amide I: peak 0.324 AU, apparent position median 1655.1 cm⁻¹ (p10–p90
+  1649–1659).
+- Absorbance maxes out at exactly 8.0 AU — some channels are clipped.
+
+**Three data facts worth keeping.**
+1. PCUK2023's source cubes are on Isilon under
+   `Group Members/Dougal_Ferguson/Prostate Project/HDF5 Data/`. The 199 GB
+   download is avoidable.
+2. The cores are still in paraffin: wax bands reach 4.8 AU at 2920/2850.
+3. In every `*_raw.h5` the `/mask` shape differs from `/spectra`, so it is
+   unusable as shipped.
+
+**"Preprocessed" is now defined** in `docs/PCUK2023_PREPROCESSING.md`. The grid
+is raw channels 12–1314 minus PyIR's `remove_wax` and `remove_co2` ranges
+(arithmetic closes exactly on 965). The values are an SG second derivative of a
+min-to-zero, vector-normalised spectrum; the window and any denoising step are
+inferred, not confirmed, and the Methods section is paywalled from here.
+
+**E1 steps 1–2 pass.** KK correlation 1.000000, scale 0.999666; ADA extrema
+3.1731 at ρ 4.0856 and 1.5423 at ρ 7.6231. 23 tests pass, 1 skipped (Lesson 1,
+no `rmies_sim.py`). ADA is 2–3× too large below a = 1 µm, best at 2–2.5 µm and
+~20 % low above 3 µm, but the Amide I shift tracks exact Mie within ~4 cm⁻¹ for
+a ≥ 2 µm.
+
+**E1 controls: both fail.** 240 runs under φ ∈ [0.05, 0.30].
+
+| control | condition | frac(W<0.05) | frac(KS<0.1) | verdict |
+|---|---|---|---|---|
+| positive | raw | 1.00 | — | PASS |
+| positive | preprocessed | 0.70 | — | FAIL |
+| negative | raw | — | 0.75 | FAIL |
+| negative | preprocessed | — | 0.00 | FAIL |
+
+**The machinery is not what is broken.** With `a` held at its true value the
+positive control passes in both conditions (W = 0 in 40/40 each). The six
+profile grids agree with dynesty everywhere and show why the free-`a` version
+fails: at truth a = 0.25 µm the preprocessed profile peaks at a = 8.00 µm, with
+f_β = 0 at a = 6.97 µm within 1.1 log-likelihood of the best fit. The control is
+confounded with H1, exactly as the mac read it.
+
+The negative control is settled by the ladder: raw fires at σ × 300, and
+preprocessed never does, because σ_eff saturates at 0.049 AU
+(`σ_pp = σ/‖y_w‖` with `‖y_w‖ ∝ σ`).
+
+**Two corrections made this session.**
+- *Mine.* The first Amide I shift table gave −55.9 cm⁻¹ at a = 5 and 6 µm. That
+  was the peak-picker railing against the 1600 cm⁻¹ window edge after the band
+  had been flattened away (1656 − 55.9 = 1600.1). Fixed with a `nan` return and
+  a regression test. The inversion is near 5 µm, as Lesson 1 says — not 6.5 µm
+  as I claimed.
+- *Measured, against the mac's estimate.* σ × 100 gives Δχ² = 0.016 (raw), not
+  20–190: the gap scales as 1/σ². The mac has since corrected this in the DRAFT.
+
+**φ narrowed to [0.05, 0.30]** on Chris's instruction, and the controls, ladder
+and diagnostics were all re-run. The narrowing removes the rejection entirely:
+20,000/20,000 prior draws are now valid, against 49.7 % before, so the effective
+prior on `a` is exactly uniform. The φ ≤ 0.9 runs are kept in
+`results/e1/superseded_phi_0.05_0.90/`.
+
+**Open for Chris.**
+1. The control redesign (the mac's four proposals in `016fa5d`). I agree with
+   all four; on the preprocessed likelihood I prefer the mac's free-scale
+   version to my fixed-reference-norm one.
+2. **The SNR mismatch is the one I would not defer.** The simulated Amide I is
+   0.0038 AU at a = 0.25 µm and at most 0.026 AU, against 0.324 AU on tissue —
+   SNR 3.5–23 against ~295. In this model all absorbance arrives through Q_ext,
+   so there is no "negligible scattering, normal absorbance" regime for the
+   positive control to sit in. Either add a path-length term or restrict E1's
+   claim to the low-SNR regime.
+3. One grid observation worth weighing before APPROVED: at a = 3.5 µm the
+   preprocessed condition identified f_β decisively (wrong f_β penalised by
+   1148 in log-likelihood). H1 predicts the opposite. Three cases, one noise
+   draw each — not a substitute for the grid.
+
+**Cost of the grid when approved:** 640 runs, 16.2 h serial, **1.16 h on 14
+workers**, inside the 6 h budget. Lower bound: the controls sit at a = 0.25 µm
+where the posterior is simplest.
+
+Nothing is running on watford. The GPU is idle and the lock is released.
+
 ## 2026-11-06 (mac): coordinator's first session
 
 **State:** `comms/2026-11-05_chat_to_watford_01.md` is OPEN and has no reply
