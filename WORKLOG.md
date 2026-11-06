@@ -63,12 +63,57 @@ case. The exploratory exact-Mie → ADA run is what says how realistic it is.
 - Item 4 (runtime) is not in EXPERIMENTS.md. It is an operations note for
   watford.
 
+**Review of watford's first pushes (d45a7b2..c4fed7b).** Its reply note isn't
+in yet, and the 240-run controls are still running.
+
+- **E0 is done and checks out.**
+  - Noise σ: median 1.10e-3 AU (p10 8.0e-4, p90 1.5e-3).
+  - Amide I peak over tissue: median 0.32 AU.
+  - The sample is md5-verified, and the GPU check ran under the lock.
+  - The PCUK2023 source cubes are already on Isilon, so the 199 GB download
+    isn't needed.
+- **E1 steps 1–2 pass.**
+  - Kramers–Kronig: correlation 1.000, scale 0.9997. The ADA extrema are within
+    1 %.
+  - The Lesson 1 test is skipped because there is no `rmies_sim.py`. The
+    fallback set gives about 70 % of the Lesson 1 shifts and inverts near
+    6.5 µm.
+- **Mac error, now corrected in EXPERIMENTS.md.** σ × 100 gives Δχ² ≈ 0.016
+  under this simulator, not 20–190.
+  - My estimate assumed a 0.5 AU Amide I. The simulated Amide I at a = 0.25 µm
+    is only about 0.007 AU, roughly 50× below real tissue.
+  - The Δχ² ≤ 0.1 rule still stands.
+  - watford's `chi2_gap` profiles out only the amplitude and baseline. That
+    gives an upper bound on the fully profiled gap, so it is conservative.
+- **The φ prior matters more than the wasted volume watford noted.**
+  - Rejecting φ·Q_ext ≥ 1 makes the effective prior on a non-uniform. Relative
+    to a ≤ 1 µm, a = 3, 4 and 6 µm get 0.42, 0.34 and 0.32 of the prior mass
+    (mac numpy check: ADA, n∞ ~ U[1.3, 1.6]).
+  - That favours "β + small scatterer" at exactly the H1 radii, which biases W.
+  - Narrowing to φ ∈ [0.05, 0.30] makes the prior on a flat. Chris must decide
+    before APPROVED, and the controls should then re-run under the final prior.
+- **The raw condition is a best case for one more reason.** In the sphere
+  model the absorbing path grows with a, so absolute absorbance says something
+  about a. In real tissue the section thickness sets it instead. The amplitude
+  range [0.2, 3] only partly decouples the two.
+- **Paraffin (for chat and Chris; affects E3).** The sample cores were measured
+  in paraffin, which has an index close to tissue's (m ≈ 1).
+  - Mie scattering should therefore be much weaker than in E1's in-air sphere
+    model. E0 fits this: the apparent Amide I p10–p90 is only 1649–1659 cm⁻¹.
+  - PCUK2023 may be a low-RMieS dataset. That could make it a source of prior
+    training data (§4) but a weak test bed for correction.
+  - A forward model for these cores needs a medium index.
+- **A possible natural test case (unverified).** The E0 Amide I map shows round
+  objects at about 1630 cm⁻¹. In prostate tissue these could be corpora
+  amylacea, which can contain amyloid (β-sheet) and are roughly spherical. That
+  would be the real-tissue version of E1's confound. Check against the H&E.
+
 **Open for Chris:**
-1. Mark E1 `APPROVED` in docs/EXPERIMENTS.md, or edit it first. The grid waits
-   for this; the controls don't.
-2. Add `rmies_sim.py` if you have it somewhere other than this Mac.
-3. Start or nudge the watford session (prompt in docs/KICKOFF.md). If watford has
-   already started, tell it to pull again before task 4 (the controls).
+1. Should the E1 φ prior narrow to [0.05, 0.30]? Decide before marking E1
+   `APPROVED`.
+2. Mark E1 `APPROVED`. The grid waits for this.
+3. Add `rmies_sim.py` if you have it somewhere other than this Mac.
+4. Pass the paraffin point to the chat when E3 is designed.
 
 ## 2026-11-05 (chat): repo scaffolded
 

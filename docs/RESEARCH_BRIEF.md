@@ -1,6 +1,6 @@
 # Research brief: resonant Mie scattering and generative correction
 
-Last updated 2026-11-05 (chat). This is the shared scientific context, so keep
+Last updated 2026-11-06 (mac: §5 data notes from E0). This is the shared scientific context, so keep
 it current. Numbers marked "Lesson 1" come from the Spectra Research course's
 simulator (`rmies_sim.py`).
 
@@ -139,8 +139,8 @@ Not ME-EMSC outputs (circular), and not class-conditional (label leakage).
 
 | Dataset | What | Size | Notes |
 |---|---|---|---|
-| PCUK2023 FTIR prostate TMA | 1,045 cores from 181 patients. Spectra unprocessed. Agilent Cary 620, 949–3800 cm⁻¹ (1,479 channels). Aligned H&E. Sparse 9-class pixel annotations on 227 cores | 199 GB | Zenodo [10.5281/zenodo.18671069](https://doi.org/10.5281/zenodo.18671069), CC BY 4.0. Gardner group (O'Leary, Ferguson et al.), so it may already be on Isilon: check before downloading. Stored with maximum gzip compression; re-save locally for training |
-| PCUK2023 sample | 4 cores (s10_c048, s17_c015, s33_c059, s33_c070), raw and "preprocessed" (undefined on the page), H&E, masks, weights for 10 classifiers | 1.7 GB | Zenodo [10.5281/zenodo.17672476](https://doi.org/10.5281/zenodo.17672476) |
+| PCUK2023 FTIR prostate TMA | 1,045 cores from 181 patients. Spectra unprocessed. Agilent Cary 620, 949–3800 cm⁻¹ (1,479 channels). Aligned H&E. Sparse 9-class pixel annotations on 227 cores | 199 GB | Zenodo [10.5281/zenodo.18671069](https://doi.org/10.5281/zenodo.18671069), CC BY 4.0. Gardner group (O'Leary, Ferguson et al.). **Source cubes are already on Isilon** (E0): `Group Members/Dougal_Ferguson/Prostate Project/HDF5 Data/Slide <n>/DataCube/`, 23 slides, so don't download. **Measured in paraffin** (wax bands up to 4.8 AU), so the medium is close to index-matched and RMieS is probably weaker than in dewaxed tissue. Stored with maximum gzip compression; re-save locally for training |
+| PCUK2023 sample | 4 cores (s10_c048, s17_c015, s33_c059, s33_c070), raw and "preprocessed", H&E, masks, weights for 10 classifiers. Raw files have 1,505 channels, 949–3850 cm⁻¹. "Preprocessed" is most likely a Savitzky–Golay second derivative of vector-normalised spectra with the wax and CO₂ bands cut; see docs/PCUK2023_PREPROCESSING.md, and use `*_raw.h5`. The raw files' `/mask` has the wrong shape, so use the one from `<core>.h5` | 1.7 GB | Zenodo [10.5281/zenodo.17672476](https://doi.org/10.5281/zenodo.17672476) |
 | BR20832 breast TMA | FTIR raw data, H&E image | 181 GB | Zenodo record 4986399 (Tang, Henderson, Gardner 2021), CC BY 4.0. Processed MATLAB version: 10.5281/zenodo.4730312 |
 | Ovarian TMA, O-PTIR + FTIR | same tissue measured both ways | — | Gajjela et al. (Reddy and Mayerich, Houston). No public release found; ask the authors |
 

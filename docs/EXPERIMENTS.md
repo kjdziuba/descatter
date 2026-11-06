@@ -138,7 +138,11 @@ nuisance parameters.
     the larger of the two σ values and report it.
   - The data then carry almost no information about f_β, so its posterior
     should match the prior.
-  - σ × 100 is not enough: a rough estimate leaves Δχ² ≈ 20–190.
+  - Under this simulator, σ × 100 already meets the rule: Δχ² ≈ 0.016 (raw)
+    and 0.007 (preprocessed) (watford, c4fed7b). That is because the simulated
+    Amide I at a = 0.25 µm is only about 0.007 AU.
+  - *Correction (mac):* the mac's earlier estimate of 20–190 assumed a
+    tissue-level Amide I of 0.5 AU, so it was wrong for this model.
 - *Draws:* for each control, f_β,true ∈ {0, 1} with 20 noise draws each, in
   both conditions. That is 40 draws per condition, the same count as the grid.
 
@@ -188,7 +192,8 @@ inference with ADA. This shows how much the approximation alone costs.
 
 **Clarified 2026-11-06** (mac, at Chris's request, while still DRAFT):
 - the step order and noise model of the preprocessed condition;
-- the negative control's noise level (σ × 100 left f_β identifiable);
+- the negative control's noise rule (Δχ² ≤ 0.1; σ × 100 turns out to meet
+  it);
 - draw counts for the controls, and pooling of draws for H1.
 
 The reasoning is in the 2026-11-06 (mac) WORKLOG entry. E1 still needs
