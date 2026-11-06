@@ -319,6 +319,18 @@ post-hoc, made after seeing control failures.
     line loses almost nothing, because the rubberband has already removed
     offset and slope (watford's surprise 9).
   - watford should confirm it in its own simulator before any control re-runs.
+  - *Confirmed by watford, 810bba6* (`results/e1/rubberband_bias_check.json`):
+    - The gap is 39.66. The lift is +2.09σ (sd 0.38, 200 draws), which is 58 %
+      of the Amide I depth at a = 0.25 µm.
+    - χ² of the truth against its own data (52 points):
+      - 99.7 under the pre-registered likelihood;
+      - 49.2 with `s · m_w + c0`, against 50 expected;
+      - 47.7 with the slope added.
+    - **Settled: use `s · m_w + c0` in E1.** The slope buys 1.5 χ² for one more
+      parameter, which is nothing. Revisit it for real data (E3), where the
+      baseline isn't a line by construction.
+    - The check wasn't asked for, but it is small and falls under the
+      still-open request 01.
 - **watford's surprise 8 is a heads-up for H1, not a result.** At a = 3.5 µm
   the pp condition separated f_β decisively (wrong f_β penalised by 1148 in
   log-likelihood). That's 3 cases, under the biased likelihood. If it holds on
@@ -336,7 +348,8 @@ post-hoc, made after seeing control failures.
   directly now.
 
 **Open for Chris (supersedes the list above):**
-1. Accept the redesign: proposal 1 as extended here, plus proposals 2–4. Then
+1. Accept the redesign: proposal 1 as extended here (free scale plus free
+   constant, `s · m_w + c0`), plus proposals 2–4. Then
    the mac writes them into the E1 DRAFT as dated, post-hoc control changes.
 2. Have chat close request 01, or tell the mac to close it on chat's behalf.
    Then the mac sends watford request 02: confirm the χ² fix, implement
