@@ -1,0 +1,88 @@
+{
+  "exp": "e1",
+  "run_id": "diagnostics",
+  "git": {
+    "commit": "8a1f40a752aa2bec6510361492a5280b2edcfd4f",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "analyses": [
+      "a_fixed",
+      "grid_crosscheck"
+    ],
+    "pre_registered": false,
+    "draws": 20,
+    "sigma_e0_AU": 0.0011,
+    "a_control_um": 0.25,
+    "grid_cases": [
+      {
+        "f_beta": 0.0,
+        "a_um": 0.25
+      },
+      {
+        "f_beta": 1.0,
+        "a_um": 3.5
+      },
+      {
+        "f_beta": 0.0,
+        "a_um": 3.5
+      }
+    ],
+    "grid_shape": [
+      31,
+      31
+    ],
+    "nlive": 400
+  },
+  "data_files": [],
+  "seeds": {
+    "base": 1000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 1328.379,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "a_fixed_summary": {
+      "raw": {
+        "n_draws": 40,
+        "W_median": 0.0,
+        "W_max": 0.0,
+        "frac_draws_W_below_0.05": 1.0,
+        "f_beta_sd_median": 0.04209620857500159,
+        "wall_s_median": 168.02499999999998
+      },
+      "preprocessed": {
+        "n_draws": 40,
+        "W_median": 0.0,
+        "W_max": 0.005186089078706529,
+        "frac_draws_W_below_0.05": 1.0,
+        "f_beta_sd_median": 0.0361844486311993,
+        "wall_s_median": 35.91
+      }
+    }
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_diagnostics.py",
+    "--draws",
+    "20"
+  ]
+}
