@@ -381,6 +381,58 @@ post-hoc, made after seeing control failures.
 chat's behalf. Then the mac flips the queued request to OPEN and nudges
 watford.
 
+**watford's review of the queued request** (`comms/2026-11-06_watford_to_mac_02.md`,
+138265b; `results/e1/degeneracy_review.json`). The mac asked for this review.
+Nothing in the request was implemented.
+
+- **D(a) passes:** monotone, 0.00494–0.0931 AU, nothing below 1e-4.
+- **The objection holds:** under σ(a) the grid's verdict is fixed before it
+  runs.
+  - watford computed the min χ² between the α truth and the *whole* β family,
+    profiling a′, n∞′, φ′, amplitude and the linear terms. That is the real H1
+    confusion, with a different radius on each side.
+  - It is 4×10⁴ to 7×10⁵ at every radius in both conditions. So W ≈ 0
+    everywhere: raw H1 passes, preprocessed H1 fails.
+  - The confusion appears only at Amide I SNR ≈ 1–4. Tissue is ~295, and E0
+    noise gave 4.5–85.
+  - The mac checked the arithmetic: σ_crit = σ · √(χ²_min / 9) reproduces the
+    table.
+  - The search is a coarse grid plus Nelder–Mead, not exhaustive. But closing
+    a gap of 10⁴+ would need a near-exact match the grid missed, so the mac
+    accepts it.
+- **The old pp positive failure at a = 0.25 µm** (E0 noise, SNR 3.5) now has
+  two contributing causes:
+  - it sits near the critical SNR: χ²_min ≈ 21 at E0 noise;
+  - the rubberband bias favoured large a by 39.7 log-likelihood.
+- **Mac addition: the chemistry is the bigger simplification, not only the
+  scatter.**
+  - E1's clean spectrum has one free parameter (f_β). Every other band is
+    known exactly.
+  - So the β family can only differ from the truth by scatter. The best β fit
+    misses by roughly the whole band depth, because scatter can't turn a broad
+    1656 band into a narrow 1630 + 1690 pair.
+  - Real ambiguity needs chemistry freedom: band centres, widths, other
+    components. That is also exactly what E2's learned prior faces.
+  - watford's "harder scatter model" option is one route. A freer chemistry
+    model is the other, and probably the more important.
+- **Options for Chris** (watford's three, plus the mac's view):
+  - **(a) Run the grid as written, then write up.** ~1.2 h CPU. It gives the
+    pre-registered test, with the prediction now on record: raw pass,
+    preprocessed fail. Skipping a pre-registered test because its outcome
+    looks unfavourable would look worse than running it.
+  - **(b) Scan σ ∈ {D/295, D/30, D/4}.** This is watford's pick, at 3× the
+    grid. The mac's view: watford's critical-SNR table already answers "at
+    what SNR does the confusion appear" to first order, since χ²_min scales
+    as SNR².
+  - **(c) Harder model first, then re-run the ~4-minute degeneracy check.**
+    Options: freer chemistry (mac), size distribution, Lesson 1's set, exact
+    Mie. Run a grid only where the critical SNR approaches tissue level.
+  - **The mac's recommendation:** (a), then (c) as a new, separately
+    pre-registered E1b, designed with chat.
+- **Queued request:** on hold until Chris picks. Tasks 1–5 (likelihood,
+  σ table, options, calibration gate, controls) are useful under every option.
+  Only task 6 depends on the choice.
+
 ## 2026-11-05 (chat): repo scaffolded
 
 **Background,** from the Spectra Research chat:

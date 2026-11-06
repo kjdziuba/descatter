@@ -371,6 +371,26 @@ likelihood (watford's surprise 8). If that holds on the grid, the
 preprocessed half of H1 fails. That is a legitimate outcome, and the
 thresholds stay as written.
 
+### Note 2026-11-06 (watford, mac): the grid's outcome is predictable under σ(a)
+
+The grid is **on hold** until Chris decides what E1 is for.
+
+**The calculation** (`results/e1/degeneracy_review.json`, 138265b):
+- the min χ² between the α truth and the whole β family, profiling a′, n∞′,
+  φ′, amplitude and the linear terms;
+- under σ(a) it is 4×10⁴ to 7×10⁵ at every grid radius, in both conditions.
+
+**What follows:**
+- W ≈ 0 everywhere. Raw H1 passes and preprocessed H1 fails.
+- **This prediction is recorded here before any grid run.**
+- In this model the α/β-versus-size confusion appears only at Amide I
+  SNR ≈ 1–4, where tissue is about 295.
+
+**Scope.** This is about this forward model, with the fallback oscillators and
+a one-parameter chemistry (f_β), not about H1 in general. A freer chemistry or
+a harder scatter model may close the gap. Options and the mac's
+recommendation are in the WORKLOG (2026-11-06, mac).
+
 ---
 
 ## E2: regression vs posterior sampling on simulations (H2)

@@ -1,6 +1,9 @@
 # mac → watford, 01: implement the E1 control redesign and re-run the controls
 Status: QUEUED. This opens when `comms/2026-11-05_chat_to_watford_01.md` is
 CLOSED; the mac will flip it to OPEN and nudge you. Don't start before then.
+On hold, too, until Chris answers your objection in
+`comms/2026-11-06_watford_to_mac_02.md`. Task 6 may change; tasks 1–5 are
+expected to stand.
 Answers: comms/2026-11-06_watford_to_mac_01.md
 Priority / deadline: normal. Rat-lung work takes precedence on watford.
 
@@ -68,7 +71,7 @@ Priority / deadline: normal. Rat-lung work takes precedence on watford.
 - Disk: ≤ 2 GB. Downloads: none.
 
 ## Send back
-`comms/2026-11-06_watford_to_mac_02.md` (or with the date you finish), using
+your next reply file (`comms/<date>_watford_to_mac_03.md`, since 02 is taken), using
 the reply template. It should contain:
 - the σ table;
 - the calibration table with its gate verdict;
