@@ -123,5 +123,71 @@
     "min": 1620.3375244140625,
     "max": 1676.2777099609375
   },
-  "figure": "results/e0/quicklook_s10_c048.png"
+  "figure": "results/e0/quicklook_s10_c048.png",
+  "preprocessed_definition": {
+    "doc": "docs/PCUK2023_PREPROCESSING.md",
+    "confirmed": [
+      "the preprocessed grid is an exact subset of the raw grid (no interpolation)",
+      "it is raw channels 12-1314 with three bands removed: 1340-1490 and 2700-3000 (paraffin, PyIR remove_wax) and 2250-2450 (CO2, PyIR remove_co2); 78+104+156 = 338 channels, 1303-338 = 965",
+      "the tissue is still in paraffin: sharp wax bands reach 4.8 AU at 2920/2850 cm^-1",
+      "the published tissue-mask rule (area under 1600-1700 after min-to-zero > 2, integrated over channel index) reproduces the shipped mask at IoU 0.984"
+    ],
+    "inferred_not_confirmed": "values are a Savitzky-Golay SECOND derivative of a min-to-zero, vector-normalised spectrum (normalise before differentiate; magnitude matches to 0.4 % at window 13; mean-spectrum correlation 0.977 at window 11). The exact window, polynomial order and any denoising step are not pinned down, and the paper's Methods section is paywalled from watford.",
+    "consequence": "use *_raw.h5 only; the preprocessed files have already removed the scatter baseline and the absolute scale.",
+    "paper": {
+      "citation": "O'Leary L, Ferguson D, Hart C, Brown M, Oliveira P, Clarke N, Sachdeva A, Gardner P, Yin H. Anal. Chem. 2026, 98(4), 2743-2755.",
+      "doi": "10.1021/acs.analchem.5c04765",
+      "pmid": "41566143",
+      "verified_against": [
+        "Crossref",
+        "PubMed esummary"
+      ]
+    }
+  },
+  "raw_mask_shape_mismatch": {
+    "problem": "in every *_raw.h5 the /mask shape differs from /spectra (256,256)",
+    "shapes": {
+      "s10_c048": [
+        235,
+        277
+      ],
+      "s17_c015": [
+        253,
+        259
+      ],
+      "s33_c059": [
+        252,
+        260
+      ],
+      "s33_c070": [
+        253,
+        259
+      ]
+    },
+    "workaround": "use /mask from the matching <core>.h5 (256x256), or regenerate it with the published Amide I area rule"
+  },
+  "saturation": {
+    "max_absorbance_over_tissue": 8.0,
+    "note": "exactly 8.0 AU, so some channels are clipped or saturated; screen before fitting"
+  },
+  "isilon": {
+    "searched": "/mnt/isilon-gardner, read-only, nothing copied",
+    "pcuk2023_source_cubes": {
+      "path": "/mnt/isilon-gardner/Group Members/Dougal_Ferguson/Prostate Project/HDF5 Data/Slide <n>/DataCube/",
+      "slides": 23,
+      "cores_on_slide_10": 78,
+      "approx_bytes_per_slide": 12000000000,
+      "note": "this is the source the 199 GB Zenodo release was built from (pcuk2023_dataset_creation reads 'Slide {n}/DataCube/{file}'); annotations/ and H_E/ sit alongside. The full download is avoidable."
+    },
+    "pcuk2023_metadata_only": "/mnt/isilon-gardner/Projects/2023_PCUK/ (four .xlsx files)",
+    "br20832": {
+      "raw_varian_instrument_data": [
+        "/mnt/isilon-gardner/Group Members/Jennie_Tang/a000*_BR20832_D043_*",
+        "/mnt/isilon-gardner/Mike/2016-05 BR20832/",
+        "/mnt/isilon-gardner/Group Members/Veronica/a0176_Veronica_BR20832_D043_16res_15x_B4"
+      ],
+      "h_and_e": "/mnt/isilon-gardner/BR20832 - H and E.7z",
+      "note": "raw instrument format (.dat/.dmd/.drd/.seq/.bsp), not the Zenodo release form"
+    }
+  }
 }

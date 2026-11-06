@@ -1,0 +1,67 @@
+{
+  "exp": "e1",
+  "run_id": "controls",
+  "git": {
+    "commit": "5bed2b733b6beb38a40d791426773335d4dbeeed",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "sigma_e0_AU": 0.0011,
+    "a_control_um": 0.25,
+    "draws_per_cell": 2,
+    "ladder_draws_per_cell": 1,
+    "ladder_sigma_multipliers": [
+      1,
+      10,
+      30,
+      100
+    ],
+    "nlive": 400,
+    "n_workers": 14,
+    "n_jobs": 32
+  },
+  "data_files": [
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e0/summary.json",
+      "bytes": 3224,
+      "sha256": "80d22faed27b0f2dbc75b2f7566f39b5dba44256a3c2edca96262974e96e8d1b"
+    }
+  ],
+  "seeds": {
+    "base": 1000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 327.955,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "positive_control_PASS": false,
+    "negative_control_PASS": false,
+    "n_runs": 32
+  },
+  "argv": [
+    "scripts/e1_controls.py",
+    "--draws",
+    "2",
+    "--ladder-draws",
+    "1"
+  ]
+}

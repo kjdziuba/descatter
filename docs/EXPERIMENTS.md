@@ -194,6 +194,59 @@ inference with ADA. This shows how much the approximation alone costs.
 The reasoning is in the 2026-11-06 (mac) WORKLOG entry. E1 still needs
 Chris's APPROVED before the grid runs.
 
+### Amendment 2026-11-06 (watford): the fallback oscillator set
+
+`legacy/rmies_sim.py` was not in the repo, so step 1's fallback applies and the
+Lesson 1 reproduction test in step 2 is **skipped**, not failed. The set below
+is what `descatter/physics.py` uses. Each band is an absorptive Lorentzian
+`k = P G² / ((ν₀ − ν)² + G²)` with `G = FWHM/2`.
+
+| # | ν₀ / cm⁻¹ | FWHM / cm⁻¹ | peak k | assignment |
+|---|---|---|---|---|
+| 1 | 1030 | 40 | 0.012 | glycogen / C-O stretch |
+| 2 | 1080 | 35 | 0.022 | symmetric PO2- stretch (nucleic acid) |
+| 3 | 1170 | 30 | 0.010 | C-O stretch / ester |
+| 4 | 1240 | 55 | 0.026 | asymmetric PO2- stretch / Amide III |
+| 5 | 1310 | 30 | 0.009 | Amide III |
+| 6 | 1340 | 30 | 0.010 | CH deformation / collagen |
+| 7 | 1398 | 35 | 0.016 | symmetric COO- stretch / CH3 bend |
+| 8 | 1450 | 35 | 0.018 | CH2 bend |
+| 9 | 1468 | 20 | 0.008 | CH2 scissoring (lipid) |
+| 10 | 1545 | 50 | 0.045 | Amide II |
+| 11 | 1740 | 25 | 0.010 | ester C=O (lipid) |
+| 12 | 1656 | 45 | (1 − f_β)·0.080 | Amide I α-helix |
+| 13 | 1630 | 25 | f_β·0.080·1.573 | Amide I β-sheet major |
+| 14 | 1690 | 20 | f_β·0.080·1.573·0.18 | Amide I β-sheet minor |
+
+The β weights make the β lineshape equal in *area* to the α lineshape, so f_β
+changes the Amide I shape and not the protein content. Amide I / Amide II is
+1.78 in k, which is 1.91 in thin-film absorbance (A ∝ ν·k) — the Lesson 1
+number in RESEARCH_BRIEF §1.
+
+**How it compares with Lesson 1** (`results/e1/amide_i_shifts.json`):
+
+| a / µm | fallback peak-max shift | Lesson 1 target |
+|---|---|---|
+| 1 | −6.0 cm⁻¹ | −8 cm⁻¹ |
+| 2 | −13.1 cm⁻¹ | −18 cm⁻¹ |
+| 3 | −22.4 cm⁻¹ | −32 cm⁻¹ |
+| 4 | −35.8 cm⁻¹ | −50 cm⁻¹ |
+| 6 | −55.9 cm⁻¹ | +62 cm⁻¹ |
+
+The shape is right — shift grows with a, then inverts — but the magnitude is
+about 70 % of Lesson 1's and the inversion is near 6.5 µm rather than 5 µm.
+**So E1 under this set is a slightly easier problem than Lesson 1.** If Chris
+adds `legacy/rmies_sim.py`, port its set and re-run; the pre-registered test
+will then be active.
+
+### Note 2026-11-06 (watford): the φ prior is partly unreachable
+
+Q_ext peaks near 3.2, so `A_app = −log10(1 − φ·Q_ext)` needs `φ < 1/max Q_ext ≈
+0.31`. The pre-registered prior φ ∈ [0.05, 0.9] therefore contains a large
+region where the model is undefined. `descatter/physics.py` flags it and the
+likelihood rejects it, so the runs are correct, but roughly two thirds of the
+φ prior volume is wasted. Worth narrowing before the step-4 grid.
+
 ---
 
 ## E2: regression vs posterior sampling on simulations (H2)
