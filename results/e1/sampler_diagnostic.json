@@ -1,0 +1,281 @@
+{
+  "status": "LABELLED DIAGNOSTIC, not pre-registered, not a control re-run",
+  "question": "the negative control failed in raw (KS median 0.1346, 0.35 of draws under 0.1). With f_beta inert the model does not depend on f_beta, so this can only be a sampler artefact. Can a sampler setting fix it?",
+  "does_not_change": "results/e1/controls.json stands as run. Re-running the control under a new setting is the coordinator's call.",
+  "wall_s_total": 2335.0,
+  "settings": [
+    {
+      "setting": "as-run (nlive 400, rwalk)",
+      "nlive": 400,
+      "sample": "rwalk",
+      "n": 4,
+      "ks_median": 0.15682034870750455,
+      "ks_max": 0.5114026729078676,
+      "frac_ks_below_0.1": 0.25,
+      "ks_floor_median": 0.006321565396930668,
+      "n_samples_median": 18507.5,
+      "wall_s_median": 372.6
+    },
+    {
+      "setting": "nlive 1500, rwalk",
+      "nlive": 1500,
+      "sample": "rwalk",
+      "n": 4,
+      "ks_median": 0.054663670363881894,
+      "ks_max": 0.0998034617171833,
+      "frac_ks_below_0.1": 1.0,
+      "ks_floor_median": 0.0032966782285225047,
+      "n_samples_median": 68052.5,
+      "wall_s_median": 1350.25
+    },
+    {
+      "setting": "nlive 400, rslice",
+      "nlive": 400,
+      "sample": "rslice",
+      "n": 4,
+      "ks_median": 0.060061893196677374,
+      "ks_max": 0.09899458093943192,
+      "frac_ks_below_0.1": 1.0,
+      "ks_floor_median": 0.006364640103878062,
+      "n_samples_median": 18258.0,
+      "wall_s_median": 783.9000000000001
+    },
+    {
+      "setting": "nlive 1000, rslice",
+      "nlive": 1000,
+      "sample": "rslice",
+      "n": 4,
+      "ks_median": 0.01696426550971386,
+      "ks_max": 0.09030763743474213,
+      "frac_ks_below_0.1": 1.0,
+      "ks_floor_median": 0.004011967709299066,
+      "n_samples_median": 45950.0,
+      "wall_s_median": 1967.75
+    }
+  ],
+  "runs": [
+    {
+      "setting": "as-run (nlive 400, rwalk)",
+      "condition": "raw",
+      "seed": 61002,
+      "f_beta_true": 0.0,
+      "ks": 0.09878949707767076,
+      "n_samples": 18265,
+      "ks_floor": 0.006363391052613004,
+      "wall_s": 368.1,
+      "n_loglike_calls": 412588
+    },
+    {
+      "setting": "as-run (nlive 400, rwalk)",
+      "condition": "raw",
+      "seed": 61003,
+      "f_beta_true": 1.0,
+      "ks": 0.5114026729078676,
+      "n_samples": 18519,
+      "ks_floor": 0.0063196013820966315,
+      "wall_s": 369.3,
+      "n_loglike_calls": 420191
+    },
+    {
+      "setting": "as-run (nlive 400, rwalk)",
+      "condition": "raw",
+      "seed": 61000,
+      "f_beta_true": 0.0,
+      "ks": 0.20310360544585593,
+      "n_samples": 18496,
+      "ks_floor": 0.006323529411764706,
+      "wall_s": 375.9,
+      "n_loglike_calls": 425990
+    },
+    {
+      "setting": "as-run (nlive 400, rwalk)",
+      "condition": "raw",
+      "seed": 61001,
+      "f_beta_true": 1.0,
+      "ks": 0.11053709196915315,
+      "n_samples": 18676,
+      "ks_floor": 0.006292982421519212,
+      "wall_s": 378.8,
+      "n_loglike_calls": 427639
+    },
+    {
+      "setting": "nlive 400, rslice",
+      "condition": "raw",
+      "seed": 61001,
+      "f_beta_true": 1.0,
+      "ks": 0.07206446288424251,
+      "n_samples": 18162,
+      "ks_floor": 0.006381409515324062,
+      "wall_s": 763.9,
+      "n_loglike_calls": 896637
+    },
+    {
+      "setting": "nlive 400, rslice",
+      "condition": "raw",
+      "seed": 61002,
+      "f_beta_true": 0.0,
+      "ks": 0.09899458093943192,
+      "n_samples": 18194,
+      "ks_floor": 0.006375795165163947,
+      "wall_s": 781.6,
+      "n_loglike_calls": 903431
+    },
+    {
+      "setting": "nlive 400, rslice",
+      "condition": "raw",
+      "seed": 61000,
+      "f_beta_true": 0.0,
+      "ks": 0.03251217367937054,
+      "n_samples": 18718,
+      "ks_floor": 0.006285918266901711,
+      "wall_s": 786.2,
+      "n_loglike_calls": 926093
+    },
+    {
+      "setting": "nlive 400, rslice",
+      "condition": "raw",
+      "seed": 61003,
+      "f_beta_true": 1.0,
+      "ks": 0.04805932350911224,
+      "n_samples": 18322,
+      "ks_floor": 0.006353485042592177,
+      "wall_s": 791.6,
+      "n_loglike_calls": 903881
+    },
+    {
+      "setting": "nlive 1500, rwalk",
+      "condition": "raw",
+      "seed": 61003,
+      "f_beta_true": 1.0,
+      "ks": 0.06931366935353206,
+      "n_samples": 67987,
+      "ks_floor": 0.0032982647424196995,
+      "wall_s": 1344.8,
+      "n_loglike_calls": 1546681
+    },
+    {
+      "setting": "nlive 1500, rwalk",
+      "condition": "raw",
+      "seed": 61000,
+      "f_beta_true": 0.0,
+      "ks": 0.0998034617171833,
+      "n_samples": 67695,
+      "ks_floor": 0.0033053705624315846,
+      "wall_s": 1345.7,
+      "n_loglike_calls": 1542144
+    },
+    {
+      "setting": "nlive 1500, rwalk",
+      "condition": "raw",
+      "seed": 61002,
+      "f_beta_true": 0.0,
+      "ks": 0.04001367137423173,
+      "n_samples": 68118,
+      "ks_floor": 0.0032950917146253094,
+      "wall_s": 1354.8,
+      "n_loglike_calls": 1562801
+    },
+    {
+      "setting": "nlive 1500, rwalk",
+      "condition": "raw",
+      "seed": 61001,
+      "f_beta_true": 1.0,
+      "ks": 0.024981371805599117,
+      "n_samples": 68740,
+      "ks_floor": 0.0032801498720345748,
+      "wall_s": 1372.1,
+      "n_loglike_calls": 1572556
+    },
+    {
+      "setting": "nlive 1000, rslice",
+      "condition": "raw",
+      "seed": 61001,
+      "f_beta_true": 1.0,
+      "ks": 0.0175565667542239,
+      "n_samples": 46100,
+      "ks_floor": 0.004005419322360552,
+      "wall_s": 1969.7,
+      "n_loglike_calls": 2316877
+    },
+    {
+      "setting": "nlive 1000, rslice",
+      "condition": "raw",
+      "seed": 61000,
+      "f_beta_true": 0.0,
+      "ks": 0.09030763743474213,
+      "n_samples": 45800,
+      "ks_floor": 0.00401851609623758,
+      "wall_s": 1985.6,
+      "n_loglike_calls": 2311707
+    },
+    {
+      "setting": "nlive 1000, rslice",
+      "condition": "raw",
+      "seed": 61003,
+      "f_beta_true": 1.0,
+      "ks": 0.01637196426520382,
+      "n_samples": 44868,
+      "ks_floor": 0.004060037974378093,
+      "wall_s": 1873.2,
+      "n_loglike_calls": 2227290
+    },
+    {
+      "setting": "nlive 1000, rslice",
+      "condition": "raw",
+      "seed": 61002,
+      "f_beta_true": 0.0,
+      "ks": 0.013472430341279762,
+      "n_samples": 46195,
+      "ks_floor": 0.004001298631060674,
+      "wall_s": 1965.8,
+      "n_loglike_calls": 2345117
+    }
+  ],
+  "grid_cost_if_adopted": {
+    "basis": "results/e1/grid_projection.json gives 4.68 h on 14 workers at the as-run setting; scaled by the median wall ratio measured here",
+    "caveat": "timings come from the negative-control configuration (f_beta inert, a free); grid runs differ, so treat the ratios as indicative",
+    "untested_cheaper_option": "keep rwalk and raise dynesty's `walks` (default 25) rather than nlive. That targets the mixing problem directly and may cost less than nlive 1500.",
+    "per_setting": [
+      {
+        "setting": "as-run (nlive 400, rwalk)",
+        "ks_median": 0.15682034870750455,
+        "frac_ks_below_0.1": 0.25,
+        "wall_s_median": 372.6,
+        "cost_ratio_vs_as_run": 1.0,
+        "projected_grid_hours_on_14_workers": 4.68,
+        "fits_6h_budget": true,
+        "negative_control_passes": false
+      },
+      {
+        "setting": "nlive 1500, rwalk",
+        "ks_median": 0.054663670363881894,
+        "frac_ks_below_0.1": 1.0,
+        "wall_s_median": 1350.25,
+        "cost_ratio_vs_as_run": 3.62,
+        "projected_grid_hours_on_14_workers": 16.96,
+        "fits_6h_budget": false,
+        "negative_control_passes": true
+      },
+      {
+        "setting": "nlive 400, rslice",
+        "ks_median": 0.060061893196677374,
+        "frac_ks_below_0.1": 1.0,
+        "wall_s_median": 783.9000000000001,
+        "cost_ratio_vs_as_run": 2.1,
+        "projected_grid_hours_on_14_workers": 9.85,
+        "fits_6h_budget": false,
+        "negative_control_passes": true
+      },
+      {
+        "setting": "nlive 1000, rslice",
+        "ks_median": 0.01696426550971386,
+        "frac_ks_below_0.1": 1.0,
+        "wall_s_median": 1967.75,
+        "cost_ratio_vs_as_run": 5.28,
+        "projected_grid_hours_on_14_workers": 24.72,
+        "fits_6h_budget": false,
+        "negative_control_passes": true
+      }
+    ]
+  }
+}

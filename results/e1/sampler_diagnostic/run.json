@@ -1,0 +1,115 @@
+{
+  "exp": "e1",
+  "run_id": "sampler_diagnostic",
+  "git": {
+    "commit": "0e209c767fc2d844d4a681cbf7299e7f1a5ef84a",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "status": "LABELLED DIAGNOSTIC, not a control",
+    "a_um": 0.25,
+    "draws_per_setting": 4,
+    "settings": [
+      {
+        "name": "as-run (nlive 400, rwalk)",
+        "nlive": 400,
+        "sample": "rwalk"
+      },
+      {
+        "name": "nlive 1500, rwalk",
+        "nlive": 1500,
+        "sample": "rwalk"
+      },
+      {
+        "name": "nlive 400, rslice",
+        "nlive": 400,
+        "sample": "rslice"
+      },
+      {
+        "name": "nlive 1000, rslice",
+        "nlive": 1000,
+        "sample": "rslice"
+      }
+    ],
+    "condition": "raw"
+  },
+  "data_files": [],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 2336.172,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "settings": [
+      {
+        "setting": "as-run (nlive 400, rwalk)",
+        "nlive": 400,
+        "sample": "rwalk",
+        "n": 4,
+        "ks_median": 0.15682034870750455,
+        "ks_max": 0.5114026729078676,
+        "frac_ks_below_0.1": 0.25,
+        "ks_floor_median": 0.006321565396930668,
+        "n_samples_median": 18507.5,
+        "wall_s_median": 372.6
+      },
+      {
+        "setting": "nlive 1500, rwalk",
+        "nlive": 1500,
+        "sample": "rwalk",
+        "n": 4,
+        "ks_median": 0.054663670363881894,
+        "ks_max": 0.0998034617171833,
+        "frac_ks_below_0.1": 1.0,
+        "ks_floor_median": 0.0032966782285225047,
+        "n_samples_median": 68052.5,
+        "wall_s_median": 1350.25
+      },
+      {
+        "setting": "nlive 400, rslice",
+        "nlive": 400,
+        "sample": "rslice",
+        "n": 4,
+        "ks_median": 0.060061893196677374,
+        "ks_max": 0.09899458093943192,
+        "frac_ks_below_0.1": 1.0,
+        "ks_floor_median": 0.006364640103878062,
+        "n_samples_median": 18258.0,
+        "wall_s_median": 783.9000000000001
+      },
+      {
+        "setting": "nlive 1000, rslice",
+        "nlive": 1000,
+        "sample": "rslice",
+        "n": 4,
+        "ks_median": 0.01696426550971386,
+        "ks_max": 0.09030763743474213,
+        "frac_ks_below_0.1": 1.0,
+        "ks_floor_median": 0.004011967709299066,
+        "n_samples_median": 45950.0,
+        "wall_s_median": 1967.75
+      }
+    ]
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_sampler_diagnostic.py"
+  ]
+}
