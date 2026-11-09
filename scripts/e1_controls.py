@@ -69,6 +69,10 @@ def _worker(job: dict) -> dict:
         seed=job["seed"],
         nlive=NLIVE,
         fixed={"a_um": job["a_um"]} if job["fix_a"] else None,
+        gauge=job.get("gauge", True),
+    )
+    res["a_interval_contains_truth"] = bool(
+        res["a_q05_q95_um"][0] <= job["a_um"] <= res["a_q05_q95_um"][1]
     )
     res.pop("_samples", None)
     res["job"] = job
@@ -101,6 +105,8 @@ def _summarise(runs: list[dict], control: str) -> dict:
             "logz_median": float(np.median([r["logz"] for r in sel])),
             "wall_s_median": float(np.median([r["wall_s"] for r in sel])),
             "n_loglike_calls_median": float(np.median([r["n_loglike_calls"] for r in sel])),
+            "frac_a_interval_contains_truth": float(
+                np.mean([r["a_interval_contains_truth"] for r in sel])),
         }
         if spec["thresholded"]:
             cell["PASS"] = bool(frac_w >= 0.95) if control == "positive" else bool(frac_ks >= 0.90)
@@ -113,8 +119,16 @@ def _summarise(runs: list[dict], control: str) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--draws", type=int, default=20, help="noise draws per (f_beta, condition)")
+    ap.add_argument("--run-id", default="controls",
+                    help="results/e1/<run-id>/ for run.json, and the json/png basename")
+    ap.add_argument("--seed-base", type=int, default=5000)
+    ap.add_argument("--legacy", action="store_true",
+                    help="seven-parameter inference, reproducing 0e209c7")
     args = ap.parse_args()
-    OUT.mkdir(parents=True, exist_ok=True)
+    gauge = not args.legacy
+    #: a dedicated directory when this is not the pre-registered run
+    out_dir = OUT if args.run_id == "controls" else OUT / args.run_id
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     from descatter import infer_e1 as inf
     from descatter import physics as ph
@@ -122,8 +136,8 @@ def main() -> None:
     sigma = ph.sigma_for_radius(A_CONTROL_UM)
     jobs = [
         {"control": name, "f_beta": f, "a_um": A_CONTROL_UM, "sigma": sigma,
-         "condition": cond, "seed": 5000 + 1000 * i + s,
-         "fix_a": spec["fix_a"], "inert": spec["inert"]}
+         "condition": cond, "seed": args.seed_base + 1000 * i + s,
+         "fix_a": spec["fix_a"], "inert": spec["inert"], "gauge": gauge}
         for i, (name, spec) in enumerate(CONTROLS.items())
         for cond in CONDITIONS
         for f in (0.0, 1.0)
@@ -135,6 +149,9 @@ def main() -> None:
         "a_control_um": A_CONTROL_UM,
         "sigma_AU": sigma,
         "sigma_rule": "sigma(a) = D(a) / 295 (results/e1/sigma_table.json)",
+        "gauge": gauge,
+        "run_id": args.run_id,
+        "seed_base": args.seed_base,
         "draws_per_cell": args.draws,
         "draws_per_condition": 2 * args.draws,
         "nlive": NLIVE, "n_workers": N_WORKERS, "n_jobs": len(jobs),
@@ -144,7 +161,7 @@ def main() -> None:
     print(f"{len(jobs)} nested-sampling runs on {N_WORKERS} workers, sigma = {sigma:.4e} AU",
           flush=True)
 
-    with Run("e1", "controls", config=config, seeds={"base": 5000}) as run:
+    with Run("e1", args.run_id, config=config, seeds={"base": args.seed_base}) as run:
         run.add_data_file(OUT / "sigma_table.json")
         run.add_data_file(OUT / "likelihood_calibration.json")
 
@@ -185,8 +202,8 @@ def main() -> None:
             },
             "runs": [{k: v for k, v in r.items() if k != "job"} for r in runs],
         }
-        (OUT / "controls.json").write_text(json.dumps(report, indent=2) + "\n")
-        _figure(summaries, runs, sigma)
+        (out_dir / "controls.json").write_text(json.dumps(report, indent=2) + "\n")
+        _figure(summaries, runs, sigma, out_dir, gauge)
         run.notes["machinery_valid"] = bool(machinery_valid)
 
     print("\n" + "=" * 76)
@@ -198,13 +215,15 @@ def main() -> None:
             print(f"  {cond:14s} W med {v['W_median']:.4f} max {v['W_max']:.4f} "
                   f"frac<0.05 {v['frac_W_below_0.05']:.2f} | KS med {v['ks_median']:.4f} "
                   f"frac<0.1 {v['frac_ks_below_0.1']:.2f} | a med {v['a_median_um_median']:.2f} "
-                  f"| min samples {v['min_posterior_samples']}")
+                  f"| min samples {v['min_posterior_samples']}"
+                  f"{'' if name != 'free_a' else chr(10) + '                 a-interval covers truth: ' + format(v['frac_a_interval_contains_truth'], '.2f')}")
     print(f"\ncalibration gate: {'PASS' if gate['GATE_PASSES'] else 'FAIL'}")
     print(f"MACHINERY VALID: {machinery_valid}")
     print(f"total wall {wall/60:.1f} min over {len(runs)} runs")
 
 
-def _figure(summaries: dict, runs: list[dict], sigma: float) -> None:
+def _figure(summaries: dict, runs: list[dict], sigma: float,
+            out_dir, gauge: bool) -> None:
     fig, ax = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
     for i, name in enumerate(("positive", "negative", "free_a")):
         s = summaries[name]
@@ -224,9 +243,11 @@ def _figure(summaries: dict, runs: list[dict], sigma: float) -> None:
                "free_a": "a free — confounded with H1"}[name]
         ax[i].set_title(f"{name} — {tag}\n{sub}")
         ax[i].legend(fontsize=8, loc="upper right")
-    fig.suptitle(f"E1 controls, redesigned 2026-11-06, at a = 0.25 µm, "
+    tag = ("gauge-fixed (n$_\\infty$ = 1.40), amendment 2026-11-09" if gauge
+           else "seven-parameter (legacy)")
+    fig.suptitle(f"E1 controls — {tag} — a = 0.25 µm, "
                  f"$\\sigma$ = {sigma:.3e} AU (tissue SNR)", fontsize=11)
-    fig.savefig(OUT / "controls.png", dpi=120)
+    fig.savefig(out_dir / "controls.png", dpi=120)
     plt.close(fig)
 
 

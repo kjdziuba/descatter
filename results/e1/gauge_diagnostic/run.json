@@ -1,0 +1,59 @@
+{
+  "exp": "e1",
+  "run_id": "gauge_diagnostic",
+  "git": {
+    "commit": "a91048dc99c2c8b08e580765eb26a287bf3a2d27",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "status": "LABELLED DIAGNOSTIC, not a control",
+    "gauge": true,
+    "n_inf_fixed": 1.4,
+    "a_control_um": 0.25,
+    "sigma_AU": 1.673749697623047e-05,
+    "n_draws": 8,
+    "nlive": 400,
+    "sample": "rwalk",
+    "timing_radii_um": [
+      3.5,
+      5.0
+    ],
+    "seed_bases": [
+      120000,
+      130000
+    ]
+  },
+  "data_files": [],
+  "seeds": {
+    "negative": 120000,
+    "timing": 130000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 492.347,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "GO": true
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_gauge_diagnostic.py"
+  ]
+}

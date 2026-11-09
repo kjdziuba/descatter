@@ -1,0 +1,165 @@
+{
+  "status": "LABELLED DIAGNOSTIC, not a control; results/e1/controls.json stands as run",
+  "hypothesis": "the curved (a, n_inf, amplitude) ridge, not the flat f_beta direction alone, is what stalled raw rwalk",
+  "go_criterion": "KS < 0.1 in all 8 draws AND median KS < 0.05",
+  "GO": true,
+  "negative_control_raw": {
+    "n_draws": 8,
+    "ks_per_draw": [
+      0.02138,
+      0.01555,
+      0.0144,
+      0.01105,
+      0.01701,
+      0.03611,
+      0.02151,
+      0.01301
+    ],
+    "ks_median": 0.016276554819967565,
+    "ks_max": 0.03611424674830366,
+    "frac_ks_below_0.1": 1.0,
+    "ks_floor_median": 0.006351665292203383,
+    "wall_s_median": 370.41499999999996,
+    "as_run_comparison": {
+      "source": "results/e1/controls.json (0e209c7), legacy 7-parameter",
+      "ks_median": 0.1346,
+      "frac_ks_below_0.1": 0.35
+    }
+  },
+  "timing_runs": [
+    {
+      "a_um": 3.5,
+      "f_beta": 0.0,
+      "condition": "preprocessed",
+      "wall_s": 250.1,
+      "a_median_um": 3.5005035488997858,
+      "a_q05_q95_um": [
+        3.4922786628575397,
+        3.5063906835563965
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 159889
+    },
+    {
+      "a_um": 3.5,
+      "f_beta": 1.0,
+      "condition": "preprocessed",
+      "wall_s": 256.4,
+      "a_median_um": 3.4990111982467416,
+      "a_q05_q95_um": [
+        3.494562056364298,
+        3.504258164545296
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 164798
+    },
+    {
+      "a_um": 3.5,
+      "f_beta": 0.0,
+      "condition": "raw",
+      "wall_s": 441.72,
+      "a_median_um": 3.49846032029016,
+      "a_q05_q95_um": [
+        3.4963842711081514,
+        3.500355503042984
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 460434
+    },
+    {
+      "a_um": 3.5,
+      "f_beta": 1.0,
+      "condition": "raw",
+      "wall_s": 426.07,
+      "a_median_um": 3.500375323335169,
+      "a_q05_q95_um": [
+        3.49891547336306,
+        3.501957685238494
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 456673
+    },
+    {
+      "a_um": 5.0,
+      "f_beta": 0.0,
+      "condition": "preprocessed",
+      "wall_s": 210.16,
+      "a_median_um": 5.002881828082027,
+      "a_q05_q95_um": [
+        4.990609706532179,
+        5.015048019047017
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 151545
+    },
+    {
+      "a_um": 5.0,
+      "f_beta": 1.0,
+      "condition": "preprocessed",
+      "wall_s": 234.18,
+      "a_median_um": 5.003139809565753,
+      "a_q05_q95_um": [
+        4.999620857499532,
+        5.007896288832053
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 169303
+    },
+    {
+      "a_um": 5.0,
+      "f_beta": 0.0,
+      "condition": "raw",
+      "wall_s": 428.48,
+      "a_median_um": 4.999811982298552,
+      "a_q05_q95_um": [
+        4.9981359510030305,
+        5.001470564181769
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 464369
+    },
+    {
+      "a_um": 5.0,
+      "f_beta": 1.0,
+      "condition": "raw",
+      "wall_s": 433.16,
+      "a_median_um": 4.999553639738305,
+      "a_q05_q95_um": [
+        4.998163937619494,
+        5.001041120942446
+      ],
+      "a_interval_contains_truth": true,
+      "wrong_mode_mass_W": 0.0,
+      "n_loglike_calls": 465279
+    }
+  ],
+  "per_condition_timing": {
+    "raw": {
+      "n": 4,
+      "wall_s_mean": 432.3575,
+      "wall_s_max": 441.72,
+      "frac_a_interval_contains_truth": 1.0
+    },
+    "preprocessed": {
+      "n": 4,
+      "wall_s_mean": 237.70999999999998,
+      "wall_s_max": 256.4,
+      "frac_a_interval_contains_truth": 1.0
+    }
+  },
+  "grid_projection": {
+    "n_runs": 640,
+    "serial_hours": 59.56,
+    "hours_on_14_workers": 4.25,
+    "fits_6h_budget": true,
+    "previous_projection_hours": 4.68
+  },
+  "wall_s_total": 491.9
+}
