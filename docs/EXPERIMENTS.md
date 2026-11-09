@@ -100,16 +100,18 @@ a linear baseline and Gaussian noise.
 
 Write it in `descatter/infer_e1.py`.
 
-**Parameters:** θ = (f_β, a, n∞, φ, amplitude, baseline offset, baseline
-slope).
+**Parameters:** θ = (f_β, a, φ, amplitude, baseline offset, baseline slope).
+n∞ is fixed at 1.40 in inference (amended 2026-11-09; see the n∞ amendment
+at the end of E1). The simulated data are unchanged.
 
 **Priors:** all uniform:
 - f_β ∈ [0, 1]
-- a ∈ [0.25, 8] µm
-- n∞ ∈ [1.30, 1.60]
+- a ∈ [0.1875, 12] µm (was [0.25, 8] with n∞ free; amended 2026-11-09)
+- n∞ fixed at 1.40 (was free in [1.30, 1.60]; amended 2026-11-09)
 - φ ∈ [0.05, 0.30] (narrowed from [0.05, 0.9] on 2026-11-06; see the φ note
   at the end of E1)
-- amplitude and baseline over wide ranges
+- amplitude ∈ [2/15, 4] (was [0.2, 3] in the code; amended 2026-11-09)
+- baseline offset ∈ [−0.5, 0.5], baseline slope ∈ [−1, 1]
 
 **Noise** (redesigned 2026-11-06; see the redesign at the end of E1): σ is set
 per radius so that the Amide I signal-to-noise matches tissue:
@@ -182,7 +184,9 @@ Run, for both conditions:
 
 - Wrong-mode mass W: the posterior mass of f_β on the wrong side of 0.5.
 - Posterior SD of f_β.
-- Posterior median and 90 % interval of a.
+- Posterior median and 90 % interval of a at n∞ = 1.40, i.e. of
+  a(n∞ − 1)/0.4, the combination the data identify (amended 2026-11-09).
+  The truth uses n∞ = 1.40, so it compares directly with a_true.
 - Log-evidence and wall time.
 
 ### Pre-registered criteria (proposed; Chris to confirm)
@@ -397,6 +401,71 @@ a one-parameter chemistry (f_β), not about H1 in general. A freer chemistry or
 a harder scatter model may close the gap. Options and the mac's
 recommendation are in the WORKLOG (2026-11-06, mac).
 
+### Amendment 2026-11-09 (mac; Chris approved; E1 still DRAFT): n∞ fixed in inference
+
+**This is post-hoc.** It was made after the redesigned negative control failed
+in raw (0e209c7, reply `comms/2026-11-09_watford_to_mac_03.md`).
+- It changes: the inference parameters, the a and amplitude priors, and the
+  radius metric (step 3 and step 5 above).
+- It does not change: the forward model, the simulated data, σ(a), the control
+  designs, the criteria, the H1 thresholds or the grid.
+
+**Why: a, n∞ and amplitude are exactly degenerate in the ADA model.**
+- The phase shift is z = 2xk + 2ix(n − 1), with:
+  - x = 2πaν;
+  - k = amplitude · k_unit;
+  - n − 1 = (n∞ − 1) + amplitude · Δn_unit (KK is linear).
+- So the spectrum depends on a only through a(n∞ − 1) and a·amplitude. It is
+  unchanged under (a, n∞, amplitude) → (λa, 1 + (n∞ − 1)/λ, amplitude/λ).
+- The evidence (WORKLOG 2026-11-09, mac):
+  - At a = 0.25 µm, the free-a posterior matches the predicted ridge marginal
+    (∝ 1/a² on [0.25, 0.333] µm) to three decimals: q05, median and q95 of
+    0.253, 0.286 and 0.328.
+  - Raw `rwalk` under-covers the ridge.
+  - At a = 3.5 and 5 µm, three of four raw timing runs give tight radius
+    intervals that exclude the truth.
+- The consequences:
+  - With n∞ free, the radius is not identifiable at any SNR.
+  - The pre-registered radius metric would report the n∞ and amplitude
+    priors, not the data.
+  - The curved flat direction is the likely cause of the raw sampler failure.
+    That is a hypothesis; request `comms/2026-11-09_mac_to_watford_02.md`
+    tests it.
+
+**What changed** (written into steps 3 and 5 above):
+1. **n∞ is fixed at 1.40 in inference.**
+   - Along an exact ridge this is a choice of coordinates. It removes no
+     fitting freedom.
+   - A unit test that the forward model is invariant along the ridge is what
+     licenses it.
+2. **Priors widened:** a ∈ [0.1875, 12] µm and amplitude ∈ [2/15, 4].
+   - These cover every spectrum the old prior reached: a(n∞ − 1) still spans
+     [0.075, 4.8] µm, and the ridge maps the old amplitudes into [2/15, 4].
+   - The covered set is slightly larger than before, and the prior over the
+     identified combinations changes. Neither should matter at SNR 295. The
+     degeneracy screen is re-run under the new bounds to check.
+3. **Radius metric:** a at n∞ = 1.40, i.e. a(n∞ − 1)/0.4.
+4. **The sampler cross-check** (step 3) uses this a.
+
+**Status of earlier results.**
+- The 0e209c7 controls stay as run in `results/e1/controls.json`. They are the
+  record of the failure, not evidence about the amended model.
+- The controls under the amended model are a new labelled analysis, in
+  `results/e1/controls_gauge/`.
+- The calibration gate (8f07934) stands: the true spectrum and the likelihood
+  at the truth are unchanged.
+
+**Effect on H1 and the recorded prediction: none expected.**
+- W depends only on f_β, and the likelihood is identical at every point on the
+  ridge, for any f_β.
+- In the H1 question, "large" and "small scatterer" now mean large and small
+  a(n∞ − 1).
+
+**Not covered.**
+- Exact Mie breaks the ridge only weakly, which leaves a near-degeneracy. That
+  matters for the exploratory Mie run and for E1b.
+- E2 uses the same ADA model, so it has the same ridge.
+
 ---
 
 ## E1b: does the confusion survive a harder model? (simulation only)
@@ -432,6 +501,8 @@ same problem E2's learned prior faces.
 
 **Status:** OUTLINE. To be designed after E1. Its "ambiguous regime" may not
 exist at tissue SNR under E1's model, so E1b decides what E2 oversamples.
+Under ADA, a, n∞ and amplitude form an exact ridge (E1 amendment
+2026-11-09). E2's parameterisation and metrics must account for it.
 
 - Use the same simulator as E1, with broader chemistry (mixtures of component
   spectra) and size distributions.

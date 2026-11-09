@@ -105,7 +105,25 @@ the committed results (8f07934, 0e209c7, 00eaccc).
 3. **The 6 h budget stays** unless step 2 fails.
 
 Closed `comms/2026-11-06_mac_to_watford_01.md` (answered by reply 03).
-Nothing is queued for watford until Chris decides.
+
+**Decided 2026-11-09 (Chris): fix n∞, test first.**
+- Written into the E1 DRAFT as "Amendment 2026-11-09":
+  - n∞ fixed at 1.40 in inference;
+  - a ∈ [0.1875, 12] µm and amplitude ∈ [2/15, 4];
+  - the radius metric is now a at n∞ = 1.40.
+
+  Steps 3 and 5 are edited to match, and the E2 outline gained a one-line
+  heads-up.
+- Opened `comms/2026-11-09_mac_to_watford_02.md`:
+  - a ridge unit test (BLOCKED if it fails);
+  - the gauge-fixed inference;
+  - the degeneracy screen under the new bounds;
+  - the raw negative control as a labelled diagnostic, with fresh seeds.
+
+  The controls re-run in `results/e1/controls_gauge/` only if the diagnostic
+  clears both thresholds: KS < 0.1 in all 8 draws and median KS < 0.05. If it
+  doesn't, watford runs its `walks` test and stops, and the budget comes back
+  to Chris.
 
 ## 2026-11-09 (watford): E1 request 02 done — machinery NOT valid
 
