@@ -228,3 +228,46 @@ def test_simulated_amide_i_is_far_weaker_than_real_tissue():
     assert depth(0.25) < 0.01
     assert max(depth(a) for a in (1.0, 2.0, 3.0, 4.0)) < 0.05
     assert depth(0.25) / 1.097e-3 < 5.0  # SNR at the positive-control radius
+
+
+# --------------------------------------------------------------------------
+# The exact (a, n_inf, amplitude) ridge (request 02 task 1)
+# --------------------------------------------------------------------------
+def test_forward_is_invariant_along_the_a_ninf_amplitude_ridge():
+    """REQUIRED BY REQUEST 02 TASK 1. The amendment of 2026-11-09 rests on this.
+
+    In qext_ada the phase shift is z = 2xk + 2ix(n-1) with x = 2*pi*a*nu,
+    k = amplitude * k_unit and n - 1 = (n_inf - 1) + amplitude * dn_unit, and
+    the Kramers-Kronig transform is linear. So the spectrum sees a only through
+    a*(n_inf - 1) and a*amplitude, and is unchanged under
+
+        (a, n_inf, amplitude) -> (lam*a, 1 + (n_inf - 1)/lam, amplitude/lam).
+
+    With n_inf free the radius is therefore not identifiable at any SNR, which
+    is why E1 now fixes n_inf as a choice of coordinates.
+    """
+    from descatter import infer_e1 as inf
+
+    nu = ph.wavenumber_grid()
+    pre = inf.Preprocessor(nu.numpy())
+    for lam in (0.7, 1.3):
+        for a_um in (0.25, 3.5):
+            for f_beta in (0.0, 1.0):
+                base = ph.Theta(f_beta=f_beta, a_um=a_um, n_inf=1.40, phi=0.2, amplitude=1.0)
+                moved = ph.Theta(
+                    f_beta=f_beta, a_um=lam * a_um, n_inf=1.0 + 0.40 / lam,
+                    phi=0.2, amplitude=1.0 / lam,
+                )
+                A0 = ph.forward(nu, base)["A_app"]
+                A1 = ph.forward(nu, moved)["A_app"]
+                raw_diff = float((A1 - A0).abs().max())
+                w0, w1 = pre(A0.numpy()), pre(A1.numpy())
+                pre_diff = float(np.abs(w1 - w0).max())
+                msg = f"lam={lam} a={a_um} f_beta={f_beta}"
+                assert raw_diff <= 1e-10, f"{msg}: raw max|dA| = {raw_diff:.3e}"
+                assert pre_diff <= 1e-10, f"{msg}: preprocessed max|dA| = {pre_diff:.3e}"
+
+    # and the ridge is specific: moving a alone changes the spectrum a lot
+    A0 = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=2.0, n_inf=1.40, phi=0.2))["A_app"]
+    A1 = ph.forward(nu, ph.Theta(f_beta=0.0, a_um=2.6, n_inf=1.40, phi=0.2))["A_app"]
+    assert float((A1 - A0).abs().max()) > 1e-3

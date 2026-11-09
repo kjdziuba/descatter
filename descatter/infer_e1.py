@@ -53,7 +53,7 @@ PARAM_NAMES = (
     "baseline_offset",
     "baseline_slope",
 )
-PRIOR_BOUNDS: dict[str, tuple[float, float]] = {
+PRIOR_BOUNDS_LEGACY: dict[str, tuple[float, float]] = {
     "f_beta": (0.0, 1.0),
     "a_um": (0.25, 8.0),
     "n_inf": (1.30, 1.60),
@@ -62,6 +62,24 @@ PRIOR_BOUNDS: dict[str, tuple[float, float]] = {
     "baseline_offset": (-0.5, 0.5),
     "baseline_slope": (-1.0, 1.0),  # AU per 1000 cm^-1
 }
+
+#: n_inf is fixed here as a CHOICE OF COORDINATES along an exact ridge, not as
+#: a restriction: the spectrum sees a only through a*(n_inf - 1) and
+#: a*amplitude (tests/test_physics.py, the ridge test). Every spectrum the old
+#: prior could reach is still reachable -- a*(n_inf - 1) spans [0.075, 4.8] um
+#: either way -- because these bounds are the image of the old box under
+#: (a, n_inf, amp) -> (lam*a, 1 + (n_inf-1)/lam, amp/lam) with
+#: lam = (n_inf - 1)/0.40. See docs/EXPERIMENTS.md, E1 Amendment 2026-11-09.
+N_INF_GAUGE = 1.40
+PRIOR_BOUNDS_GAUGE: dict[str, tuple[float, float]] = {
+    **PRIOR_BOUNDS_LEGACY,
+    "a_um": (0.1875, 12.0),
+    "n_inf": (N_INF_GAUGE, N_INF_GAUGE),
+    "amplitude": (2.0 / 15.0, 4.0),
+}
+
+#: the amended E1 default
+PRIOR_BOUNDS = PRIOR_BOUNDS_GAUGE
 
 AMIDE_I_WINDOW = (1600.0, 1700.0)
 REJECT_LOGL = -1e100
@@ -135,6 +153,10 @@ class E1Problem:
     fixed: dict[str, float] = field(default_factory=dict)
     #: negative control: make f_beta have no effect on the model at all.
     inert_f_beta: bool = False
+    #: gauge-fixed inference (the amended E1 default): n_inf pinned at 1.40 and
+    #: the widened a / amplitude bounds. Set False to reproduce the 7-parameter
+    #: runs in results/e1/controls.json (0e209c7).
+    gauge: bool = True
     _pre: Preprocessor | None = field(default=None, init=False, repr=False)
     n_calls: int = field(default=0, init=False, repr=False)
 
@@ -144,6 +166,9 @@ class E1Problem:
         bad = set(self.fixed) - set(PARAM_NAMES)
         if bad:
             raise ValueError(f"unknown fixed parameters: {sorted(bad)}")
+        self.bounds = PRIOR_BOUNDS_GAUGE if self.gauge else PRIOR_BOUNDS_LEGACY
+        if self.gauge:
+            self.fixed = {"n_inf": N_INF_GAUGE, **self.fixed}
         self.free_names = tuple(n for n in PARAM_NAMES if n not in self.fixed)
         nu_np = self.nu.numpy()
         if self.condition == "preprocessed":
@@ -163,7 +188,7 @@ class E1Problem:
     def prior_transform(self, u: np.ndarray) -> np.ndarray:
         out = np.empty_like(u)
         for i, name in enumerate(self.free_names):
-            lo, hi = PRIOR_BOUNDS[name]
+            lo, hi = self.bounds[name]
             out[i] = lo + u[i] * (hi - lo)
         return out
 
@@ -254,6 +279,7 @@ def run_nested(
             "sigma_eff": problem.sigma_eff,
             "fixed": dict(problem.fixed),
             "inert_f_beta": problem.inert_f_beta,
+            "gauge": problem.gauge,
             "dof": problem.dof,
             "n_free_params": len(problem.free_names),
         }
@@ -310,6 +336,7 @@ def simulate_and_infer(
     nlive: int = 400,
     exact_mie: bool = False,
     fixed: dict[str, float] | None = None,
+    gauge: bool = True,
     **kwargs,
 ) -> dict:
     nu = ph.wavenumber_grid() if nu is None else nu
@@ -322,6 +349,7 @@ def simulate_and_infer(
         truth={k: getattr(theta_true, k) for k in PARAM_NAMES},
         fixed=fixed or {},
         inert_f_beta=theta_true.inert_f_beta,
+        gauge=gauge,
     )
     out = run_nested(problem, nlive=nlive, seed=seed, **kwargs)
     out["sigma_true"] = sigma

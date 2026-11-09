@@ -8,6 +8,14 @@ import torch
 from descatter import infer_e1 as inf
 from descatter import physics as ph
 
+#: E1 is gauge-fixed by default (n_inf pinned at 1.40), so a theta vector has
+#: six entries, not seven. Build them by name rather than by position.
+def vec(problem, **values) -> list[float]:
+    full = {"f_beta": 0.0, "a_um": 3.0, "n_inf": 1.40, "phi": 0.2,
+            "amplitude": 1.0, "baseline_offset": 0.0, "baseline_slope": 0.0}
+    full.update(values)
+    return [full[n] for n in problem.free_names]
+
 
 # --------------------------------------------------------------------------
 # Rubberband baseline
@@ -97,9 +105,9 @@ def test_full_pipeline_chi2_is_invariant_to_positive_rescaling():
     nu = ph.wavenumber_grid()
     sim = ph.simulate(nu, ph.Theta(f_beta=0.3, a_um=3.0, n_inf=1.40, phi=0.2),
                       sigma=1.1e-3, seed=7)
-    theta_vec = [0.3, 3.0, 1.40, 0.2, 1.0, 0.0, 0.0]
-    base = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3,
-                         condition="preprocessed").chi2(theta_vec)
+    p0 = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="preprocessed")
+    theta_vec = vec(p0, f_beta=0.3, a_um=3.0)
+    base = p0.chi2(theta_vec)
     for alpha, beta in [(2.0, 0.0), (0.5, 0.0), (1.0, 0.37), (7.5, 1.9)]:
         scaled = inf.E1Problem(nu=nu, data=alpha * sim["y"].numpy() + beta,
                                sigma=alpha * 1.1e-3, condition="preprocessed")
@@ -128,8 +136,8 @@ def test_loglike_peaks_at_the_truth():
     truth = ph.Theta(f_beta=0.0, a_um=3.0, n_inf=1.40, phi=0.2, amplitude=1.0)
     sim = ph.simulate(nu, truth, sigma=1.1e-3, seed=3)
     p = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="raw")
-    at_truth = p.loglike([0.0, 3.0, 1.40, 0.2, 1.0, 0.0, 0.0])
-    for wrong in ([1.0, 3.0, 1.40, 0.2, 1.0, 0.0, 0.0], [0.0, 6.0, 1.40, 0.2, 1.0, 0.0, 0.0]):
+    at_truth = p.loglike(vec(p, f_beta=0.0, a_um=3.0))
+    for wrong in (vec(p, f_beta=1.0, a_um=3.0), vec(p, f_beta=0.0, a_um=6.0)):
         assert at_truth > p.loglike(wrong)
 
 
@@ -137,18 +145,56 @@ def test_loglike_rejects_unphysical_phi():
     nu = ph.wavenumber_grid()
     sim = ph.simulate(nu, ph.Theta(f_beta=0.0, a_um=3.0), sigma=1.1e-3, seed=0)
     p = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="raw")
-    assert p.loglike([0.0, 4.0, 1.40, 0.89, 1.0, 0.0, 0.0]) == inf.REJECT_LOGL
+    assert p.loglike(vec(p, a_um=4.0, phi=0.89)) == inf.REJECT_LOGL
 
 
 def test_fixed_parameters_shrink_the_sampled_space():
+    """Under the gauge, n_inf is already fixed, so fixing a leaves five free."""
     nu = ph.wavenumber_grid()
     sim = ph.simulate(nu, ph.Theta(f_beta=0.0, a_um=3.0), sigma=1.1e-3, seed=0)
     p = inf.E1Problem(
         nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="raw", fixed={"a_um": 3.0}
     )
-    assert p.free_names == tuple(n for n in inf.PARAM_NAMES if n != "a_um")
-    assert p.full_theta([0.2, 1.4, 0.2, 1.0, 0.0, 0.0])["a_um"] == 3.0
-    assert p.loglike([0.0, 1.40, 0.2, 1.0, 0.0, 0.0]) > inf.REJECT_LOGL
+    assert p.free_names == tuple(n for n in inf.PARAM_NAMES if n not in ("a_um", "n_inf"))
+    assert p.full_theta(vec(p))["a_um"] == 3.0
+    assert p.full_theta(vec(p))["n_inf"] == inf.N_INF_GAUGE
+    assert p.loglike(vec(p)) > inf.REJECT_LOGL
+
+
+def test_gauge_is_the_default_and_legacy_is_still_reachable():
+    """The amended setup is the default; gauge=False reproduces the
+    seven-parameter runs in results/e1/controls.json (0e209c7)."""
+    nu = ph.wavenumber_grid()
+    sim = ph.simulate(nu, ph.Theta(f_beta=0.0, a_um=3.0), sigma=1.1e-3, seed=0)
+    g = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="raw")
+    legacy = inf.E1Problem(nu=nu, data=sim["y"].numpy(), sigma=1.1e-3, condition="raw",
+                           gauge=False)
+
+    assert g.gauge and g.fixed == {"n_inf": inf.N_INF_GAUGE} and len(g.free_names) == 6
+    assert not legacy.gauge and legacy.fixed == {} and len(legacy.free_names) == 7
+    assert g.bounds["a_um"] == (0.1875, 12.0) and g.bounds["amplitude"] == (2 / 15, 4.0)
+    assert legacy.bounds["a_um"] == (0.25, 8.0) and legacy.bounds["amplitude"] == (0.2, 3.0)
+
+    # the same physical point gives the same log-likelihood either way
+    assert np.isclose(g.loglike(vec(g, a_um=3.0)), legacy.loglike(vec(legacy, a_um=3.0)))
+
+
+def test_gauge_bounds_are_the_image_of_the_legacy_box():
+    """The widened bounds are not a loosening: they are exactly where the ridge
+    map sends the old prior box, so a*(n_inf - 1) still spans [0.075, 4.8] um."""
+    lo_a, hi_a = inf.PRIOR_BOUNDS_LEGACY["a_um"]
+    lo_n, hi_n = inf.PRIOR_BOUNDS_LEGACY["n_inf"]
+    lo_amp, hi_amp = inf.PRIOR_BOUNDS_LEGACY["amplitude"]
+    g = inf.N_INF_GAUGE - 1.0
+
+    assert np.isclose(lo_a * (lo_n - 1) / g, inf.PRIOR_BOUNDS_GAUGE["a_um"][0])
+    assert np.isclose(hi_a * (hi_n - 1) / g, inf.PRIOR_BOUNDS_GAUGE["a_um"][1])
+    assert np.isclose(lo_amp * g / (hi_n - 1), inf.PRIOR_BOUNDS_GAUGE["amplitude"][0])
+    assert np.isclose(hi_amp * g / (lo_n - 1), inf.PRIOR_BOUNDS_GAUGE["amplitude"][1])
+
+    # the identified combination a*(n_inf - 1) covers the same range both ways
+    assert np.isclose(lo_a * (lo_n - 1), inf.PRIOR_BOUNDS_GAUGE["a_um"][0] * g)
+    assert np.isclose(hi_a * (hi_n - 1), inf.PRIOR_BOUNDS_GAUGE["a_um"][1] * g)
 
 
 # --------------------------------------------------------------------------
