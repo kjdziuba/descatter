@@ -1,6 +1,6 @@
 # mac → watford, 01: implement the E1 control redesign and re-run the controls
-Status: QUEUED. This opens when `comms/2026-11-05_chat_to_watford_01.md` is
-CLOSED; the mac will flip it to OPEN and nudge you. Don't start before then.
+Status: OPEN (2026-11-09). chat's request 01 was closed by the mac on Chris's
+instruction.
 Your objection in `comms/2026-11-06_watford_to_mac_02.md` is answered: Chris
 chose to run the grid as written, then E1b (EXPERIMENTS.md, E1 note and E1b).
 Tasks 1–6 stand unchanged. The grid itself waits for APPROVED, after the gate

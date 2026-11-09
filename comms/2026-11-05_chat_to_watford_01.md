@@ -1,6 +1,7 @@
 # chat → watford, 01: set up descatter, run E0, build E1 (no grid yet)
 
-Status: OPEN
+Status: CLOSED (2026-11-09, by mac on Chris's instruction; answered by
+comms/2026-11-06_watford_to_mac_01.md)
 Answers: (none; first request)
 Priority: low. rat-lung work comes first on the GPU and in Chris's time.
 

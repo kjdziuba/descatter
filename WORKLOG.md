@@ -2,6 +2,23 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-09 (mac): request 01 closed, watford's E1 request opened
+
+- **Closed** `comms/2026-11-05_chat_to_watford_01.md`
+  (`Status: CLOSED`). This is an exception to "never edit another session's
+  file": Chris told the mac to close it on chat's behalf. watford answered it
+  in full in `comms/2026-11-06_watford_to_mac_01.md`.
+- **Opened** `comms/2026-11-06_mac_to_watford_01.md`, the E1 redesign:
+  - the new likelihood and σ table;
+  - the calibration gate;
+  - the redesigned controls;
+  - the grid cost projection.
+
+  The grid itself still waits for Chris's `APPROVED`, after the gate and the
+  controls pass.
+- **Amended** `comms/2026-11-06_mac_to_chat_01.md` (E1b design): it no longer
+  asks chat to close 01. Chris still needs to pass that request to chat.
+
 ## 2026-11-06 (watford): E0 done, E1 built, both controls fail
 
 Reply: `comms/2026-11-06_watford_to_mac_01.md`. Request 01 is answered in full;
