@@ -2,6 +2,64 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-09 (watford): E1 request 02 done — machinery NOT valid
+
+Reply: `comms/2026-11-09_watford_to_mac_03.md`. All six tasks complete, the
+grid not run, E1 should not be marked APPROVED yet.
+
+**Positive control PASSES in both conditions; negative control FAILS in raw.**
+
+| set | condition | frac(W<0.05) | frac(KS<0.1) | verdict |
+|---|---|---|---|---|
+| positive (a fixed) | raw | 1.00 | — | PASS |
+| positive (a fixed) | preprocessed | 1.00 | — | PASS |
+| negative (f_β inert) | raw | — | **0.35** | **FAIL** |
+| negative (f_β inert) | preprocessed | — | 1.00 | PASS |
+| free_a (observation) | both | 1.00 | — | not thresholded |
+
+The calibration gate passed first (every median within ±10 %, worst cell
++6.96 %), so task 5 ran as instructed.
+
+**The raw failure can only be a sampler artefact.** With f_β inert the model
+does not depend on f_β, so the posterior must equal the prior. KS 0.1346 sits
+21× above the 0.0063 sampling floor, and falls as samples rise (r = −0.38).
+`rwalk`'s fixed step count mixes the flat f_β direction slowly inside the very
+thin bounding ellipsoid that σ = 1.7e-5 over 441 points produces. The
+preprocessed condition, with 52 points and two parameters profiled away, is
+clean at 0.0298.
+
+**This is the redesign working.** The old noise-ladder negative control
+confounded "the sampler cannot mix" with "the noise has not flattened the
+posterior"; making f_β inert separates them.
+
+**The fix costs more than the grid budget allows.** Labelled diagnostic, 16
+runs:
+
+| setting | KS med | frac<0.1 | × cost | projected grid |
+|---|---|---|---|---|
+| as run: nlive 400, rwalk | 0.1568 | 0.25 | 1.00 | 4.68 h |
+| nlive 1500, rwalk | 0.0547 | 1.00 | 3.62 | 16.96 h |
+| nlive 400, rslice | 0.0601 | 1.00 | 2.10 | 9.85 h |
+| nlive 1000, rslice | 0.0170 | 1.00 | 5.28 | 24.72 h |
+
+Only `nlive 1000, rslice` has real margin; the cheap one's maximum KS is
+0.0990 against a 0.1 threshold on four draws.
+
+**Open for Chris and the mac.** Relax the 6 h budget, widen the pool past the
+14 workers the request allows (watford has 64 threads, shared), or test the
+option I did not: keep `rwalk` and raise dynesty's `walks` (default 25) rather
+than `nlive`. I'd try `walks` first — about 40 min, and it may remove the
+trade-off. Not started; it is the coordinator's call.
+
+**A correction to reply 01.** The free-a observation has reversed: 0.70 FAIL
+then, 1.00 in both conditions now. Reply 01 blamed preprocessing for
+destroying the radius. That was wrong. The degeneracy review's account — the
+radius is identifiable at tissue SNR, and the old failures were an SNR-3.5
+artefact — is what the data support.
+
+Grid cost at the new σ: 640 runs, 65.5 h serial, **4.68 h on 14 workers** at
+the as-run setting. The positive control and the gate need no re-run.
+
 ## 2026-11-09 (mac): request 01 closed, watford's E1 request opened
 
 - **Closed** `comms/2026-11-05_chat_to_watford_01.md`
