@@ -2,6 +2,111 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-09 (mac): review of reply 03 — the radius is not identifiable in E1's model
+
+Reviewed `comms/2026-11-09_watford_to_mac_03.md` against EXPERIMENTS.md E1 and
+the committed results (8f07934, 0e209c7, 00eaccc).
+
+**Confirmed as reported.**
+- The σ table, the calibration gate (PASS), the controls (positive PASS in both
+  conditions, negative FAIL in raw at 0.35), the grid projection and the
+  sampler diagnostic all match the committed JSON.
+- MACHINERY_VALID = False is the right verdict under the pre-registered
+  criteria. E1 stays DRAFT.
+- The task-1 deviation is accepted: the invariance is tested on the window, and
+  through the full pipeline it holds only for α > 0, since the rubberband is a
+  lower hull.
+
+**New finding: a, n∞ and amplitude are exactly degenerate in the model.**
+- In `physics.qext_ada` the phase shift is z = 2xk + 2ix(n − 1), with:
+  - x = 2πaν;
+  - k = amplitude · k_unit;
+  - n − 1 = (n∞ − 1) + amplitude · Δn_unit (KK is linear).
+
+  So z sees a only through a·amplitude and a·(n∞ − 1). The spectrum is
+  unchanged along (a, n∞, amp) → (λa, 1 + (n∞ − 1)/λ, amp/λ).
+- The data are ADA too (`exact_mie_data` is false in every run), so the
+  likelihood is exactly flat along that line.
+- At the truth (n∞ = 1.40, amplitude 1), the n∞ prior [1.3, 1.6] bounds λ to
+  [2/3, 4/3]. Under the uniform priors, the radius posterior along the ridge is
+  ∝ 1/a².
+- At a = 0.25 µm the a bound cuts the ridge to [0.25, 0.333] µm. Prediction
+  against data (medians over 40 runs):
+
+  | | q05 | median | q95 |
+  |---|---|---|---|
+  | exact-ridge prediction | 0.253 | 0.286 | 0.328 |
+  | free-a, preprocessed | 0.253 | 0.286 | 0.328 |
+  | free-a, raw | 0.254 | 0.285 | 0.323 |
+
+- So "radius recovered at 0.29 µm" is the prior-truncated ridge, not
+  identification. Neither condition identifies a, at any SNR; only
+  a(n∞ − 1) and a·amplitude are identified.
+  - Reply 03's correction ("the radius is identifiable at tissue SNR") and
+    reply 01's claim ("preprocessing destroys the radius") are both wrong
+    about the radius.
+  - The f_β half of the free-a result stands: W = 0 in 40/40, in both
+    conditions.
+- At a = 3.5 µm the ridge spans 2.33–4.67 µm, and the predicted 90 % interval
+  is 2.39–4.44. The raw timing runs in `grid_projection.json` give narrow
+  intervals scattered along the ridge:
+  - [2.64, 2.75] and [3.25, 3.44] at 3.5 µm;
+  - [4.60, 5.15] and [4.16, 4.84] at 5 µm.
+
+  Three of the four exclude the truth. The preprocessed runs are wide, roughly
+  the ridge.
+
+**What this means.**
+- The raw mixing failure is not confined to the negative control. Every raw
+  run has this flat, curved direction, and raw `rwalk` under-covers it:
+  - raw free-a interval width 0.060 µm, against 0.075 predicted;
+  - raw negative-control median 0.278 µm, against 0.286.
+
+  The inert f_β is a second flat direction on top. The mac's hypothesis
+  (untested) is that the curved ridge is why the bounding ellipsoid fits badly
+  and `rwalk` stalls.
+- H1's metric W is unaffected: the likelihood is identical at every point on
+  the ridge, for any f_β. The degeneracy review is unaffected too, because it
+  profiled over a′, n∞′ and φ′, which spans the ridge.
+- The pre-registered metric "posterior median and 90 % interval of a" would
+  report the n∞ and amplitude priors, not the data. It needs amending,
+  whatever sampler is chosen.
+- E2 uses the same ADA forward model, so it has the same ridge. Exact Mie (E1's
+  exploratory run, and E1b) breaks it only weakly. That leaves a
+  near-degeneracy, which is harder for a sampler than an exact one.
+
+**Two smaller points on the reply.**
+- Raising `walks` costs about linearly. The as-run controls make about 23
+  likelihood calls per iteration (412,588 calls over ~17,900 iterations), which
+  is about `walks`. To beat rslice's ×2.1 it would have to work below ~50 walks.
+- "21× above the sampling floor" treats the equal-weight resamples as
+  independent, which overstates the effective sample size. The conclusion
+  stands anyway, because inert mode makes the likelihood exactly flat by
+  construction (tested).
+
+**Mac's recommendation, for Chris to decide.**
+1. **Remove the redundant direction rather than buy more sampler time.**
+   - Fix n∞ at 1.40 in inference. Along an exact ridge this is a gauge choice:
+     it removes no fitting freedom.
+   - Widen the bounds so the reachable set of spectra still covers the current
+     one: a ∈ [0.1875, 12] µm keeps a(n∞ − 1) ∈ [0.075, 4.8]; amplitude ∈
+     [0.133, 4] covers every amplitude the shift maps onto. Re-run the
+     degeneracy screen (~4 min) under the new bounds as a check.
+   - Report a at n∞ = 1.40, which is a(n∞ − 1)/0.4.
+   - Logged as a DRAFT amendment.
+2. **A labelled diagnostic first, under an hour.** Run the raw negative control
+   under the gauge-fixed model at the current setting (rwalk, nlive 400), with
+   fresh seeds.
+   - If it passes with margin: re-run both controls under the amended model as
+     a new labelled analysis. The gate stands, since it involves neither the
+     sampler nor the parameterisation.
+   - If it fails: fall back to watford's `walks` and rslice options, and the
+     budget question goes back to Chris.
+3. **The 6 h budget stays** unless step 2 fails.
+
+Closed `comms/2026-11-06_mac_to_watford_01.md` (answered by reply 03).
+Nothing is queued for watford until Chris decides.
+
 ## 2026-11-09 (watford): E1 request 02 done — machinery NOT valid
 
 Reply: `comms/2026-11-09_watford_to_mac_03.md`. All six tasks complete, the
