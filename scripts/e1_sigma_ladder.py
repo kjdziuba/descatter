@@ -1,4 +1,14 @@
-"""Find the noise level at which the E1 negative control actually fires.
+"""RETIRED 2026-11-06. Kept for the record; it does not run under the current code.
+
+This probed the *old* negative control, which raised sigma until the f_beta
+posterior went flat, and the *old* preprocessed likelihood, whose sigma_eff it
+measures. The redesign replaced both: the negative control now makes f_beta
+inert, and the preprocessed likelihood keeps sigma exact. Its results are in
+results/e1/superseded_phi_0.05_0.90/sigma_ladder.json.
+
+Original docstring follows.
+
+Find the noise level at which the E1 negative control actually fires.
 
 The ladder inside scripts/e1_controls.py stops at sigma x 100. There, the raw
 condition's KS is still falling (0.84 -> 0.24 -> 0.18 -> 0.093) while the

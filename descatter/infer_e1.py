@@ -7,15 +7,14 @@ expected to be multimodal in (f_beta, a).
 Conditions, on identical simulated data:
 
 (i)  ``raw``           -- likelihood on the apparent absorbance over 950-1800 cm^-1.
-(ii) ``preprocessed``  -- rubberband baseline over 950-1800, cut to 1600-1700,
-     then vector-normalise the window; the *same* operations are applied to the
-     model inside the likelihood.
+(ii) ``preprocessed``  -- rubberband baseline over 950-1800, cut to 1600-1700;
+     the same operations are applied to the model, which is then fitted with a
+     free scale and offset.
 
-The order of operations in (ii) and its noise scale are not pinned down by the
-DRAFT in docs/EXPERIMENTS.md. This module follows the mac session's 2026-11-06
-proposal (WORKLOG, point 3): rubberband over the full range, window, then
-normalise, with ``sigma_pp = sigma / ||window before normalisation||``. See
-``PREPROCESSED_ASSUMPTION``.
+Condition (ii) was redesigned on 2026-11-06 after the first controls failed:
+the window is fitted as ``s * m_w + c0`` with ``s`` and ``c0`` profiled out,
+instead of being vector-normalised with ``sigma_pp = sigma / ||y_w||``. See
+``PREPROCESSED_LIKELIHOOD``.
 """
 
 from __future__ import annotations
@@ -29,12 +28,14 @@ import torch
 
 from descatter import physics as ph
 
-PREPROCESSED_ASSUMPTION = (
-    "rubberband (lower convex hull) over 950-1800 cm^-1, then cut to 1600-1700, "
-    "then vector-normalise the window; sigma_pp = sigma / ||windowed, "
-    "baseline-corrected data before normalisation||. Not pre-registered: "
-    "docs/EXPERIMENTS.md E1 step 3 leaves the order and the noise scale open, "
-    "and this follows the mac session's 2026-11-06 proposal."
+PREPROCESSED_LIKELIHOOD = (
+    "rubberband (lower convex hull) over 950-1800 cm^-1, then cut to 1600-1700; "
+    "y_w ~ N(s * m_w + c0, sigma^2 I) with s and c0 profiled out by linear least "
+    "squares at every call and sigma exact. Pre-registered in docs/EXPERIMENTS.md "
+    "E1 step 3 (redesign 2026-11-06). This replaces vector normalisation with "
+    "sigma_pp = sigma / ||y_w||, whose effective sigma saturated at ~0.049 AU "
+    "under heavy noise and which was biased by the rubberband lifting noisy data "
+    "by +2.1 sigma (results/e1/superseded_phi_0.05_0.90/, 810bba6)."
 )
 
 #: Uniform priors. f_beta, a, n_inf and phi are pre-registered; the amplitude and
@@ -91,7 +92,11 @@ def rubberband_baseline(nu: np.ndarray, y: np.ndarray) -> np.ndarray:
 
 @dataclass
 class Preprocessor:
-    """Condition (ii): rubberband -> window -> vector normalise."""
+    """Condition (ii): rubberband over the full range, then cut to the window.
+
+    No normalisation: the free scale ``s`` in the likelihood carries what vector
+    normalisation used to, and keeps sigma exact.
+    """
 
     nu: np.ndarray
     window: tuple[float, float] = AMIDE_I_WINDOW
@@ -99,14 +104,18 @@ class Preprocessor:
     def __post_init__(self) -> None:
         self.sel = (self.nu >= self.window[0]) & (self.nu <= self.window[1])
 
-    def __call__(self, y: np.ndarray) -> tuple[np.ndarray, float]:
-        """Returns ``(normalised window, norm)``; ``norm`` rescales the noise."""
-        corrected = y - rubberband_baseline(self.nu, y)
-        w = corrected[self.sel]
-        norm = float(np.linalg.norm(w))
-        if norm == 0.0:
-            norm = 1.0
-        return w / norm, norm
+    def __call__(self, y: np.ndarray) -> np.ndarray:
+        return (y - rubberband_baseline(self.nu, y))[self.sel]
+
+
+def profile_scale_offset(target: np.ndarray, model: np.ndarray) -> tuple[np.ndarray, float, float]:
+    """Least-squares fit of ``target ~ s * model + c0``.
+
+    Returns ``(residual, s, c0)``. ``s`` is unconstrained, so it may be negative.
+    """
+    design = np.column_stack([model, np.ones_like(model)])
+    coef, *_ = np.linalg.lstsq(design, target, rcond=None)
+    return target - design @ coef, float(coef[0]), float(coef[1])
 
 
 # --------------------------------------------------------------------------
@@ -121,9 +130,11 @@ class E1Problem:
     sigma: float
     condition: str = "raw"
     truth: dict | None = None
-    #: parameters held at a fixed value instead of being sampled. Only for
-    #: clearly labelled diagnostics -- the pre-registered E1 runs sample all seven.
+    #: parameters held at a fixed value instead of being sampled. Used by the
+    #: redesigned positive control (a fixed) and by labelled diagnostics.
     fixed: dict[str, float] = field(default_factory=dict)
+    #: negative control: make f_beta have no effect on the model at all.
+    inert_f_beta: bool = False
     _pre: Preprocessor | None = field(default=None, init=False, repr=False)
     n_calls: int = field(default=0, init=False, repr=False)
 
@@ -137,14 +148,16 @@ class E1Problem:
         nu_np = self.nu.numpy()
         if self.condition == "preprocessed":
             self._pre = Preprocessor(nu_np)
-            self.target, norm = self._pre(self.data)
-            self.sigma_eff = self.sigma / norm
-            self.data_norm = norm
+            self.target = self._pre(self.data)
+            self.n_profiled = 2  # s and c0
         else:
             self.target = self.data
-            self.sigma_eff = self.sigma
-            self.data_norm = 1.0
+            self.n_profiled = 0
+        #: sigma is now exact in both conditions -- nothing rescales it
+        self.sigma_eff = self.sigma
         self.n_data = int(self.target.size)
+        #: degrees of freedom of chi^2 at the truth
+        self.dof = self.n_data - self.n_profiled
 
     # -- dynesty hooks ----------------------------------------------------
     def prior_transform(self, u: np.ndarray) -> np.ndarray:
@@ -160,23 +173,34 @@ class E1Problem:
         return {n: values[n] for n in PARAM_NAMES}
 
     def model(self, theta_vec: Sequence[float]) -> tuple[np.ndarray | None, bool]:
-        th = ph.Theta(**self.full_theta(theta_vec))
+        th = ph.Theta(**self.full_theta(theta_vec), inert_f_beta=self.inert_f_beta)
         with torch.no_grad():
             out = ph.forward(self.nu, th)
         if not bool(out["valid"].all()):
             return None, False
         y = out["A_app"].numpy()
         if self._pre is not None:
-            y, _ = self._pre(y)
+            y = self._pre(y)
         return y, True
+
+    def chi2(self, theta_vec: Sequence[float]) -> float | None:
+        """chi^2 of the model against the data, with s and c0 profiled out in the
+        preprocessed condition. ``None`` when the parameters are unphysical."""
+        y, ok = self.model(theta_vec)
+        if not ok:
+            return None
+        if self._pre is not None:
+            resid, _, _ = profile_scale_offset(self.target, y)
+        else:
+            resid = self.target - y
+        return float(np.dot(resid, resid) / self.sigma_eff**2)
 
     def loglike(self, theta_vec: Sequence[float]) -> float:
         self.n_calls += 1
-        y, ok = self.model(theta_vec)
-        if not ok:
+        c2 = self.chi2(theta_vec)
+        if c2 is None:
             return REJECT_LOGL
-        r = (self.target - y) / self.sigma_eff
-        return float(-0.5 * np.dot(r, r) - self.n_data * np.log(self.sigma_eff * np.sqrt(2 * np.pi)))
+        return float(-0.5 * c2 - self.n_data * np.log(self.sigma_eff * np.sqrt(2 * np.pi)))
 
 
 # --------------------------------------------------------------------------
@@ -229,6 +253,8 @@ def run_nested(
             "n_data": problem.n_data,
             "sigma_eff": problem.sigma_eff,
             "fixed": dict(problem.fixed),
+            "inert_f_beta": problem.inert_f_beta,
+            "dof": problem.dof,
             "n_free_params": len(problem.free_names),
         }
     )
@@ -295,6 +321,7 @@ def simulate_and_infer(
         condition=condition,
         truth={k: getattr(theta_true, k) for k in PARAM_NAMES},
         fixed=fixed or {},
+        inert_f_beta=theta_true.inert_f_beta,
     )
     out = run_nested(problem, nlive=nlive, seed=seed, **kwargs)
     out["sigma_true"] = sigma

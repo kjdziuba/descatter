@@ -71,9 +71,26 @@ def _beta_scale() -> float:
 BETA_SCALE = _beta_scale()
 
 
-def amide_i_bands(f_beta: float | torch.Tensor) -> list[tuple[float, float, torch.Tensor]]:
-    """The three Amide I lineshapes at mixing fraction ``f_beta``."""
+def amide_i_bands(
+    f_beta: float | torch.Tensor, inert: bool = False
+) -> list[tuple[float, float, torch.Tensor]]:
+    """The three Amide I lineshapes at mixing fraction ``f_beta``.
+
+    With ``inert=True`` the beta lineshape (bands 13-14) is replaced by the
+    alpha one (band 12), so the Amide I contribution is the alpha band at full
+    strength whatever ``f_beta`` is. That makes ``f_beta`` have no effect on the
+    spectrum at all, which is what the E1 negative control needs: the posterior
+    must then reproduce the prior exactly, and any KS >= 0.1 is a bug rather
+    than a statement about noise (docs/EXPERIMENTS.md, redesign 2026-11-06).
+    """
     fb = torch.as_tensor(f_beta, dtype=DTYPE)
+    if inert:
+        zero = torch.zeros_like(fb)
+        return [
+            (ALPHA_BAND[0], ALPHA_BAND[1], zero + AMIDE_I_PEAK_K),
+            (BETA_MAJOR[0], BETA_MAJOR[1], zero),
+            (BETA_MINOR[0], BETA_MINOR[1], zero),
+        ]
     return [
         (ALPHA_BAND[0], ALPHA_BAND[1], (1.0 - fb) * AMIDE_I_PEAK_K),
         (BETA_MAJOR[0], BETA_MAJOR[1], fb * AMIDE_I_PEAK_K * BETA_SCALE),
@@ -118,10 +135,18 @@ def lorentz_dn(
     return (peaks[..., :, None] * g[..., :, None] * d / (d**2 + g[..., :, None] ** 2)).sum(-2)
 
 
-def tissue_k(nu: torch.Tensor, f_beta: float | torch.Tensor, amplitude: float | torch.Tensor = 1.0):
-    """Tissue ``k(nu)`` from the 14-oscillator set at Amide I mixing ``f_beta``."""
+def tissue_k(
+    nu: torch.Tensor,
+    f_beta: float | torch.Tensor,
+    amplitude: float | torch.Tensor = 1.0,
+    inert_f_beta: bool = False,
+):
+    """Tissue ``k(nu)`` from the 14-oscillator set at Amide I mixing ``f_beta``.
+
+    ``inert_f_beta=True`` makes ``f_beta`` inert; see :func:`amide_i_bands`.
+    """
     bands = [(c, w, torch.as_tensor(p, dtype=DTYPE)) for c, w, p, _ in FIXED_BANDS]
-    bands += amide_i_bands(f_beta)
+    bands += amide_i_bands(f_beta, inert=inert_f_beta)
     centres = torch.tensor([b[0] for b in bands], dtype=DTYPE)
     fwhm = torch.tensor([b[1] for b in bands], dtype=DTYPE)
     peaks = torch.stack([torch.as_tensor(b[2], dtype=DTYPE) for b in bands])
@@ -310,6 +335,8 @@ class Theta:
     amplitude: float = 1.0
     baseline_offset: float = 0.0
     baseline_slope: float = 0.0
+    #: not a parameter -- a mode. See :func:`amide_i_bands`.
+    inert_f_beta: bool = False
 
 
 def wavenumber_grid(
@@ -334,7 +361,7 @@ def forward(
     ``A_app`` (noise free), plus ``valid``.
     """
     def k_of(w: torch.Tensor) -> torch.Tensor:
-        return tissue_k(w, theta.f_beta, theta.amplitude)
+        return tissue_k(w, theta.f_beta, theta.amplitude, inert_f_beta=theta.inert_f_beta)
 
     k = k_of(nu)
     n_idx = theta.n_inf + kk_dn_extended(nu, k_of, extend_factor=pad_factor, pad_factor=1.0)
@@ -431,3 +458,36 @@ def amide_i_second_derivative_position(
     if idx == 0 or idx == len(y) - 1:
         return float("nan")
     return _parabolic_extremum(w, -y, idx)
+
+
+# --------------------------------------------------------------------------
+# E1 noise rule (docs/EXPERIMENTS.md step 3, redesigned 2026-11-06)
+# --------------------------------------------------------------------------
+#: E0's tissue SNR: median raw Amide I peak 0.324 AU over median noise
+#: 1.097e-3 AU, core s10_c048 (results/e0/summary.json).
+TISSUE_SNR = 295.0
+SIGMA_PHI = 0.2
+
+
+def absorption_depth(nu: torch.Tensor, a_um: float, phi: float = SIGMA_PHI) -> float:
+    """``D(a)``: the Amide I depth of the same sphere with scattering switched off.
+
+    Evaluate the forward model with ``n_inf = 1`` and ``dn = 0``, keeping k, phi,
+    amplitude 1 and the alpha composition, then take the maximum of the apparent
+    absorbance over 1600-1700 cm^-1. With ``n = 1`` the complex phase shift
+    ``z = 2xk + 2ix(n-1)`` is purely real, so this is the pure-absorption van de
+    Hulst limit and ``Q_ext`` saturates at 2 rather than oscillating.
+
+    ``n_inf = 1`` is used only to set sigma; it is outside the inference prior.
+    """
+    k = tissue_k(nu, 0.0, 1.0)
+    q = qext_ada(nu, a_um, torch.ones_like(nu), k)
+    a_abs, _ = apparent_absorbance(q, phi)
+    sel = (nu >= 1600.0) & (nu <= 1700.0)
+    return float(a_abs[sel].max())
+
+
+def sigma_for_radius(a_um: float, nu: torch.Tensor | None = None) -> float:
+    """``sigma(a) = D(a) / 295``, so the Amide I SNR matches tissue at every radius."""
+    nu = wavenumber_grid() if nu is None else nu
+    return absorption_depth(nu, a_um) / TISSUE_SNR

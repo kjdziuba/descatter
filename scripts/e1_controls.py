@@ -1,19 +1,21 @@
-"""E1 step 3: the positive and negative controls (allowed before approval).
+"""E1 controls, redesigned 2026-11-06 (request 02 task 5).
 
-Positive: a = 0.25 um, where scattering is negligible. Both conditions should
-          recover f_beta.  Criterion: W < 0.05 in >= 95 % of draws.
-Negative: the same setup with noise sigma x 100. The f_beta posterior should
-          match the prior.  Criterion: KS(f_beta posterior, prior) < 0.1.
+Three sets of runs, all at a = 0.25 um under sigma(0.25 um), 40 draws per
+condition each (f_beta,true in {0, 1} x 20 seeds):
 
-Also runs a sigma ladder, so the sigma at which the negative control starts to
-fire is measured rather than argued about (mac WORKLOG 2026-11-06, point 1).
+- **positive**, with ``a`` FIXED at 0.25 um. Tests the sampler and likelihood
+  alone. Criterion: W < 0.05 in >= 95 % of the 40 draws, in each condition.
+- **negative**, with f_beta made INERT, so it has no effect on the spectrum.
+  The posterior must then reproduce the prior. Criterion: KS < 0.1 in >= 90 %
+  of the 40 draws, in each condition, from >= 2000 equal-weight samples.
+- **free_a**, the old positive control with ``a`` sampled. A labelled
+  observation, NOT thresholded: it is confounded with H1 itself, because the
+  preprocessed window cannot pin the radius.
 
-Does NOT run the E1 grid (step 4); that needs docs/EXPERIMENTS.md to say
-Status: APPROVED.
+The step-4 grid is NOT run here; E1 needs Chris's APPROVED first.
 
-Run:  OMP_NUM_THREADS=16 .venv/bin/python scripts/e1_controls.py [--draws N]
-Writes results/e1/controls.json, results/e1/controls.png and
-results/e1/<run_id>/run.json.
+Run:  OMP_NUM_THREADS=1 .venv/bin/python -m scripts.e1_controls [--draws N]
+Writes results/e1/controls.{json,png}.
 """
 
 from __future__ import annotations
@@ -33,14 +35,23 @@ import numpy as np
 from descatter.provenance import REPO_ROOT, Run
 
 OUT = REPO_ROOT / "results" / "e1"
-SIGMA_E0 = 1.1e-3  # E0 median noise over tissue pixels, results/e0/summary.json
 A_CONTROL_UM = 0.25
-N_WORKERS = 14  # 14 single-threaded workers stays inside the 16-thread budget
+N_WORKERS = 14
 NLIVE = 400
+CONDITIONS = ("raw", "preprocessed")
+
+#: name -> how the run is set up and how it is judged
+CONTROLS = {
+    "positive": {"thresholded": True, "fix_a": True, "inert": False,
+                 "criterion": "W < 0.05 in >= 95 % of the 40 draws"},
+    "negative": {"thresholded": True, "fix_a": False, "inert": True,
+                 "criterion": "KS(f_beta, prior) < 0.1 in >= 90 % of the 40 draws"},
+    "free_a": {"thresholded": False, "fix_a": False, "inert": False,
+               "criterion": "labelled observation, not thresholded"},
+}
 
 
 def _worker(job: dict) -> dict:
-    """One nested-sampling run, single-threaded."""
     import torch
 
     torch.set_num_threads(1)
@@ -48,7 +59,8 @@ def _worker(job: dict) -> dict:
     from descatter import physics as ph
 
     theta = ph.Theta(
-        f_beta=job["f_beta"], a_um=job["a_um"], n_inf=1.40, phi=0.2, amplitude=1.0
+        f_beta=job["f_beta"], a_um=job["a_um"], n_inf=1.40, phi=ph.SIGMA_PHI,
+        amplitude=1.0, inert_f_beta=job["inert"],
     )
     res = inf.simulate_and_infer(
         theta,
@@ -56,119 +68,85 @@ def _worker(job: dict) -> dict:
         condition=job["condition"],
         seed=job["seed"],
         nlive=NLIVE,
+        fixed={"a_um": job["a_um"]} if job["fix_a"] else None,
     )
     res.pop("_samples", None)
     res["job"] = job
     return res
 
 
-def _summarise(runs: list[dict], label: str) -> dict:
-    """Pass/fail against the pre-registered criteria, per condition."""
-    out: dict = {"label": label, "n_runs": len(runs), "per_condition": {}}
-    for cond in ("raw", "preprocessed"):
+def _summarise(runs: list[dict], control: str) -> dict:
+    spec = CONTROLS[control]
+    out: dict = {"control": control, "criterion": spec["criterion"],
+                 "thresholded": spec["thresholded"], "per_condition": {}}
+    for cond in CONDITIONS:
         sel = [r for r in runs if r["condition"] == cond]
         if not sel:
             continue
         w = np.array([r["wrong_mode_mass_W"] for r in sel], dtype=float)
         ks = np.array([r["ks_f_beta_vs_uniform_prior"] for r in sel], dtype=float)
-        out["per_condition"][cond] = {
+        nsamp = np.array([r["n_posterior_samples"] for r in sel], dtype=int)
+        frac_w = float((w < 0.05).mean())
+        frac_ks = float((ks < 0.1).mean())
+        cell = {
             "n_draws": len(sel),
-            "W_median": float(np.median(w)),
-            "W_max": float(w.max()),
-            "frac_draws_W_below_0.05": float((w < 0.05).mean()),
-            "ks_median": float(np.median(ks)),
-            "ks_max": float(ks.max()),
-            "frac_draws_ks_below_0.1": float((ks < 0.1).mean()),
+            "W_median": float(np.median(w)), "W_max": float(w.max()),
+            "frac_W_below_0.05": frac_w,
+            "ks_median": float(np.median(ks)), "ks_max": float(ks.max()),
+            "frac_ks_below_0.1": frac_ks,
             "f_beta_sd_median": float(np.median([r["f_beta_sd"] for r in sel])),
             "a_median_um_median": float(np.median([r["a_median_um"] for r in sel])),
+            "min_posterior_samples": int(nsamp.min()),
+            "meets_2000_sample_requirement": bool(nsamp.min() >= 2000),
             "logz_median": float(np.median([r["logz"] for r in sel])),
             "wall_s_median": float(np.median([r["wall_s"] for r in sel])),
-            "wall_s_total": float(np.sum([r["wall_s"] for r in sel])),
             "n_loglike_calls_median": float(np.median([r["n_loglike_calls"] for r in sel])),
         }
+        if spec["thresholded"]:
+            cell["PASS"] = bool(frac_w >= 0.95) if control == "positive" else bool(frac_ks >= 0.90)
+        out["per_condition"][cond] = cell
+    if spec["thresholded"]:
+        out["PASS"] = all(c["PASS"] for c in out["per_condition"].values())
     return out
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--draws", type=int, default=20, help="noise draws per (f_beta, condition)")
-    ap.add_argument("--ladder-draws", type=int, default=5)
     args = ap.parse_args()
-
     OUT.mkdir(parents=True, exist_ok=True)
-    conditions = ("raw", "preprocessed")
-    ladder_mults = (1, 10, 30, 100)
 
-    jobs: list[dict] = []
-    for cond in conditions:
-        for f_beta in (0.0, 1.0):
-            for s in range(args.draws):
-                jobs.append(
-                    {
-                        "control": "positive",
-                        "f_beta": f_beta,
-                        "a_um": A_CONTROL_UM,
-                        "sigma": SIGMA_E0,
-                        "sigma_mult": 1,
-                        "condition": cond,
-                        "seed": 1000 + s,
-                    }
-                )
-                jobs.append(
-                    {
-                        "control": "negative",
-                        "f_beta": f_beta,
-                        "a_um": A_CONTROL_UM,
-                        "sigma": SIGMA_E0 * 100,
-                        "sigma_mult": 100,
-                        "condition": cond,
-                        "seed": 2000 + s,
-                    }
-                )
-            for mult in ladder_mults:
-                for s in range(args.ladder_draws):
-                    jobs.append(
-                        {
-                            "control": "ladder",
-                            "f_beta": f_beta,
-                            "a_um": A_CONTROL_UM,
-                            "sigma": SIGMA_E0 * mult,
-                            "sigma_mult": mult,
-                            "condition": cond,
-                            "seed": 3000 + s,
-                        }
-                    )
+    from descatter import infer_e1 as inf
+    from descatter import physics as ph
+
+    sigma = ph.sigma_for_radius(A_CONTROL_UM)
+    jobs = [
+        {"control": name, "f_beta": f, "a_um": A_CONTROL_UM, "sigma": sigma,
+         "condition": cond, "seed": 5000 + 1000 * i + s,
+         "fix_a": spec["fix_a"], "inert": spec["inert"]}
+        for i, (name, spec) in enumerate(CONTROLS.items())
+        for cond in CONDITIONS
+        for f in (0.0, 1.0)
+        for s in range(args.draws)
+    ]
 
     config = {
-        "sigma_e0_AU": SIGMA_E0,
+        "redesign": "docs/EXPERIMENTS.md E1, Redesign 2026-11-06",
         "a_control_um": A_CONTROL_UM,
+        "sigma_AU": sigma,
+        "sigma_rule": "sigma(a) = D(a) / 295 (results/e1/sigma_table.json)",
         "draws_per_cell": args.draws,
-        "ladder_draws_per_cell": args.ladder_draws,
-        "ladder_sigma_multipliers": list(ladder_mults),
-        "nlive": NLIVE,
-        "n_workers": N_WORKERS,
-        "n_jobs": len(jobs),
+        "draws_per_condition": 2 * args.draws,
+        "nlive": NLIVE, "n_workers": N_WORKERS, "n_jobs": len(jobs),
+        "preprocessed_likelihood": inf.PREPROCESSED_LIKELIHOOD,
+        "prior_bounds": {k: list(v) for k, v in inf.PRIOR_BOUNDS.items()},
     }
-    print(f"{len(jobs)} nested-sampling runs on {N_WORKERS} workers")
+    print(f"{len(jobs)} nested-sampling runs on {N_WORKERS} workers, sigma = {sigma:.4e} AU",
+          flush=True)
 
-    with Run("e1", "controls", config=config, seeds={"base": 1000}) as run:
-        from descatter import infer_e1 as inf
-        from descatter import physics as ph
-
-        run.add_data_file(REPO_ROOT / "results" / "e0" / "summary.json")
-
-        # --- noise-free chi^2 gap: how separable are f_beta = 0 and 1 at all? ---
-        gaps = []
-        for mult in (1, 3, 10, 30, 100, 300, 1000):
-            row = {"sigma_mult": mult, "sigma_AU": SIGMA_E0 * mult}
-            for cond in conditions:
-                row[f"chi2_gap_{cond}"] = inf.chi2_gap(
-                    ph.Theta(f_beta=0.0, a_um=A_CONTROL_UM, n_inf=1.40, phi=0.2),
-                    ph.Theta(f_beta=1.0, a_um=A_CONTROL_UM, n_inf=1.40, phi=0.2),
-                    sigma=SIGMA_E0 * mult,
-                    condition=cond,
-                )
-            gaps.append(row)
+    with Run("e1", "controls", config=config, seeds={"base": 5000}) as run:
+        run.add_data_file(OUT / "sigma_table.json")
+        run.add_data_file(OUT / "likelihood_calibration.json")
 
         t0 = time.perf_counter()
         ctx = mp.get_context("spawn")
@@ -177,167 +155,77 @@ def main() -> None:
             for i, r in enumerate(pool.imap_unordered(_worker, jobs), 1):
                 runs.append(r)
                 if i % 20 == 0 or i == len(jobs):
-                    print(f"  {i}/{len(jobs)}  elapsed {(time.perf_counter() - t0) / 60:.1f} min")
+                    print(f"  {i}/{len(jobs)}  elapsed {(time.perf_counter()-t0)/60:.1f} min",
+                          flush=True)
         wall = time.perf_counter() - t0
-
         for r in runs:
-            r.update({k: r["job"][k] for k in ("control", "f_beta", "sigma_mult", "a_um")})
+            r.update({k: r["job"][k] for k in ("control", "f_beta", "a_um", "inert", "fix_a")})
 
-        pos = [r for r in runs if r["control"] == "positive"]
-        neg = [r for r in runs if r["control"] == "negative"]
-        lad = [r for r in runs if r["control"] == "ladder"]
-
-        pos_sum = _summarise(pos, "positive control (a = 0.25 um, sigma = E0 median)")
-        neg_sum = _summarise(neg, "negative control (a = 0.25 um, sigma x 100)")
-
-        pos_pass = all(
-            c["frac_draws_W_below_0.05"] >= 0.95 for c in pos_sum["per_condition"].values()
+        summaries = {name: _summarise([r for r in runs if r["control"] == name], name)
+                     for name in CONTROLS}
+        gate = json.loads((OUT / "likelihood_calibration.json").read_text())
+        machinery_valid = (
+            gate["GATE_PASSES"] and summaries["positive"]["PASS"] and summaries["negative"]["PASS"]
         )
-        neg_pass = all(c["ks_median"] < 0.1 for c in neg_sum["per_condition"].values())
-
-        ladder = []
-        for mult in ladder_mults:
-            row: dict = {"sigma_mult": mult, "sigma_AU": SIGMA_E0 * mult}
-            for cond in conditions:
-                sel = [r for r in lad if r["sigma_mult"] == mult and r["condition"] == cond]
-                ks = np.array([r["ks_f_beta_vs_uniform_prior"] for r in sel])
-                w = np.array([r["wrong_mode_mass_W"] for r in sel], dtype=float)
-                row[cond] = {
-                    "n": len(sel),
-                    "ks_median": float(np.median(ks)),
-                    "ks_min": float(ks.min()),
-                    "ks_max": float(ks.max()),
-                    "W_median": float(np.median(w)),
-                    "f_beta_sd_median": float(np.median([r["f_beta_sd"] for r in sel])),
-                }
-            ladder.append(row)
 
         report = {
             "experiment": "E1",
-            "step": "3 (controls only; the step-4 grid was NOT run)",
+            "step": "3, redesigned controls (the step-4 grid was NOT run)",
             "experiments_md_status_at_run_time": "DRAFT",
             "config": config,
-            "preprocessed_condition_assumption": inf.PREPROCESSED_ASSUMPTION,
-            "prior_bounds": {k: list(v) for k, v in inf.PRIOR_BOUNDS.items()},
-            "pre_registered_criteria": {
-                "positive": "W < 0.05 in >= 95 % of draws, in both conditions",
-                "negative": "KS(f_beta posterior, uniform prior) < 0.1",
-            },
-            "noise_free_chi2_gap_f0_vs_f1": gaps,
-            "positive_control": pos_sum | {"PASS": bool(pos_pass)},
-            "negative_control": neg_sum | {"PASS": bool(neg_pass)},
-            "sigma_ladder": ladder,
+            "likelihood_calibration_gate": gate["GATE_PASSES"],
+            "positive_control": summaries["positive"],
+            "negative_control": summaries["negative"],
+            "free_a_observation": summaries["free_a"],
+            "MACHINERY_VALID": bool(machinery_valid),
             "timing": {
                 "wall_s_total": round(wall, 1),
-                "wall_s_per_run_median": float(np.median([r["wall_s"] for r in runs])),
-                "wall_s_per_run_median_raw": float(
-                    np.median([r["wall_s"] for r in runs if r["condition"] == "raw"])
-                ),
-                "wall_s_per_run_median_preprocessed": float(
-                    np.median([r["wall_s"] for r in runs if r["condition"] == "preprocessed"])
-                ),
-                "projected_grid_step4": _project_grid(runs),
+                **{f"wall_s_median_{c}": float(np.median(
+                    [r["wall_s"] for r in runs if r["condition"] == c])) for c in CONDITIONS},
             },
             "runs": [{k: v for k, v in r.items() if k != "job"} for r in runs],
         }
         (OUT / "controls.json").write_text(json.dumps(report, indent=2) + "\n")
-        _figure(pos, neg, ladder, gaps, pos_pass, neg_pass)
+        _figure(summaries, runs, sigma)
+        run.notes["machinery_valid"] = bool(machinery_valid)
 
-        run.notes.update(
-            {
-                "positive_control_PASS": bool(pos_pass),
-                "negative_control_PASS": bool(neg_pass),
-                "n_runs": len(runs),
-            }
-        )
-
-    print("\n" + "=" * 70)
-    print(f"POSITIVE control: {'PASS' if pos_pass else 'FAIL'}")
-    for c, v in pos_sum["per_condition"].items():
-        print(
-            f"  {c:14s} W median {v['W_median']:.4f}, max {v['W_max']:.4f}, "
-            f"frac(W<0.05) = {v['frac_draws_W_below_0.05']:.2f}  [need >= 0.95]"
-        )
-    print(f"NEGATIVE control: {'PASS' if neg_pass else 'FAIL'}")
-    for c, v in neg_sum["per_condition"].items():
-        print(
-            f"  {c:14s} KS median {v['ks_median']:.4f}, max {v['ks_max']:.4f}  [need < 0.1]"
-        )
-    print(f"\ntotal wall {wall / 60:.1f} min over {len(runs)} runs")
-    print(json.dumps(report["timing"]["projected_grid_step4"], indent=2))
+    print("\n" + "=" * 76)
+    for name in ("positive", "negative", "free_a"):
+        s = summaries[name]
+        tag = ("PASS" if s.get("PASS") else "FAIL") if s["thresholded"] else "observation"
+        print(f"{name.upper():9s} ({s['criterion']}): {tag}")
+        for cond, v in s["per_condition"].items():
+            print(f"  {cond:14s} W med {v['W_median']:.4f} max {v['W_max']:.4f} "
+                  f"frac<0.05 {v['frac_W_below_0.05']:.2f} | KS med {v['ks_median']:.4f} "
+                  f"frac<0.1 {v['frac_ks_below_0.1']:.2f} | a med {v['a_median_um_median']:.2f} "
+                  f"| min samples {v['min_posterior_samples']}")
+    print(f"\ncalibration gate: {'PASS' if gate['GATE_PASSES'] else 'FAIL'}")
+    print(f"MACHINERY VALID: {machinery_valid}")
+    print(f"total wall {wall/60:.1f} min over {len(runs)} runs")
 
 
-def _project_grid(runs: list[dict]) -> dict:
-    """Project step 4's cost: 8 radii x 2 f_beta x 20 draws x 2 conditions."""
-    raw = float(np.median([r["wall_s"] for r in runs if r["condition"] == "raw"]))
-    pre = float(np.median([r["wall_s"] for r in runs if r["condition"] == "preprocessed"]))
-    n_per_cond = 8 * 2 * 20
-    serial_s = n_per_cond * (raw + pre)
-    return {
-        "n_runs": 2 * n_per_cond,
-        "note": (
-            "control runs are at a = 0.25 um where the posterior is simple; runs at "
-            "a = 3-6 um are expected to be slower, so treat this as a lower bound"
-        ),
-        "serial_hours": round(serial_s / 3600, 2),
-        f"hours_on_{N_WORKERS}_workers": round(serial_s / 3600 / N_WORKERS, 2),
-        "fits_6h_budget_at_16_threads": bool(serial_s / N_WORKERS < 6 * 3600),
-    }
-
-
-def _figure(pos, neg, ladder, gaps, pos_pass, neg_pass) -> None:
-    fig, ax = plt.subplots(2, 2, figsize=(13, 8.6), constrained_layout=True)
-
-    for i, (runs, name, ok) in enumerate(
-        [(pos, "positive control", pos_pass), (neg, "negative control", neg_pass)]
-    ):
-        for j, cond in enumerate(("raw", "preprocessed")):
-            w = [r["wrong_mode_mass_W"] for r in runs if r["condition"] == cond]
-            ax[0, i].scatter(
-                np.full(len(w), j) + np.linspace(-0.15, 0.15, len(w)), w, s=14, alpha=0.75,
-                label=cond,
-            )
-        ax[0, i].axhline(0.05, color="C3", ls="--", lw=1, label="W = 0.05")
-        ax[0, i].set_xticks([0, 1], ["raw", "preprocessed"])
-        ax[0, i].set_ylabel("wrong-mode mass W")
-        ax[0, i].set_ylim(-0.03, 1.03)
-        ax[0, i].set_title(f"{name} — {'PASS' if ok else 'FAIL'}")
-        ax[0, i].legend(fontsize=8)
-
-    for j, cond in enumerate(("raw", "preprocessed")):
-        for runs, name, mk in [(pos, "positive", "o"), (neg, "negative", "s")]:
-            ks = [r["ks_f_beta_vs_uniform_prior"] for r in runs if r["condition"] == cond]
-            ax[1, 0].scatter(
-                np.full(len(ks), 2 * j + (0 if name == "positive" else 0.4)),
-                ks, s=14, marker=mk, alpha=0.75,
-                label=f"{cond}, {name}" if j == 0 or True else None,
-            )
-    ax[1, 0].axhline(0.1, color="C3", ls="--", lw=1, label="KS = 0.1")
-    ax[1, 0].set_xticks([0.2, 2.2], ["raw", "preprocessed"])
-    ax[1, 0].set_ylabel("KS(f$_\\beta$ posterior, uniform prior)")
-    ax[1, 0].set_title("circles = positive (should be far from the prior)\n"
-                       "squares = negative (should sit on the prior)")
-    ax[1, 0].legend(fontsize=7, ncol=2)
-
-    m = [g["sigma_mult"] for g in gaps]
-    ax[1, 1].loglog(m, [g["chi2_gap_raw"] for g in gaps], "o-", label="raw")
-    ax[1, 1].loglog(m, [g["chi2_gap_preprocessed"] for g in gaps], "s-", label="preprocessed")
-    ax[1, 1].axhline(1.0, color="k", ls=":", lw=1, label=r"$\Delta\chi^2 = 1$")
-    ax2 = ax[1, 1].twinx()
-    for cond, mk in (("raw", "o"), ("preprocessed", "s")):
-        ax2.plot(
-            [r["sigma_mult"] for r in ladder],
-            [r[cond]["ks_median"] for r in ladder],
-            mk + "--", color="C3", alpha=0.6,
-            label=f"KS median, {cond}",
-        )
-    ax2.axhline(0.1, color="C3", ls=":", lw=1)
-    ax2.set_ylabel("KS median (red)", color="C3")
-    ax[1, 1].set_xlabel(r"noise multiplier $\sigma / \sigma_{E0}$")
-    ax[1, 1].set_ylabel(r"noise-free $\Delta\chi^2$ (f$_\beta$=0 vs 1)")
-    ax[1, 1].set_title("how much noise kills f$_\\beta$ identifiability")
-    ax[1, 1].legend(fontsize=7, loc="lower left")
-
+def _figure(summaries: dict, runs: list[dict], sigma: float) -> None:
+    fig, ax = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
+    for i, name in enumerate(("positive", "negative", "free_a")):
+        s = summaries[name]
+        metric = "ks_f_beta_vs_uniform_prior" if name == "negative" else "wrong_mode_mass_W"
+        line = 0.1 if name == "negative" else 0.05
+        for j, cond in enumerate(CONDITIONS):
+            v = [r[metric] for r in runs if r["control"] == name and r["condition"] == cond]
+            ax[i].scatter(np.full(len(v), j) + np.linspace(-0.18, 0.18, len(v)), v,
+                          s=16, alpha=0.75, label=cond)
+        ax[i].axhline(line, color="C3", ls="--", lw=1,
+                      label=("KS = 0.1" if name == "negative" else "W = 0.05"))
+        ax[i].set_xticks([0, 1], list(CONDITIONS))
+        ax[i].set_ylabel("KS vs prior" if name == "negative" else "wrong-mode mass W")
+        ax[i].set_ylim(-0.03, 1.03)
+        tag = ("PASS" if s.get("PASS") else "FAIL") if s["thresholded"] else "observation only"
+        sub = {"positive": "a fixed at truth", "negative": "f$_\\beta$ inert",
+               "free_a": "a free — confounded with H1"}[name]
+        ax[i].set_title(f"{name} — {tag}\n{sub}")
+        ax[i].legend(fontsize=8, loc="upper right")
+    fig.suptitle(f"E1 controls, redesigned 2026-11-06, at a = 0.25 µm, "
+                 f"$\\sigma$ = {sigma:.3e} AU (tissue SNR)", fontsize=11)
     fig.savefig(OUT / "controls.png", dpi=120)
     plt.close(fig)
 

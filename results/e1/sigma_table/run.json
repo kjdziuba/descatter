@@ -1,0 +1,57 @@
+{
+  "exp": "e1",
+  "run_id": "sigma_table",
+  "git": {
+    "commit": "399a4fb3a8da314034ac96f355386ed7a2b70093",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "radii_um": [
+      0.25,
+      1.0,
+      2.0,
+      3.0,
+      3.5,
+      4.0,
+      5.0,
+      6.0
+    ],
+    "tissue_snr": 295.0,
+    "phi": 0.2,
+    "n_inf_for_D": 1.0,
+    "window": [
+      1600,
+      1700
+    ]
+  },
+  "data_files": [],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "16",
+    "OPENBLAS_NUM_THREADS": "16",
+    "MKL_NUM_THREADS": "16"
+  },
+  "wall_time_s": 0.453,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "blocked": false
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_sigma_table.py"
+  ]
+}

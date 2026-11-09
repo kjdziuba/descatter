@@ -1,0 +1,86 @@
+{
+  "task": "request 02 task 2: sigma(a) = D(a) / 295",
+  "definition": "D(a) = max over 1600-1700 cm^-1 of A_app evaluated with n_inf = 1 and dn = 0, keeping k(nu), phi = 0.2, amplitude 1 and the alpha composition (f_beta = 0). With n = 1 the complex phase shift z = 2xk + 2ix(n-1) is purely real, so Q_ext is the pure-absorption van de Hulst limit and saturates at 2 instead of oscillating. n_inf = 1 is used only to set sigma and is outside the inference prior.",
+  "tissue_snr": 295.0,
+  "tissue_snr_source": "E0: median raw Amide I peak 0.324 AU over median noise 1.097e-3 AU, core s10_c048 (results/e0/summary.json)",
+  "blocked_checks": {
+    "D_monotone_increasing": true,
+    "D_min_AU": 0.004937561607987988,
+    "D_above_1e-4_everywhere": true,
+    "BLOCKED": false
+  },
+  "per_radius": [
+    {
+      "a_um": 0.25,
+      "D_AU": 0.004937561607987988,
+      "sigma_AU": 1.673749697623047e-05,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.003815537519923412,
+      "sigma_relative_to_E0_noise": 0.015257517754084291,
+      "qext_abs_max": 0.05652385566800433
+    },
+    {
+      "a_um": 1.0,
+      "D_AU": 0.019140331025497517,
+      "sigma_AU": 6.488247805253395e-05,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.014892246786783761,
+      "sigma_relative_to_E0_noise": 0.05914537652920141,
+      "qext_abs_max": 0.2155758561981891
+    },
+    {
+      "a_um": 2.0,
+      "D_AU": 0.036706010537387944,
+      "sigma_AU": 0.00012442715436402694,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.02552514884859787,
+      "sigma_relative_to_E0_noise": 0.11342493560986958,
+      "qext_abs_max": 0.4052277044546049
+    },
+    {
+      "a_um": 3.0,
+      "D_AU": 0.0527885716483882,
+      "sigma_AU": 0.00017894431067250237,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.025239761066283117,
+      "sigma_relative_to_E0_noise": 0.1631215229466749,
+      "qext_abs_max": 0.5722669143204087
+    },
+    {
+      "a_um": 3.5,
+      "D_AU": 0.060303042495126684,
+      "sigma_AU": 0.00020441709320381926,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.019509431918711906,
+      "sigma_relative_to_E0_noise": 0.18634192634805766,
+      "qext_abs_max": 0.6482197000868419
+    },
+    {
+      "a_um": 4.0,
+      "D_AU": 0.0674821306716543,
+      "sigma_AU": 0.0002287529853276417,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.01107884175296131,
+      "sigma_relative_to_E0_noise": 0.20852596657032058,
+      "qext_abs_max": 0.7195653237597304
+    },
+    {
+      "a_um": 5.0,
+      "D_AU": 0.08088163578242487,
+      "sigma_AU": 0.0002741750365505928,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.0,
+      "sigma_relative_to_E0_noise": 0.2499316650415613,
+      "qext_abs_max": 0.8496151553881632
+    },
+    {
+      "a_um": 6.0,
+      "D_AU": 0.09308132719490825,
+      "sigma_AU": 0.00031552992269460426,
+      "snr_by_construction": 295.0,
+      "apparent_band_depth_AU": 0.0,
+      "sigma_relative_to_E0_noise": 0.28762982925670394,
+      "qext_abs_max": 0.9645806033974731
+    }
+  ]
+}
