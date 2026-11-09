@@ -1,0 +1,47 @@
+{
+  "exp": "e1",
+  "run_id": "grid_projection",
+  "git": {
+    "commit": "8f07934fdc96b470f42288a6a8f33505dc5b2709",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "timing_radii_um": [
+      3.5,
+      5.0
+    ],
+    "grid_n_runs": 640,
+    "n_workers": 14,
+    "nlive": 400
+  },
+  "data_files": [],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 467.957,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "projection_hours": 4.68
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_grid_projection.py"
+  ]
+}

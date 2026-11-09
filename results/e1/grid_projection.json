@@ -1,0 +1,441 @@
+{
+  "task": "request 02 task 6: step-4 grid cost projection at the new sigma(a)",
+  "grid_as_pre_registered": {
+    "radii_um": [
+      0.25,
+      1,
+      2,
+      3,
+      3.5,
+      4,
+      5,
+      6
+    ],
+    "f_betas": [
+      0,
+      1
+    ],
+    "draws_per_combination": 20,
+    "conditions": [
+      "raw",
+      "preprocessed"
+    ],
+    "n_runs": 640
+  },
+  "timing_sample": {
+    "radii_um": [
+      3.5,
+      5.0
+    ],
+    "n_runs_timed": 8,
+    "wall_s_total": 467.5
+  },
+  "per_condition": {
+    "raw": {
+      "n_timed": 4,
+      "wall_s_mean": 450.6275,
+      "wall_s_max": 466.0,
+      "n_loglike_calls_mean": 497354.0
+    },
+    "preprocessed": {
+      "n_timed": 4,
+      "wall_s_mean": 286.555,
+      "wall_s_max": 293.19,
+      "n_loglike_calls_mean": 192248.0
+    }
+  },
+  "per_radius": {
+    "3.5": {
+      "sigma_AU": 0.00020441709320381926,
+      "wall_s_mean": 370.035,
+      "W_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "a_median_um": [
+        2.685,
+        3.347,
+        2.554,
+        3.306
+      ]
+    },
+    "5.0": {
+      "sigma_AU": 0.0002741750365505928,
+      "wall_s_mean": 367.14750000000004,
+      "W_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "a_median_um": [
+        4.629,
+        4.424,
+        5.545,
+        4.244
+      ]
+    }
+  },
+  "projection": {
+    "serial_hours": 65.53,
+    "hours_on_14_workers": 4.68,
+    "fits_6h_budget": true,
+    "basis": "mean of the timed runs at a = 3.5 and 5 um, which are harder than the controls' a = 0.25 um; the grid also includes easier radii, so this should be an over- rather than under-estimate"
+  },
+  "runs": [
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.0006370465605125748,
+      "f_beta_sd": 0.00049161568072473,
+      "f_beta_median": 0.0005220742620209404,
+      "f_beta_q05_q95": [
+        4.810597002206602e-05,
+        0.0015633921771261736
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9969292089155531,
+      "a_median_um": 2.6847592287615893,
+      "a_q05_q95_um": [
+        2.639613850468421,
+        2.7455358263836933
+      ],
+      "n_posterior_samples": 20034,
+      "truth": {
+        "f_beta": 0.0,
+        "a_um": 3.5,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "raw",
+      "logz": 3084.704366003677,
+      "logz_err": 0.5699525825252512,
+      "wall_s": 437.35,
+      "n_loglike_calls": 480133,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 441,
+      "sigma_eff": 0.00020441709320381926,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 441,
+      "n_free_params": 7,
+      "sigma_true": 0.00020441709320381926,
+      "exact_mie_data": false,
+      "a_um": 3.5,
+      "f_beta": 0.0,
+      "sigma": 0.00020441709320381926
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.9986391202489732,
+      "f_beta_sd": 0.0008687783791626174,
+      "f_beta_median": 0.9987674505381262,
+      "f_beta_q05_q95": [
+        0.9970530208934484,
+        0.9998282967427086
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9949269180378095,
+      "a_median_um": 3.3465593202750834,
+      "a_q05_q95_um": [
+        3.2538669032028054,
+        3.4418437296478386
+      ],
+      "n_posterior_samples": 21130,
+      "truth": {
+        "f_beta": 1.0,
+        "a_um": 3.5,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "raw",
+      "logz": 3082.9341175643744,
+      "logz_err": 0.5905546084655461,
+      "wall_s": 466.0,
+      "n_loglike_calls": 514322,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 441,
+      "sigma_eff": 0.00020441709320381926,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 441,
+      "n_free_params": 7,
+      "sigma_true": 0.00020441709320381926,
+      "exact_mie_data": false,
+      "a_um": 3.5,
+      "f_beta": 1.0,
+      "sigma": 0.00020441709320381926
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.0010431718127839982,
+      "f_beta_sd": 0.0010268268721920061,
+      "f_beta_median": 0.0006797772268865719,
+      "f_beta_q05_q95": [
+        5.182808933067872e-05,
+        0.0032882851598903546
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9932366720162333,
+      "a_median_um": 2.553738188056622,
+      "a_q05_q95_um": [
+        2.3375717597308228,
+        3.990774882428612
+      ],
+      "n_posterior_samples": 9149,
+      "truth": {
+        "f_beta": 0.0,
+        "a_um": 3.5,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "preprocessed",
+      "logz": 356.0293323619329,
+      "logz_err": 0.38565660646109634,
+      "wall_s": 288.06,
+      "n_loglike_calls": 189805,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 52,
+      "sigma_eff": 0.00020441709320381926,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 50,
+      "n_free_params": 7,
+      "sigma_true": 0.00020441709320381926,
+      "exact_mie_data": false,
+      "a_um": 3.5,
+      "f_beta": 0.0,
+      "sigma": 0.00020441709320381926
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.9952192076640741,
+      "f_beta_sd": 0.0027173549749827486,
+      "f_beta_median": 0.9952968853718456,
+      "f_beta_q05_q95": [
+        0.991129113271827,
+        0.9996183378415735
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9858497071597135,
+      "a_median_um": 3.305750803967729,
+      "a_q05_q95_um": [
+        2.482156987103311,
+        3.995235533169523
+      ],
+      "n_posterior_samples": 9516,
+      "truth": {
+        "f_beta": 1.0,
+        "a_um": 3.5,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "preprocessed",
+      "logz": 352.2352752178571,
+      "logz_err": 0.3907931118871548,
+      "wall_s": 288.73,
+      "n_loglike_calls": 194706,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 52,
+      "sigma_eff": 0.00020441709320381926,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 50,
+      "n_free_params": 7,
+      "sigma_true": 0.00020441709320381926,
+      "exact_mie_data": false,
+      "a_um": 3.5,
+      "f_beta": 1.0,
+      "sigma": 0.00020441709320381926
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.0011564961274947293,
+      "f_beta_sd": 0.0005885308999457939,
+      "f_beta_median": 0.0012253281897323756,
+      "f_beta_q05_q95": [
+        0.00025012098514865807,
+        0.00209355883598564
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.995674178201041,
+      "a_median_um": 4.629185209938821,
+      "a_q05_q95_um": [
+        4.597150922480387,
+        5.153653230336006
+      ],
+      "n_posterior_samples": 20992,
+      "truth": {
+        "f_beta": 0.0,
+        "a_um": 5.0,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "raw",
+      "logz": 2953.106891212664,
+      "logz_err": 0.5913031840825523,
+      "wall_s": 453.71,
+      "n_loglike_calls": 508572,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 441,
+      "sigma_eff": 0.0002741750365505928,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 441,
+      "n_free_params": 7,
+      "sigma_true": 0.0002741750365505928,
+      "exact_mie_data": false,
+      "a_um": 5.0,
+      "f_beta": 0.0,
+      "sigma": 0.0002741750365505928
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.9992249634830169,
+      "f_beta_sd": 0.0005168189996686814,
+      "f_beta_median": 0.9993615839280234,
+      "f_beta_q05_q95": [
+        0.9981972958664094,
+        0.9998615646885454
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9964955706805979,
+      "a_median_um": 4.423522501066321,
+      "a_q05_q95_um": [
+        4.15615821941958,
+        4.844146199696281
+      ],
+      "n_posterior_samples": 20166,
+      "truth": {
+        "f_beta": 1.0,
+        "a_um": 5.0,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "raw",
+      "logz": 2954.781771205092,
+      "logz_err": 0.585819528329055,
+      "wall_s": 445.45,
+      "n_loglike_calls": 486389,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 441,
+      "sigma_eff": 0.0002741750365505928,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 441,
+      "n_free_params": 7,
+      "sigma_true": 0.0002741750365505928,
+      "exact_mie_data": false,
+      "a_um": 5.0,
+      "f_beta": 1.0,
+      "sigma": 0.0002741750365505928
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.0010146364379393514,
+      "f_beta_sd": 0.0007745778951474628,
+      "f_beta_median": 0.0008501721872018762,
+      "f_beta_q05_q95": [
+        7.336822850069568e-05,
+        0.002429397184570326
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9943828686533903,
+      "a_median_um": 5.54547219763359,
+      "a_q05_q95_um": [
+        4.095846121725028,
+        6.09825912932405
+      ],
+      "n_posterior_samples": 8844,
+      "truth": {
+        "f_beta": 0.0,
+        "a_um": 5.0,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "preprocessed",
+      "logz": 341.9182351720564,
+      "logz_err": 0.37848217720000044,
+      "wall_s": 276.24,
+      "n_loglike_calls": 183405,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 52,
+      "sigma_eff": 0.0002741750365505928,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 50,
+      "n_free_params": 7,
+      "sigma_true": 0.0002741750365505928,
+      "exact_mie_data": false,
+      "a_um": 5.0,
+      "f_beta": 0.0,
+      "sigma": 0.0002741750365505928
+    },
+    {
+      "wrong_mode_mass_W": 0.0,
+      "f_beta_mean": 0.9987934009932906,
+      "f_beta_sd": 0.0009488014302482878,
+      "f_beta_median": 0.9990143680600306,
+      "f_beta_q05_q95": [
+        0.9968791246553813,
+        0.9999058060015699
+      ],
+      "ks_f_beta_vs_uniform_prior": 0.9937369372345858,
+      "a_median_um": 4.244350776622918,
+      "a_q05_q95_um": [
+        3.3714436497087403,
+        4.691526548398507
+      ],
+      "n_posterior_samples": 9497,
+      "truth": {
+        "f_beta": 1.0,
+        "a_um": 5.0,
+        "n_inf": 1.4,
+        "phi": 0.2,
+        "amplitude": 1.0,
+        "baseline_offset": 0.0,
+        "baseline_slope": 0.0
+      },
+      "condition": "preprocessed",
+      "logz": 337.35998068226894,
+      "logz_err": 0.3914266883883437,
+      "wall_s": 293.19,
+      "n_loglike_calls": 201076,
+      "nlive": 400,
+      "seed": 77000,
+      "n_data": 52,
+      "sigma_eff": 0.0002741750365505928,
+      "fixed": {},
+      "inert_f_beta": false,
+      "dof": 50,
+      "n_free_params": 7,
+      "sigma_true": 0.0002741750365505928,
+      "exact_mie_data": false,
+      "a_um": 5.0,
+      "f_beta": 1.0,
+      "sigma": 0.0002741750365505928
+    }
+  ]
+}
