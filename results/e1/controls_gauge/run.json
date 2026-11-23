@@ -1,0 +1,102 @@
+{
+  "exp": "e1",
+  "run_id": "controls_gauge",
+  "git": {
+    "commit": "2a159b920d1a7b8e654f3cf93614da7a84a393ee",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "redesign": "docs/EXPERIMENTS.md E1, Redesign 2026-11-06",
+    "a_control_um": 0.25,
+    "sigma_AU": 1.673749697623047e-05,
+    "sigma_rule": "sigma(a) = D(a) / 295 (results/e1/sigma_table.json)",
+    "gauge": true,
+    "run_id": "controls_gauge",
+    "seed_base": 200000,
+    "draws_per_cell": 20,
+    "draws_per_condition": 40,
+    "nlive": 400,
+    "n_workers": 14,
+    "n_jobs": 240,
+    "preprocessed_likelihood": "rubberband (lower convex hull) over 950-1800 cm^-1, then cut to 1600-1700; y_w ~ N(s * m_w + c0, sigma^2 I) with s and c0 profiled out by linear least squares at every call and sigma exact. Pre-registered in docs/EXPERIMENTS.md E1 step 3 (redesign 2026-11-06). This replaces vector normalisation with sigma_pp = sigma / ||y_w||, whose effective sigma saturated at ~0.049 AU under heavy noise and which was biased by the rubberband lifting noisy data by +2.1 sigma (results/e1/superseded_phi_0.05_0.90/, 810bba6).",
+    "prior_bounds": {
+      "f_beta": [
+        0.0,
+        1.0
+      ],
+      "a_um": [
+        0.1875,
+        12.0
+      ],
+      "n_inf": [
+        1.4,
+        1.4
+      ],
+      "phi": [
+        0.05,
+        0.3
+      ],
+      "amplitude": [
+        0.13333333333333333,
+        4.0
+      ],
+      "baseline_offset": [
+        -0.5,
+        0.5
+      ],
+      "baseline_slope": [
+        -1.0,
+        1.0
+      ]
+    }
+  },
+  "data_files": [
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e1/sigma_table.json",
+      "bytes": 3144,
+      "sha256": "e94c5f551eefb99690b920cb1d9d1bea4780c9581f5c841ea68e35eff8c5e16d"
+    },
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e1/likelihood_calibration.json",
+      "bytes": 5357,
+      "sha256": "69cc0502555cba51b2fd97fd2fd40776c71aeda89719e9842619a8eb564e2129"
+    }
+  ],
+  "seeds": {
+    "base": 200000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 4170.05,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "machinery_valid": true
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_controls.py",
+    "--draws",
+    "20",
+    "--run-id",
+    "controls_gauge",
+    "--seed-base",
+    "200000"
+  ]
+}

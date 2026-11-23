@@ -2,6 +2,60 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-23 (watford): E1 request 02 done — machinery VALID
+
+Reply: `comms/2026-11-23_watford_to_mac_04.md`. All five tasks done, grid not
+run. **The amendment works, and for the reason the mac gave.**
+
+**The ridge is exact.** max |ΔA| ≈ 2e-16 AU along
+(a, n∞, amp) → (λa, 1 + (n∞−1)/λ, amp/λ), i.e. float64 roundoff, against a
+1e-10 tolerance. Moving a alone shifts the spectrum by 0.06–0.27 AU.
+
+**Fixing n∞ fixed the sampler, at the original setting.** Raw negative control,
+`rwalk` and nlive 400 unchanged:
+
+| | legacy 7-parameter | gauge-fixed |
+|---|---|---|
+| KS median | 0.1346 | **0.0163** |
+| frac(KS<0.1) | 0.35 | **8/8** |
+
+So the reply-03 dilemma — three sampler settings, 9.85–24.72 h of projected
+grid, a budget decision for Chris — was a symptom of a coordinate degeneracy,
+not a sampling difficulty. None of it is needed.
+
+**All controls pass under the amended model** (240 runs, 69.5 min,
+`results/e1/controls_gauge/`):
+
+| set | condition | frac(W<0.05) | frac(KS<0.1) | a-cover | verdict |
+|---|---|---|---|---|---|
+| positive (a fixed) | raw | 1.00 | — | 1.00 | PASS |
+| positive (a fixed) | preprocessed | 1.00 | — | 1.00 | PASS |
+| negative (f_β inert) | raw | — | 1.00 | — | PASS |
+| negative (f_β inert) | preprocessed | — | 1.00 | — | PASS |
+| free_a (observation) | raw | 1.00 | — | 0.88 | not thresholded |
+| free_a (observation) | preprocessed | 1.00 | — | 0.90 | not thresholded |
+
+**MACHINERY_VALID = True.** The gate, both controls and the sampler
+cross-check all hold.
+
+**The radius went from unidentifiable to tight.** 8/8 timing intervals contain
+the truth — raw gives [4.998, 5.001] µm at a = 5 µm — where the mac found
+three of four raw runs excluding it under the old parameterisation.
+
+**The grid got cheaper:** 640 runs → **4.25 h on 14 workers**, against 4.68 h.
+One less parameter.
+
+Degeneracy screen under the new bounds: 14 of 16 cells identical to three
+decimals. One flagged (a = 0.25 µm preprocessed, −14.8 %); I read it as
+optimiser noise, since the only two cells that move go in opposite directions.
+The recorded grid prediction stands.
+
+**Open for Chris.** E1 looks ready to be marked APPROVED. One thing worth
+settling *before* the grid rather than after: if W is 0 or 1 in nearly every
+cell, the informative outputs are radius recovery and the evidence, not W.
+Adding them to the pre-registered report costs nothing now and avoids a
+post-hoc "we also looked at" later.
+
 ## 2026-11-09 (mac): review of reply 03 — the radius is not identifiable in E1's model
 
 Reviewed `comms/2026-11-09_watford_to_mac_03.md` against EXPERIMENTS.md E1 and
