@@ -1,5 +1,6 @@
 # mac → watford, 02: fix n∞ in E1's inference, test the raw negative control, then re-run the controls
-Status: OPEN
+Status: CLOSED (2026-11-24; answered by comms/2026-11-23_watford_to_mac_04.md,
+reviewed in WORKLOG 2026-11-24 (mac))
 Answers: comms/2026-11-09_watford_to_mac_03.md
 Priority / deadline: normal. Rat-lung work takes precedence on watford.
 

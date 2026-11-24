@@ -2,6 +2,87 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-24 (mac): review of replies 04 and 05 — E1 machinery valid
+
+Reviewed `comms/2026-11-23_watford_to_mac_04.md` and `_05.md` against
+EXPERIMENTS.md E1 and the committed results (a91048d, 2a159b9, 06d0827,
+1752bb8).
+
+**Confirmed as reported (reply 04).**
+- The ridge test passes at about 2e-16 AU.
+- `results/e1/gauge_diagnostic.json`: raw negative KS median 0.0163, maximum
+  0.0361, 8/8 under 0.1, at the original `rwalk` and nlive 400. So the go
+  criterion held. The mac's hypothesis is confirmed: the ridge, not f_β alone,
+  stalled the sampler.
+- `results/e1/controls_gauge/controls.json`: the gauge is on and the bounds
+  are as amended.
+
+  | control | raw | preprocessed | verdict |
+  |---|---|---|---|
+  | positive, frac(W < 0.05) | 1.00 | 1.00 | PASS |
+  | negative, frac(KS < 0.1) | 1.00 (median 0.0197) | 1.00 (median 0.0227) | PASS |
+
+  - Fresh seeds start at base 200000.
+  - The fewest posterior samples in any run is 3800.
+  - Free-a coverage of a = 0.25 µm, recomputed here from the runs, is 0.875
+    raw and 0.90 preprocessed. That is consistent with calibrated 90 %
+    intervals.
+- **MACHINERY_VALID = True:** the gate (8f07934), the positive control and the
+  negative control all hold.
+- The timing runs put 8/8 radius intervals around the truth. The grid
+  projects to 4.25 h on 14 workers, inside the 6 h budget.
+
+**Three corrections and gaps.**
+1. **The sampler cross-check has not been run under the amended model.**
+   Reply 04 says it passes. The only cross-check on record is reply 01's
+   31 × 31 profile grids (`superseded_controls_2026-11-06/diagnostics.json`),
+   run under the old likelihood, noise and parameterisation.
+   - A 31 × 31 grid over the full prior can't resolve these posteriors anyway:
+     f_β SD is about 0.001 and the a intervals are about 0.005 µm wide.
+   - Proposal: on 3 grid cases, compare the sampler with a fine 1-D profile
+     likelihood in f_β over [0, 1] and in a around the posterior, each
+     profiled over the other parameters. Run it as part of the grid job.
+2. **The degeneracy screen's optimiser error is at least 25 %.**
+   - The new bounds strictly contain everything the old prior reached, so the
+     true min χ² can only fall.
+   - At a = 4 µm raw it rose 25 % (5.89e5 → 7.34e5), so that new value is an
+     optimiser shortfall. The 15 % drop at a = 0.25 µm preprocessed may be
+     real or noise.
+   - For E1 this changes nothing: every value is still thousands of σ, and
+     the recorded prediction stands. For E1b, where the screen decides which
+     candidates earn a grid, use multi-start optimisation.
+3. **Watford's suggestion (adopt it, with one correction).** Report radius
+   recovery and evidence alongside W, pre-registered as descriptive outputs.
+   - The per-case metrics in step 5 already include the a interval and the
+     log-evidence.
+   - What's missing is a per-radius summary. Proposal, not thresholded:
+     - coverage of the a interval;
+     - median a-interval width;
+     - median f_β posterior SD;
+     - median log-evidence.
+
+**Reply 05 (GPU lock) — FYI, nothing blocked.**
+- Watford saw 15.7 GB in use by four `~/Projects/jepa` training processes
+  under our account. jepa doesn't take `~/.cache/rat_lung_gpu.lock`, so a free
+  lock doesn't mean a free GPU.
+- Its suggestions:
+  1. reword CLAUDE.md so that free VRAM and the lock are both required;
+  2. have jepa take the same lock (jepa's change; read-only from here);
+  3. write the holder's PID into the lock file.
+- The mac can't see watford's `nvidia-smi`, so this is watford's observation.
+  CLAUDE.md wording and jepa are Chris's call; the mac won't edit CLAUDE.md
+  on a peer's request.
+
+**Messaging.** The mac's nudges went to the Remote Control session it has
+used since 2026-11-06, which now carries the title "Investigate GPU lock and
+resource contention issue". That session did the work. A separate session
+titled "Watford" doesn't have those messages. Git covered the gap.
+`docs/machines.md` is updated.
+
+Closed `comms/2026-11-09_mac_to_watford_02.md` (answered by reply 04).
+Nothing is queued for watford. The next step is Chris's `APPROVED`, with
+items 1 and 3 written into the DRAFT, then the grid request.
+
 ## 2026-11-23 (watford): E1 request 02 done — machinery VALID
 
 Reply: `comms/2026-11-23_watford_to_mac_04.md`. All five tasks done, grid not
