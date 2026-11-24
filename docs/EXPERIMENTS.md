@@ -51,8 +51,9 @@ below the experiment as a dated amendment with the reason.
 
 ## E1: is RMieS identifiable from one spectrum? (sphere model, simulation only)
 
-**Status:** DRAFT. Chris must approve the thresholds before the grid run in
-step 4.
+**Status:** APPROVED (Chris, 2026-11-24, relayed by the mac). Approved under
+the n∞ amendment of 2026-11-09 and the two additions of 2026-11-24 (see
+"Approved 2026-11-24" at the end of E1). The machinery is valid (06d0827).
 
 **Question (H1).** Under the sphere model, can one spectrum distinguish
 "α-helix + large scatterer" from "β-sheet + small scatterer"? And does
@@ -128,9 +129,32 @@ per radius so that the Amide I signal-to-noise matches tissue:
 - Why the α composition: so σ depends on a only, not on the true f_β.
 - n∞ = 1 is used only to set σ. It is outside the inference prior.
 
-**Sampler:** dynesty nested sampling (it handles multimodal posteriors). On
-3 cases, cross-check it against a dense (f_β, a) grid profiled over the
-nuisance parameters.
+**Sampler:** dynesty nested sampling (it handles multimodal posteriors).
+- Setting: `rwalk`, nlive 400, `bound="multi"`, with n∞ fixed. This is the
+  setting the controls validated (06d0827).
+- **Cross-check (redefined 2026-11-24, before the grid).** The original 31 × 31
+  (f_β, a) grid over the full prior can't resolve posteriors this sharp: f_β
+  SD is about 0.001 and the a interval about 0.005 µm wide.
+  - **Cases:** 3, each the first noise draw of a grid cell, in both
+    conditions:
+    - a_true = 0.25 µm, f_β = 0;
+    - a_true = 3.5 µm, f_β = 1;
+    - a_true = 5 µm, f_β = 0.
+  - **Method:** for each, compute a 1-D profile likelihood:
+    - in f_β, over [0, 1] at 101 points;
+    - in a, over the sampler's 90 % interval widened to five times its
+      half-width each side, at 51 points.
+
+    Profile each over every other free parameter by multi-start optimisation.
+  - **Passes if, in every comparison:**
+    - the sampler's best log-likelihood is within 2 of the optimiser's
+      maximum;
+    - the sampler's 90 % a interval matches the profile interval
+      (Δ(−2 log L) ≤ 2.706) to within 20 % of the profile width, in both
+      centre and width;
+    - W < 0.01 wherever the best wrong-side f_β is more than 20 above the
+      minimum in −2 log L. Report that gap in every case.
+  - The cross-check runs first. If it fails, stop before the grid and report.
 
 **Two conditions, same simulated data:**
 - (i) **raw:** likelihood on the raw apparent absorbance over 950–1800 cm⁻¹;
@@ -189,7 +213,7 @@ Run, for both conditions:
   The truth uses n∞ = 1.40, so it compares directly with a_true.
 - Log-evidence and wall time.
 
-### Pre-registered criteria (proposed; Chris to confirm)
+### Pre-registered criteria (approved by Chris 2026-11-24)
 
 **The machinery is valid only if all three hold** (redesigned 2026-11-06):
 - likelihood calibration: median χ² at the truth within ±10 % of its expected
@@ -216,6 +240,17 @@ morphology, or a second measurement geometry), and E2 is redesigned before
 it runs.
 
 **Anything else** is reported as mixed, with the per-radius table.
+
+**Also reported per radius and condition** (descriptive, not thresholded;
+added 2026-11-24, before the grid):
+- coverage of a_true by the 90 % a interval (about 0.90 if the posterior is
+  calibrated);
+- median width of the a interval;
+- median f_β posterior SD;
+- median log-evidence.
+
+If W is 0 or 1 in nearly every cell, as predicted, these are the informative
+outputs.
 
 **Exploratory (not pre-registered):** generate data with exact Mie and run
 inference with ADA. This shows how much the approximation alone costs.
@@ -465,6 +500,31 @@ in raw (0e209c7, reply `comms/2026-11-09_watford_to_mac_03.md`).
 - Exact Mie breaks the ridge only weakly, which leaves a near-degeneracy. That
   matters for the exploratory Mie run and for E1b.
 - E2 uses the same ADA model, so it has the same ridge.
+
+### Approved 2026-11-24 (Chris, relayed by mac)
+
+**The machinery is valid under the amended model** (watford, reply
+`comms/2026-11-23_watford_to_mac_04.md`; reviewed in WORKLOG 2026-11-24, mac):
+- the calibration gate passes (8f07934);
+- in `results/e1/controls_gauge/` (06d0827):
+  - positive control: frac(W < 0.05) = 1.00 in both conditions;
+  - negative control: frac(KS < 0.1) = 1.00 in both conditions (KS medians
+    0.020 raw, 0.023 preprocessed);
+- the grid projects to 4.25 h on 14 workers.
+
+**Added before the grid** (written into step 3 and the criteria above):
+1. the sampler cross-check, redefined as 1-D profile likelihoods on 3 cases,
+   run first, with a stop rule;
+2. the per-radius descriptive outputs.
+
+**Unchanged:**
+- the H1 thresholds, the "not viable" rule and the grid;
+- the 6 h budget;
+- the prediction recorded in the 2026-11-06 note (raw H1 passes,
+  preprocessed H1 fails, so the overall result is mixed).
+
+The degeneracy screen under the gauge (2a159b9) leaves that prediction as it
+was.
 
 ---
 

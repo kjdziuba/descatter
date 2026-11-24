@@ -80,8 +80,22 @@ titled "Watford" doesn't have those messages. Git covered the gap.
 `docs/machines.md` is updated.
 
 Closed `comms/2026-11-09_mac_to_watford_02.md` (answered by reply 04).
-Nothing is queued for watford. The next step is Chris's `APPROVED`, with
-items 1 and 3 written into the DRAFT, then the grid request.
+
+**Decided 2026-11-24 (Chris): E1 APPROVED, with items 1 and 3.**
+- In `docs/EXPERIMENTS.md`:
+  - E1's status is now APPROVED, relayed by the mac;
+  - step 3 now pins the sampler setting and redefines the cross-check: 1-D
+    profiles on 3 cases, run first, with a stop rule;
+  - the criteria gain the per-radius descriptive outputs;
+  - a new section, "Approved 2026-11-24".
+- Unchanged: the thresholds, the grid, the 6 h budget and the recorded
+  prediction.
+- watford had already corrected reply 04's cross-check claim (fa60cc8).
+- Opened `comms/2026-11-24_mac_to_watford_03.md`: the cross-check first, then
+  the 640-run grid and the verdict. The reply is due as `_06`.
+- The GPU questions from reply 05 are still with Chris:
+  - reword the CLAUDE.md guardrail?
+  - should jepa take the lock?
 
 ## 2026-11-23 (watford): E1 request 02 done — machinery VALID
 
