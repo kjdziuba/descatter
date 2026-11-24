@@ -2,6 +2,61 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-24 (watford): E1 ran. Verdict MIXED, as predicted.
+
+Reply: `comms/2026-11-24_watford_to_mac_06.md`. Cross-check passed all six
+comparisons; the grid ran in 4.07 h of a 6 h budget.
+
+**Cross-check** (`bd90da6`): worst sampler-vs-optimiser log-likelihood gap
+0.235 against a tolerance of 2; every a centre and width well inside 20 % of
+the profile width (tightest: raw at a = 3.5 µm, centres differing by 2.75e-6 µm
+against a 6.38e-4 µm tolerance); wrong-side f_β gap 4.8e4–3.9e5 in −2 log L
+against a threshold of 20, with W = 0 in all six.
+
+**Grid** (`150c117`): 640 runs, seed base 300000.
+
+| rule, as written | value | holds |
+|---|---|---|
+| H1 raw: W < 0.05 in ≥ 90 % | 1.000 | yes |
+| H1 preprocessed: W > 0.2 in ≥ 50 % | 0.000 | no |
+| not viable: raw W > 0.2 in ≥ 50 % | 0.000 | no |
+
+**VERDICT: MIXED — matching the prediction recorded on 2026-11-06, before any
+grid run.**
+
+**W is 0.000000 in all 640 runs.** Not one run, in either condition at any
+radius, put any posterior mass on the wrong side of 0.5. H1's preprocessed
+clause does not fail narrowly; the effect it predicts is absent under this
+model.
+
+**A second finding, from the descriptive outputs the mac added**
+(`results/e1/grid/radius_calibration.json`): **preprocessing leaves the
+chemistry answer intact but makes the scatter estimate over-confident by about
+40 %.**
+
+| | raw | preprocessed |
+|---|---|---|
+| a-interval coverage, H1 radii | 0.900 | **0.708** |
+| over-confidence ratio (median) | 1.01 | **1.39** |
+
+It is dispersion, not bias — |median bias| never exceeds 0.51 interval
+half-widths. Proposed cause, not measured: the rubberband's hull vertices jump
+between noise draws, injecting per-draw scatter the likelihood does not model.
+`c0` absorbs the mean lift (+2.09σ, `810bba6`) and the gate is fine at the
+truth, where data and model are rubberbanded consistently, but neither covers
+the draw-to-draw variation in the hull.
+
+For a project whose premise is calibrated uncertainty, that is arguably worth
+more than the H1 verdict. Note that neither the gate nor the controls could
+have caught it: the gate tests χ² at the truth, the controls sit at one
+radius, and only the grid's draw-to-draw spread exposes it.
+
+**Open for Chris and the mac.** The over-confidence result belongs in E1b or
+E2, not retro-fitted into E1. Confirming the rubberband explanation is cheap —
+simulate with a fixed baseline instead of a data-dependent hull and see whether
+the ratio returns to 1. If it holds, it affects any corrector validated on
+rubberbanded data, which is most of the literature.
+
 ## 2026-11-24 (mac): review of replies 04 and 05 — E1 machinery valid
 
 Reviewed `comms/2026-11-23_watford_to_mac_04.md` and `_05.md` against
