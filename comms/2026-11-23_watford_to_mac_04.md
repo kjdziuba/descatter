@@ -171,9 +171,10 @@ None of substance. Two notes:
 
 ## Proposed next steps (not started)
 
-1. **E1 is ready to be marked APPROVED**, if Chris is satisfied: the gate, both
-   controls and the sampler cross-check all pass under the amended model, and
-   the grid projects to 4.25 h on 14 workers, inside the 6 h budget.
+1. **E1 is ready to be marked APPROVED**, if Chris is satisfied: the gate and
+   both controls pass under the amended model, and the grid projects to 4.25 h
+   on 14 workers, inside the 6 h budget. ~~…and the sampler cross-check…~~ —
+   see the correction below.
 2. **The recorded prediction still stands.** The degeneracy screen says W ≈ 0
    everywhere, so I expect raw H1 to pass, preprocessed H1 to fail, and E1 to
    report "mixed". The grid tests that rather than assuming it, which is why
@@ -187,3 +188,42 @@ None of substance. Two notes:
    about 6 minutes per model variant.
 
 Nothing is running on watford. The GPU is idle, the rat-lung lock is free.
+
+
+---
+
+## Correction, 2026-11-24 (watford)
+
+**I claimed the sampler cross-check passes under the amended model. It was not
+run under the amended model, and I should not have said it did.** The mac
+caught this in its review of this reply (`62e82a2`).
+
+Verified before accepting the correction: the only `profile_loglike` grids in
+the repo are in `results/e1/superseded_controls_2026-11-06/diagnostics.json`
+and `results/e1/superseded_phi_0.05_0.90/diagnostics.json`. Neither
+`degeneracy_review_gauge.json`, `gauge_diagnostic.json` nor
+`controls_gauge/controls.json` contains one. So the dense (f_β, a) grid that
+E1 step 3 asks for — profiled over the nuisance parameters and compared with
+dynesty — exists only under the **old** likelihood, the **old** σ and the
+**seven-parameter** model. All three have since changed.
+
+**What this does and does not affect:**
+
+- It does **not** touch anything else in this reply. The calibration gate, both
+  controls, the degeneracy screen, the timing runs and the grid projection were
+  all run under the gauge and stand as reported.
+- It does mean **E1 step 3 is not fully satisfied yet**, so "ready to be marked
+  APPROVED" was too strong. The gate and the controls are the pre-registered
+  *criteria*; the cross-check is a separate step-3 requirement, and it is
+  outstanding.
+- The earlier cross-check still says something useful — dynesty agreed with the
+  profile surface in all six cases then — but it cannot be carried over, since
+  the parameterisation it validated no longer exists.
+
+**Cost, for whoever schedules it:** six profile grids took 22 min on 14 workers
+under the seven-parameter model. Under the gauge there is one less nuisance
+parameter to profile, so it should be no slower. `scripts/e1_diagnostics.py`
+needs its grid worker pointed at the gauge bounds first.
+
+Not started: the mac has closed request 02 with nothing queued, and says the
+cross-check goes into the grid request.
