@@ -1,0 +1,76 @@
+{
+  "exp": "e1",
+  "run_id": "crosscheck",
+  "git": {
+    "commit": "661b163c047d15f739d9b0620034d87b194cbbf2",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "step": "E1 step 3, redefined 2026-11-24",
+    "cases": [
+      {
+        "a_um": 0.25,
+        "f_beta": 0.0
+      },
+      {
+        "a_um": 3.5,
+        "f_beta": 1.0
+      },
+      {
+        "a_um": 5.0,
+        "f_beta": 0.0
+      }
+    ],
+    "conditions": [
+      "raw",
+      "preprocessed"
+    ],
+    "n_f_points": 101,
+    "n_a_points": 51,
+    "a_widen": 5.0,
+    "chi2_90_1dof": 2.706,
+    "nlive": 400,
+    "sample": "rwalk",
+    "bound": "multi",
+    "seeds": [
+      300000,
+      300000,
+      304100,
+      304100,
+      306000,
+      306000
+    ]
+  },
+  "data_files": [],
+  "seeds": {
+    "from": "scripts/e1_grid_config.grid_seed, draw 0"
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 657.267,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "ALL_PASS": true
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_crosscheck.py"
+  ]
+}
