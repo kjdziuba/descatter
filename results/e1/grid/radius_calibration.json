@@ -1,0 +1,200 @@
+{
+  "analysis": "radius-interval calibration decomposed from the grid's pre-registered descriptive outputs. Coverage is pre-registered; the bias/dispersion split is a labelled addition, computed from committed grid runs only, with nothing re-run or re-tuned.",
+  "question": "the preprocessed condition under-covers a_true (0.708 at the H1 radii against a nominal 0.90). Is the estimate offset, or is the interval too narrow for the real scatter?",
+  "method": "per cell: median(a_hat - a_true) against the median interval half-width (bias); and SD of a_hat across the 20 draws against the implied posterior SD, half-width/1.645 (dispersion).",
+  "answer": "dispersion, not bias. |bias| never exceeds 0.51 half-widths, so the estimate is centred. But in the preprocessed condition the spread of estimates across draws exceeds what each posterior claims by a median factor of 1.39, rising to 1.77 at a = 6 um. Raw is calibrated at 1.01.",
+  "consequence": "preprocessing leaves the chemistry answer intact -- W = 0 in all 640 runs -- but makes the SCATTER estimate over-confident by about 40 %. For a project whose premise is calibrated uncertainty that is worth more than the H1 verdict itself.",
+  "likely_cause": "PROPOSED, not measured. The rubberband is a data-dependent, non-smooth operation: its hull vertices jump between noise draws, injecting per-draw scatter the likelihood does not model. c0 absorbs the MEAN lift (+2.09 sigma, 810bba6) and the calibration gate is fine at the truth, where data and model are rubberbanded consistently -- but neither accounts for the draw-to-draw variation in which points the hull touches.",
+  "per_cell": [
+    {
+      "condition": "raw",
+      "a_um": 0.25,
+      "n": 40,
+      "coverage": 0.8,
+      "median_bias_um": -0.0004228783319791263,
+      "bias_over_halfwidth": -0.1407250456256689,
+      "sd_across_draws_um": 0.002297136897284549,
+      "implied_posterior_sd_um": 0.001826745862310433,
+      "overconfidence_ratio": 1.2575021762354917
+    },
+    {
+      "condition": "raw",
+      "a_um": 1,
+      "n": 40,
+      "coverage": 0.95,
+      "median_bias_um": 0.0001979393436023491,
+      "bias_over_halfwidth": 0.06831621862500743,
+      "sd_across_draws_um": 0.0017717674543542047,
+      "implied_posterior_sd_um": 0.0017613367787781733,
+      "overconfidence_ratio": 1.005922022239987
+    },
+    {
+      "condition": "raw",
+      "a_um": 2,
+      "n": 40,
+      "coverage": 0.875,
+      "median_bias_um": -0.000611174270903736,
+      "bias_over_halfwidth": -0.259304956799946,
+      "sd_across_draws_um": 0.0016009518303071381,
+      "implied_posterior_sd_um": 0.0014328091362878215,
+      "overconfidence_ratio": 1.117351774050623
+    },
+    {
+      "condition": "raw",
+      "a_um": 3,
+      "n": 40,
+      "coverage": 0.925,
+      "median_bias_um": 1.1061183741611913e-05,
+      "bias_over_halfwidth": 0.006083761346365997,
+      "sd_across_draws_um": 0.0010867113227296188,
+      "implied_posterior_sd_um": 0.0011052576641750978,
+      "overconfidence_ratio": 0.9832198933817654
+    },
+    {
+      "condition": "raw",
+      "a_um": 3.5,
+      "n": 40,
+      "coverage": 0.875,
+      "median_bias_um": 0.00017022927100995844,
+      "bias_over_halfwidth": 0.10052584172780937,
+      "sd_across_draws_um": 0.001022987575918763,
+      "implied_posterior_sd_um": 0.0010294152999974749,
+      "overconfidence_ratio": 0.9937559466245278
+    },
+    {
+      "condition": "raw",
+      "a_um": 4,
+      "n": 40,
+      "coverage": 0.9,
+      "median_bias_um": -0.00011087928584840867,
+      "bias_over_halfwidth": -0.06921549003827024,
+      "sd_across_draws_um": 0.0009924320737984612,
+      "implied_posterior_sd_um": 0.0009738256732297123,
+      "overconfidence_ratio": 1.0191065003524094
+    },
+    {
+      "condition": "raw",
+      "a_um": 5,
+      "n": 40,
+      "coverage": 0.85,
+      "median_bias_um": -0.00011688550722999125,
+      "bias_over_halfwidth": -0.07327428215631124,
+      "sd_across_draws_um": 0.0010804931575617135,
+      "implied_posterior_sd_um": 0.0009697129402253689,
+      "overconfidence_ratio": 1.1142402176365704
+    },
+    {
+      "condition": "raw",
+      "a_um": 6,
+      "n": 40,
+      "coverage": 0.925,
+      "median_bias_um": -0.00013580657022549403,
+      "bias_over_halfwidth": -0.07719829398044918,
+      "sd_across_draws_um": 0.0010389567022850098,
+      "implied_posterior_sd_um": 0.0010694172279029997,
+      "overconfidence_ratio": 0.9715167057129617
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 0.25,
+      "n": 40,
+      "coverage": 0.875,
+      "median_bias_um": -6.696916314662127e-05,
+      "bias_over_halfwidth": -0.016163508514926664,
+      "sd_across_draws_um": 0.003069208351814946,
+      "implied_posterior_sd_um": 0.0025186819704121903,
+      "overconfidence_ratio": 1.2185771716596123
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 1,
+      "n": 40,
+      "coverage": 0.9,
+      "median_bias_um": -0.0018032065978320633,
+      "bias_over_halfwidth": -0.32762979910815826,
+      "sd_across_draws_um": 0.003449805012219954,
+      "implied_posterior_sd_um": 0.0033457708260665408,
+      "overconfidence_ratio": 1.0310942355474242
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 2,
+      "n": 40,
+      "coverage": 0.85,
+      "median_bias_um": -0.002746911371487193,
+      "bias_over_halfwidth": -0.5076018246245619,
+      "sd_across_draws_um": 0.0037451923770759283,
+      "implied_posterior_sd_um": 0.0032896945126415925,
+      "overconfidence_ratio": 1.1384620555750555
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 3,
+      "n": 40,
+      "coverage": 0.8,
+      "median_bias_um": 0.00040759377428489785,
+      "bias_over_halfwidth": 0.07562380971070504,
+      "sd_across_draws_um": 0.004976641706334782,
+      "implied_posterior_sd_um": 0.003276446549490374,
+      "overconfidence_ratio": 1.518914357723571
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 3.5,
+      "n": 40,
+      "coverage": 0.625,
+      "median_bias_um": -0.000828910103186864,
+      "bias_over_halfwidth": -0.13379913859657208,
+      "sd_across_draws_um": 0.006025560911714708,
+      "implied_posterior_sd_um": 0.0037660684855518275,
+      "overconfidence_ratio": 1.5999605251022955
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 4,
+      "n": 40,
+      "coverage": 0.7,
+      "median_bias_um": -0.0018093097718456796,
+      "bias_over_halfwidth": -0.2678010969170741,
+      "sd_across_draws_um": 0.005916670699322326,
+      "implied_posterior_sd_um": 0.0041070943041177765,
+      "overconfidence_ratio": 1.440597722187744
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 5,
+      "n": 40,
+      "coverage": 0.625,
+      "median_bias_um": -0.00028948814973395187,
+      "bias_over_halfwidth": -0.033813254710676206,
+      "sd_across_draws_um": 0.006947801049263444,
+      "implied_posterior_sd_um": 0.0052044868097414106,
+      "overconfidence_ratio": 1.3349637155884446
+    },
+    {
+      "condition": "preprocessed",
+      "a_um": 6,
+      "n": 40,
+      "coverage": 0.875,
+      "median_bias_um": 0.0009225881554870696,
+      "bias_over_halfwidth": 0.09200998382260603,
+      "sd_across_draws_um": 0.01078228704247117,
+      "implied_posterior_sd_um": 0.006095467472304686,
+      "overconfidence_ratio": 1.7689024002607638
+    }
+  ],
+  "summary": {
+    "raw": {
+      "median_overconfidence_ratio": 1.0125142612961981,
+      "max_abs_bias_over_halfwidth": 0.259304956799946,
+      "coverage_all_radii": 0.8875,
+      "coverage_H1_radii": 0.9
+    },
+    "preprocessed": {
+      "median_overconfidence_ratio": 1.3877807188880942,
+      "max_abs_bias_over_halfwidth": 0.5076018246245619,
+      "coverage_all_radii": 0.78125,
+      "coverage_H1_radii": 0.7083333333333334
+    }
+  }
+}

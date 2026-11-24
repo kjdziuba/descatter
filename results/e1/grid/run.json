@@ -1,0 +1,125 @@
+{
+  "exp": "e1",
+  "run_id": "grid",
+  "git": {
+    "commit": "bd90da6e6017addb569b4e5050cdf34d490e1839",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "step": "E1 step 4, APPROVED 2026-11-24",
+    "radii_um": [
+      0.25,
+      1.0,
+      2.0,
+      3.0,
+      3.5,
+      4.0,
+      5.0,
+      6.0
+    ],
+    "f_betas": [
+      0.0,
+      1.0
+    ],
+    "draws": 20,
+    "conditions": [
+      "raw",
+      "preprocessed"
+    ],
+    "n_runs": 640,
+    "seed_base": 300000,
+    "seed_scheme": "SEED_BASE + 1000*radius_idx + 100*f_idx + draw",
+    "sigma_by_a_um": {
+      "0.25": 1.673749697623047e-05,
+      "1.0": 6.488247805253395e-05,
+      "2.0": 0.00012442715436402694,
+      "3.0": 0.00017894431067250237,
+      "3.5": 0.00020441709320381926,
+      "4.0": 0.0002287529853276417,
+      "5.0": 0.0002741750365505928,
+      "6.0": 0.00031552992269460426
+    },
+    "sigma_rule": "sigma(a) = D(a)/295 (results/e1/sigma_table.json)",
+    "nlive": 400,
+    "sample": "rwalk",
+    "bound": "multi",
+    "n_workers": 14,
+    "gauge": true,
+    "n_inf_fixed": 1.4,
+    "prior_bounds": {
+      "f_beta": [
+        0.0,
+        1.0
+      ],
+      "a_um": [
+        0.1875,
+        12.0
+      ],
+      "n_inf": [
+        1.4,
+        1.4
+      ],
+      "phi": [
+        0.05,
+        0.3
+      ],
+      "amplitude": [
+        0.13333333333333333,
+        4.0
+      ],
+      "baseline_offset": [
+        -0.5,
+        0.5
+      ],
+      "baseline_slope": [
+        -1.0,
+        1.0
+      ]
+    },
+    "samples_dir": "/home/u37314kd/descatter_runs/e1_grid",
+    "crosscheck": "results/e1/crosscheck/crosscheck.json, ALL_PASS"
+  },
+  "data_files": [
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e1/sigma_table.json",
+      "bytes": 3144,
+      "sha256": "e94c5f551eefb99690b920cb1d9d1bea4780c9581f5c841ea68e35eff8c5e16d"
+    },
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e1/crosscheck/crosscheck.json",
+      "bytes": 55871,
+      "sha256": "24363aca8424133fc53656ea72690c90d35a1efa4e187b17f4fb9cf1862d6c17"
+    }
+  ],
+  "seeds": {
+    "base": 300000
+  },
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_time_s": 14646.458,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "verdict": "mixed"
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_grid.py"
+  ]
+}
