@@ -1,0 +1,61 @@
+{
+  "exp": "e1",
+  "run_id": "posterior_correlation",
+  "git": {
+    "commit": "25d163dccc673407214c4cbdea93205f94acb510",
+    "branch": "main",
+    "dirty": true
+  },
+  "config": {
+    "purpose": "reproduce the numbers quoted in the 2026-11-25 correction (707bf06), requested by the mac in 25d163d",
+    "reads": [
+      "/home/u37314kd/descatter_runs/e1_grid",
+      "results/e1/grid/grid.json"
+    ],
+    "runs_inference": false,
+    "source_of_posteriors": "the E1 grid, 150c117",
+    "h1_radii": [
+      3.0,
+      3.5,
+      4.0
+    ]
+  },
+  "data_files": [
+    {
+      "path": "/home/u37314kd/Projects/descatter/results/e1/grid/grid.json",
+      "bytes": 855346,
+      "sha256": "90e667b1b7254a0c84dc828237b271992adeb5ee8ebf8588758434ffd68c0efa"
+    }
+  ],
+  "seeds": {},
+  "host": "Watford",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+  "libraries": {
+    "python": "3.12.13",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "h5py": "3.16.0",
+    "matplotlib": "3.11.2",
+    "torch": "2.14.1+cu130",
+    "miepython": "3.3.1",
+    "dynesty": "3.1.0",
+    "emcee": "3.1.6"
+  },
+  "env": {
+    "OMP_NUM_THREADS": "16",
+    "OPENBLAS_NUM_THREADS": "16",
+    "MKL_NUM_THREADS": "16"
+  },
+  "wall_time_s": 0.581,
+  "peak_vram_mib": null,
+  "status": "ok",
+  "notes": {
+    "corr_H1": {
+      "raw": -0.31866597352193987,
+      "preprocessed": -0.7262407825918367
+    }
+  },
+  "argv": [
+    "/home/u37314kd/Projects/descatter/scripts/e1_posterior_correlation.py"
+  ]
+}
