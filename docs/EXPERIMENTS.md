@@ -565,11 +565,14 @@ preprocessing as such. This is a post-hoc reading, outside the verdict
   - The intervals are correctly sized: the spread within each f_β group,
     relative to the interval width, is 0.79 raw and 1.00 preprocessed.
 - **Why preprocessed is hit harder:** its f_β–a correlation is stronger.
-  - The posterior correlation at the H1 radii is −0.33 raw and −0.77
-    preprocessed.
+  - The median posterior correlation at the H1 radii is −0.32 raw and
+    −0.73 preprocessed, over all 120 draws (9d06af6).
   - A 2-D toy with the truth on a prior boundary
-    (`scripts/toy_boundary_coverage.py`) reproduces the coverage at those
-    correlations: 0.87 raw and 0.71 preprocessed.
+    (`scripts/toy_boundary_coverage.py`, part 2) predicts coverage of 0.87
+    raw and 0.74 preprocessed at those correlations. The grid shows 0.90 and
+    0.71, each within about 1 binomial SD.
+  - Over all radii the preprocessed correlation is weaker (−0.56), and
+    coverage is higher (0.78 observed, 0.81 predicted).
 - **Withdrawn:** watford's first reading, "preprocessing makes the radius
   posterior over-confident by 40 %" (rubberband hull jitter). It pooled the
   two f_β values.

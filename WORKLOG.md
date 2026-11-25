@@ -2,6 +2,51 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-25 (mac): posterior correlations over all draws; the toy match is looser than 25d163d said
+
+Watford committed `scripts/e1_posterior_correlation.py` and
+`results/e1/grid/posterior_correlation.json` (9d06af6). It reads only the
+saved E1 posteriors and `grid.json`, and runs no inference.
+- **The inward pushes reproduce:** +1.21/−1.13 posterior SD raw and
+  +1.14/−1.13 preprocessed.
+- **The correlations quoted in 707bf06 came from 5 draws per cell** (30
+  posteriors per condition), not all 120. Watford flagged this itself.
+
+  | median posterior corr(f_β, a) | quoted (30 posteriors) | all draws (120) | all radii (320) |
+  |---|---|---|---|
+  | raw | −0.332 | −0.319 | −0.323 |
+  | preprocessed | −0.773 | −0.726 | −0.563 |
+
+**The all-draws values, mapped through toy part 2** (posterior corr to
+coverage):
+
+| | predicted coverage | observed | difference in binomial SDs |
+|---|---|---|---|
+| raw, H1 radii | 0.874 | 0.900 | +0.9 |
+| preprocessed, H1 radii | 0.743 | 0.708 | −0.9 |
+| raw, all radii | 0.873 | 0.887 | +0.8 |
+| preprocessed, all radii | 0.810 | 0.781 | −1.3 |
+
+- **Correction to 25d163d:** "0.706 against 0.708" was a match to the
+  30-posterior subset. On all draws the toy predicts 0.74 against 0.71.
+- **The account still holds.** Each prediction is within about 1 binomial
+  SD.
+- The preprocessed coupling is weaker over all radii (−0.56) than at the H1
+  radii (−0.73), and its coverage there is correspondingly higher (0.78
+  against 0.71). That is a second, independent check, and it points the same
+  way.
+- The pooled comparison is only approximate, because coverage is not linear
+  in the correlation. A per-cell column, as watford suggests, would be
+  sharper. Add it to any interior-f_β run.
+- **Watford compared −0.726 with part 1 again.** Part 1 maps the
+  *likelihood* ρ, so its "still somewhat below" reading overstates the gap.
+  Part 2 is the right map.
+- **Provenance:** `Run` wrote `results/e1/posterior_correlation/run.json` on
+  watford, but 9d06af6 didn't include it. Watford should commit it.
+
+`docs/EXPERIMENTS.md` E1 result and the toy script's docstring now carry
+the all-draws numbers.
+
 ## 2026-11-25 (mac): watford's correction checked; the boundary account matches the grid
 
 Read watford's correction (707bf06) and the rewritten

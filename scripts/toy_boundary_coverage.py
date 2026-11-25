@@ -39,9 +39,13 @@ Part 2 (seed 2, 3000 datasets)
 -0.90     -0.780           0.706
 -0.95     -0.876           0.624
 
-The E1 grid at the H1 radii (watford, 707bf06) measures:
-- raw: posterior corr -0.332, coverage 0.900;
-- preprocessed: posterior corr -0.773, coverage 0.708.
+The E1 grid at the H1 radii, over all 120 draws
+(results/e1/grid/posterior_correlation.json, 9d06af6), measures:
+- raw: posterior corr -0.319, coverage 0.900. Part 2 predicts 0.874.
+- preprocessed: posterior corr -0.726, coverage 0.708. Part 2 predicts 0.743.
+
+Each difference is about 0.9 binomial SD on 120 draws. 707bf06 quoted
+-0.332 and -0.773, which came from a 5-draw-per-cell subset.
 """
 import numpy as np
 from scipy.stats import truncnorm
