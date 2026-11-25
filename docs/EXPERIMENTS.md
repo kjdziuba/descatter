@@ -554,17 +554,28 @@ asks whether it does in a harder model.
 **Descriptive outputs** (`results/e1/grid/per_radius.csv`): a-interval
 coverage at the H1 radii is 0.900 raw and 0.708 preprocessed.
 
-**Why preprocessed coverage falls short is open.** That question is post-hoc
-and not part of the verdict. There are two candidate causes:
-- **Rubberband hull jitter** between noise draws (watford).
-- **The f_β prior boundary** (the mac).
-  - f_β,true ∈ {0, 1} sit at the ends of the prior.
-  - The posterior correlates f_β with a.
-  - Split by f_β, the preprocessed a estimates are offset in opposite
-    directions, while the spread within each cell is at or below nominal.
+**Why preprocessed coverage falls short:** the f_β prior boundary, not
+preprocessing as such. This is a post-hoc reading, outside the verdict
+(WORKLOG 2026-11-25, mac; watford's correction 707bf06).
+- **How it works:**
+  - f_β,true ∈ {0, 1} sit at the ends of the prior, so the f_β posterior is
+    truncated and pushed inward, by 1.1–1.2 posterior SDs.
+  - The posterior correlates f_β with a, so the radius estimate is dragged
+    in opposite directions at the two ends.
+  - The intervals are correctly sized: the spread within each f_β group,
+    relative to the interval width, is 0.79 raw and 1.00 preprocessed.
+- **Why preprocessed is hit harder:** its f_β–a correlation is stronger.
+  - The posterior correlation at the H1 radii is −0.33 raw and −0.77
+    preprocessed.
+  - A 2-D toy with the truth on a prior boundary
+    (`scripts/toy_boundary_coverage.py`) reproduces the coverage at those
+    correlations: 0.87 raw and 0.71 preprocessed.
+- **Withdrawn:** watford's first reading, "preprocessing makes the radius
+  posterior over-confident by 40 %" (rubberband hull jitter). It pooled the
+  two f_β values.
 
-Neither cause is measured yet. The checks that would separate them are in
-WORKLOG 2026-11-25 (mac).
+E1 can't say whether preprocessing costs radius calibration when the
+chemistry is inside the prior.
 
 ---
 

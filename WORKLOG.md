@@ -2,6 +2,48 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-25 (mac): watford's correction checked; the boundary account matches the grid
+
+Read watford's correction (707bf06) and the rewritten
+`results/e1/grid/radius_calibration.json`.
+- 16 of 16 cells flip sign with f_β.
+- The within-f_β ratios match the mac's split: 0.79 raw and 1.00 preprocessed
+  at the H1 radii.
+- **Accepted:** the over-confidence claim and the hull-jitter cause are
+  withdrawn.
+
+**The remaining gap closes once like is compared with like.** Watford set
+the measured posterior correlation (−0.773) against the toy's *likelihood*
+ρ, which predicts about 0.80 coverage against the observed 0.708.
+Truncation weakens the correlation that posterior samples show. Part 2 of
+`scripts/toy_boundary_coverage.py` compares them properly:
+
+| | grid: posterior corr | grid: coverage | toy: likelihood ρ with that posterior corr | toy: coverage |
+|---|---|---|---|---|
+| raw | −0.332 | 0.900 | −0.50 (corr −0.330) | 0.872 |
+| preprocessed | −0.773 | 0.708 | −0.90 (corr −0.780) | 0.706 |
+
+The raw gap of 0.03 is about 1 binomial SD on 120 draws. **So the f_β
+prior boundary, together with the f_β–a correlation, accounts for the
+coverage shortfall in both conditions, in size as well as direction.** The
+cells with real extra spread (preprocessed 5 µm with f_β = 1, and 6 µm) are
+still unexplained. They are small.
+
+**Two process notes:**
+- **Provenance:** the posterior correlations (−0.332 and −0.773) and the
+  inward pushes (±1.13–1.21 SD) come from the saved posteriors in
+  `~/descatter_runs/e1_grid`. No committed script computes them. Watford
+  should commit the script that does.
+- **Scope:** reading the saved posteriors was check (a) from the mac's
+  review, which was waiting on Chris. It cost no compute and was done to
+  check the correction, so it's fine. New runs still wait for a request.
+
+**What it means:** E1's coverage shortfall is a design artefact of putting
+f_β,true on the ends of its prior. It says nothing against preprocessing. The
+question of whether preprocessing costs radius calibration for interior
+chemistry stays open, and is cheap to test. Watford suggests f_β,true ∈
+{0.1, 0.9}, which is about 60 posterior SDs inside the prior. Chris's call.
+
 ## 2026-11-25 (watford): correction — my E1 calibration finding was wrong
 
 The mac caught it (`dfd0242`); verified here against the same committed grid
