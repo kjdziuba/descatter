@@ -1,200 +1,372 @@
 {
-  "analysis": "radius-interval calibration decomposed from the grid's pre-registered descriptive outputs. Coverage is pre-registered; the bias/dispersion split is a labelled addition, computed from committed grid runs only, with nothing re-run or re-tuned.",
-  "question": "the preprocessed condition under-covers a_true (0.708 at the H1 radii against a nominal 0.90). Is the estimate offset, or is the interval too narrow for the real scatter?",
-  "method": "per cell: median(a_hat - a_true) against the median interval half-width (bias); and SD of a_hat across the 20 draws against the implied posterior SD, half-width/1.645 (dispersion).",
-  "answer": "dispersion, not bias. |bias| never exceeds 0.51 half-widths, so the estimate is centred. But in the preprocessed condition the spread of estimates across draws exceeds what each posterior claims by a median factor of 1.39, rising to 1.77 at a = 6 um. Raw is calibrated at 1.01.",
-  "consequence": "preprocessing leaves the chemistry answer intact -- W = 0 in all 640 runs -- but makes the SCATTER estimate over-confident by about 40 %. For a project whose premise is calibrated uncertainty that is worth more than the H1 verdict itself.",
-  "likely_cause": "PROPOSED, not measured. The rubberband is a data-dependent, non-smooth operation: its hull vertices jump between noise draws, injecting per-draw scatter the likelihood does not model. c0 absorbs the MEAN lift (+2.09 sigma, 810bba6) and the calibration gate is fine at the truth, where data and model are rubberbanded consistently -- but neither accounts for the draw-to-draw variation in which points the hull touches.",
+  "status": "CORRECTED 2026-11-25. The first version of this file was wrong; see 'what_was_wrong' below. The correction came from the mac's review (dfd0242) and is verified here against the same committed grid runs.",
+  "what_was_wrong": {
+    "claim": "'preprocessing makes the scatter estimate over-confident by about 40 %', from a median dispersion ratio of 1.39 against 1.01 for raw.",
+    "error": "the ratio was computed by POOLING f_beta = 0 and f_beta = 1 within each radius cell. Those two sub-populations have systematically OPPOSITE a offsets -- 8 of 8 cells flip sign, in both conditions -- so pooling adds between-group variance to the numerator while the denominator, the posterior width, is unchanged. The ratio measured a mixture, not a posterior.",
+    "consequence": "the headline claim is withdrawn. The posterior intervals are correctly sized.",
+    "also_withdrawn": "the proposed hull-jitter cause. It was an explanation for an effect that is not there."
+  },
+  "corrected_finding": {
+    "within_f_beta_dispersion_ratio": {
+      "raw_all": 0.8847753260916265,
+      "raw_H1": 0.7894258775227596,
+      "preprocessed_all": 0.9585917614587832,
+      "preprocessed_H1": 1.0011123425689588,
+      "reading": "~1 means the posterior width matches the real scatter. Preprocessed is 1.00 at the H1 radii, so it is NOT over-confident. Raw is 0.79, slightly conservative."
+    },
+    "pooled_ratio_for_contrast": {
+      "raw_H1": 0.9937559466245278,
+      "preprocessed_H1": 1.518914357723571
+    },
+    "real_effect": "coverage of a_true IS short in the preprocessed condition (0.708 at the H1 radii against a nominal 0.90), but the cause is a systematic f_beta-dependent OFFSET in the recovered radius, not an interval that is too narrow."
+  },
+  "mechanism": {
+    "proposed_by": "the mac (WORKLOG 2026-11-25), with a toy model in scripts/toy_boundary_coverage.py",
+    "account": "f_beta,true is 0 or 1, exactly on its prior boundary, so the posterior is truncated and f_hat is pushed inward. Because f_beta and a are correlated in the posterior, that inward push drags a_hat with it, in opposite directions at the two boundaries.",
+    "evidence_from_this_grid": {
+      "f_hat_pushed_inward_by_posterior_SD": {
+        "raw_f0": 1.21,
+        "raw_f1": -1.13,
+        "preprocessed_f0": 1.14,
+        "preprocessed_f1": -1.13
+      },
+      "median_posterior_corr_f_a_at_H1_radii": {
+        "raw": -0.332,
+        "preprocessed": -0.773
+      },
+      "toy_model_coverage_at_that_correlation": {
+        "rho_-0.30": 0.89,
+        "rho_-0.70": 0.835,
+        "rho_-0.80": 0.787
+      },
+      "observed_coverage_at_H1_radii": {
+        "raw": 0.9,
+        "preprocessed": 0.708
+      },
+      "reading": "raw at rho = -0.33 should give about 0.89 and gives 0.900. Preprocessed at rho = -0.77 should give about 0.80 and gives 0.708 -- the right direction and roughly the right size, from a 2-D Gaussian toy. The stronger f-a correlation in the preprocessed window is why the same boundary effect costs it more coverage."
+    }
+  },
+  "what_this_means_for_E1": "nothing in the verdict changes. W is 0.000000 in all 640 runs either way, and coverage was a descriptive output, not a criterion. What changes is the interpretation: this is an artefact of putting f_beta,true on its prior boundary, not a property of preprocessing.",
   "per_cell": [
     {
       "condition": "raw",
       "a_um": 0.25,
-      "n": 40,
-      "coverage": 0.8,
-      "median_bias_um": -0.0004228783319791263,
-      "bias_over_halfwidth": -0.1407250456256689,
-      "sd_across_draws_um": 0.002297136897284549,
-      "implied_posterior_sd_um": 0.001826745862310433,
-      "overconfidence_ratio": 1.2575021762354917
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0014468771211585407,
+        "bias_over_halfwidth": -0.4221419601790569,
+        "within_group_ratio": 1.104474381769701,
+        "coverage": 0.8
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 8.675933973786853e-05,
+        "bias_over_halfwidth": 0.0347019962614029,
+        "within_group_ratio": 1.1731335122315374,
+        "coverage": 0.8
+      },
+      "pooled_ratio": 1.2575021762354917,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 1,
-      "n": 40,
-      "coverage": 0.95,
-      "median_bias_um": 0.0001979393436023491,
-      "bias_over_halfwidth": 0.06831621862500743,
-      "sd_across_draws_um": 0.0017717674543542047,
-      "implied_posterior_sd_um": 0.0017613367787781733,
-      "overconfidence_ratio": 1.005922022239987
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0008786946450340949,
+        "bias_over_halfwidth": -0.27036895262838795,
+        "within_group_ratio": 0.9381376827952893,
+        "coverage": 0.9
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0010929327640337716,
+        "bias_over_halfwidth": 0.44910184128214936,
+        "within_group_ratio": 0.5836980294522551,
+        "coverage": 1.0
+      },
+      "pooled_ratio": 1.005922022239987,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 2,
-      "n": 40,
-      "coverage": 0.875,
-      "median_bias_um": -0.000611174270903736,
-      "bias_over_halfwidth": -0.259304956799946,
-      "sd_across_draws_um": 0.0016009518303071381,
-      "implied_posterior_sd_um": 0.0014328091362878215,
-      "overconfidence_ratio": 1.117351774050623
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.001764892368581572,
+        "bias_over_halfwidth": -0.6776312911670513,
+        "within_group_ratio": 0.8766008348335534,
+        "coverage": 0.85
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.00042929703162886135,
+        "bias_over_halfwidth": 0.21280687384877847,
+        "within_group_ratio": 1.1807136408419372,
+        "coverage": 0.9
+      },
+      "pooled_ratio": 1.117351774050623,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 3,
-      "n": 40,
-      "coverage": 0.925,
-      "median_bias_um": 1.1061183741611913e-05,
-      "bias_over_halfwidth": 0.006083761346365997,
-      "sd_across_draws_um": 0.0010867113227296188,
-      "implied_posterior_sd_um": 0.0011052576641750978,
-      "overconfidence_ratio": 0.9832198933817654
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.000982346831601033,
+        "bias_over_halfwidth": -0.47648841736817116,
+        "within_group_ratio": 0.7472100616959229,
+        "coverage": 0.95
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0005051974508829549,
+        "bias_over_halfwidth": 0.3081895530997185,
+        "within_group_ratio": 0.7372084406135521,
+        "coverage": 0.9
+      },
+      "pooled_ratio": 0.9832198933817654,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 3.5,
-      "n": 40,
-      "coverage": 0.875,
-      "median_bias_um": 0.00017022927100995844,
-      "bias_over_halfwidth": 0.10052584172780937,
-      "sd_across_draws_um": 0.001022987575918763,
-      "implied_posterior_sd_um": 0.0010294152999974749,
-      "overconfidence_ratio": 0.9937559466245278
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0004602353388887259,
+        "bias_over_halfwidth": -0.24195975775016074,
+        "within_group_ratio": 0.9148177797457678,
+        "coverage": 0.95
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0005676105221339434,
+        "bias_over_halfwidth": 0.3718359818802005,
+        "within_group_ratio": 0.8929498173496996,
+        "coverage": 0.8
+      },
+      "pooled_ratio": 0.9937559466245278,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 4,
-      "n": 40,
-      "coverage": 0.9,
-      "median_bias_um": -0.00011087928584840867,
-      "bias_over_halfwidth": -0.06921549003827024,
-      "sd_across_draws_um": 0.0009924320737984612,
-      "implied_posterior_sd_um": 0.0009738256732297123,
-      "overconfidence_ratio": 1.0191065003524094
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.000982749990446674,
+        "bias_over_halfwidth": -0.5575258811942898,
+        "within_group_ratio": 0.8316416933495965,
+        "coverage": 0.85
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0003335435245324092,
+        "bias_over_halfwidth": 0.22910494979600995,
+        "within_group_ratio": 0.7343269458618441,
+        "coverage": 0.95
+      },
+      "pooled_ratio": 1.0191065003524094,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 5,
-      "n": 40,
-      "coverage": 0.85,
-      "median_bias_um": -0.00011688550722999125,
-      "bias_over_halfwidth": -0.07327428215631124,
-      "sd_across_draws_um": 0.0010804931575617135,
-      "implied_posterior_sd_um": 0.0009697129402253689,
-      "overconfidence_ratio": 1.1142402176365704
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0007260158835173947,
+        "bias_over_halfwidth": -0.40562405691774295,
+        "within_group_ratio": 0.9545278699613622,
+        "coverage": 0.75
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0004035783181168817,
+        "bias_over_halfwidth": 0.27651769112514046,
+        "within_group_ratio": 0.7814744187127608,
+        "coverage": 0.95
+      },
+      "pooled_ratio": 1.1142402176365704,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "raw",
       "a_um": 6,
-      "n": 40,
-      "coverage": 0.925,
-      "median_bias_um": -0.00013580657022549403,
-      "bias_over_halfwidth": -0.07719829398044918,
-      "sd_across_draws_um": 0.0010389567022850098,
-      "implied_posterior_sd_um": 0.0010694172279029997,
-      "overconfidence_ratio": 0.9715167057129617
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.000615148090887363,
+        "bias_over_halfwidth": -0.3259522712325487,
+        "within_group_ratio": 1.0011000964178745,
+        "coverage": 0.9
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0003023869810045987,
+        "bias_over_halfwidth": 0.18744521032072609,
+        "within_group_ratio": 0.8329248647567113,
+        "coverage": 0.95
+      },
+      "pooled_ratio": 0.9715167057129617,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 0.25,
-      "n": 40,
-      "coverage": 0.875,
-      "median_bias_um": -6.696916314662127e-05,
-      "bias_over_halfwidth": -0.016163508514926664,
-      "sd_across_draws_um": 0.003069208351814946,
-      "implied_posterior_sd_um": 0.0025186819704121903,
-      "overconfidence_ratio": 1.2185771716596123
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0018568445129524963,
+        "bias_over_halfwidth": -0.32874259390672844,
+        "within_group_ratio": 0.9325697393459207,
+        "coverage": 0.85
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0013264931597235519,
+        "bias_over_halfwidth": 0.38239671217562404,
+        "within_group_ratio": 0.9553121896540526,
+        "coverage": 0.9
+      },
+      "pooled_ratio": 1.2185771716596123,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 1,
-      "n": 40,
-      "coverage": 0.9,
-      "median_bias_um": -0.0018032065978320633,
-      "bias_over_halfwidth": -0.32762979910815826,
-      "sd_across_draws_um": 0.003449805012219954,
-      "implied_posterior_sd_um": 0.0033457708260665408,
-      "overconfidence_ratio": 1.0310942355474242
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0034678315488363975,
+        "bias_over_halfwidth": -0.4810214887642818,
+        "within_group_ratio": 0.752661925359621,
+        "coverage": 0.85
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.00032730514871315286,
+        "bias_over_halfwidth": 0.07383682946970656,
+        "within_group_ratio": 0.9667019621721882,
+        "coverage": 0.95
+      },
+      "pooled_ratio": 1.0310942355474242,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 2,
-      "n": 40,
-      "coverage": 0.85,
-      "median_bias_um": -0.002746911371487193,
-      "bias_over_halfwidth": -0.5076018246245619,
-      "sd_across_draws_um": 0.0037451923770759283,
-      "implied_posterior_sd_um": 0.0032896945126415925,
-      "overconfidence_ratio": 1.1384620555750555
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.005431015718124765,
+        "bias_over_halfwidth": -0.7068906627644076,
+        "within_group_ratio": 0.6646404188659516,
+        "coverage": 0.75
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0002926887638112774,
+        "bias_over_halfwidth": 0.07624157787590446,
+        "within_group_ratio": 0.9020583036581978,
+        "coverage": 0.95
+      },
+      "pooled_ratio": 1.1384620555750555,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 3,
-      "n": 40,
-      "coverage": 0.8,
-      "median_bias_um": 0.00040759377428489785,
-      "bias_over_halfwidth": 0.07562380971070504,
-      "sd_across_draws_um": 0.004976641706334782,
-      "implied_posterior_sd_um": 0.003276446549490374,
-      "overconfidence_ratio": 1.518914357723571
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0022675340404367805,
+        "bias_over_halfwidth": -0.30902422763230486,
+        "within_group_ratio": 1.0885406123343015,
+        "coverage": 0.75
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.001842520408871673,
+        "bias_over_halfwidth": 0.4171336633375102,
+        "within_group_ratio": 1.0394155549575859,
+        "coverage": 0.85
+      },
+      "pooled_ratio": 1.518914357723571,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 3.5,
-      "n": 40,
-      "coverage": 0.625,
-      "median_bias_um": -0.000828910103186864,
-      "bias_over_halfwidth": -0.13379913859657208,
-      "sd_across_draws_um": 0.006025560911714708,
-      "implied_posterior_sd_um": 0.0037660684855518275,
-      "overconfidence_ratio": 1.5999605251022955
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0052082156937800494,
+        "bias_over_halfwidth": -0.6729713485770838,
+        "within_group_ratio": 0.9270214752724424,
+        "coverage": 0.65
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0034270247162260237,
+        "bias_over_halfwidth": 0.6759543093501343,
+        "within_group_ratio": 1.0655690841190655,
+        "coverage": 0.6
+      },
+      "pooled_ratio": 1.5999605251022955,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 4,
-      "n": 40,
-      "coverage": 0.7,
-      "median_bias_um": -0.0018093097718456796,
-      "bias_over_halfwidth": -0.2678010969170741,
-      "sd_across_draws_um": 0.005916670699322326,
-      "implied_posterior_sd_um": 0.0041070943041177765,
-      "overconfidence_ratio": 1.440597722187744
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.0057563953526147404,
+        "bias_over_halfwidth": -0.6857848087076841,
+        "within_group_ratio": 0.7805670363345738,
+        "coverage": 0.65
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0032647087402595254,
+        "bias_over_halfwidth": 0.5740291559691383,
+        "within_group_ratio": 0.9628091301803315,
+        "coverage": 0.75
+      },
+      "pooled_ratio": 1.440597722187744,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 5,
-      "n": 40,
-      "coverage": 0.625,
-      "median_bias_um": -0.00028948814973395187,
-      "bias_over_halfwidth": -0.033813254710676206,
-      "sd_across_draws_um": 0.006947801049263444,
-      "implied_posterior_sd_um": 0.0052044868097414106,
-      "overconfidence_ratio": 1.3349637155884446
+      "f0": {
+        "n": 20,
+        "median_bias_um": -0.004069452385880634,
+        "bias_over_halfwidth": -0.32028743057419196,
+        "within_group_ratio": 0.9285203612392348,
+        "coverage": 0.85
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": 0.0027964277310323915,
+        "bias_over_halfwidth": 0.6374416396650135,
+        "within_group_ratio": 2.245788360647662,
+        "coverage": 0.4
+      },
+      "pooled_ratio": 1.3349637155884446,
+      "sign_flips_with_f_beta": true
     },
     {
       "condition": "preprocessed",
       "a_um": 6,
-      "n": 40,
-      "coverage": 0.875,
-      "median_bias_um": 0.0009225881554870696,
-      "bias_over_halfwidth": 0.09200998382260603,
-      "sd_across_draws_um": 0.01078228704247117,
-      "implied_posterior_sd_um": 0.006095467472304686,
-      "overconfidence_ratio": 1.7689024002607638
+      "f0": {
+        "n": 20,
+        "median_bias_um": 0.006552051424088656,
+        "bias_over_halfwidth": 0.3034982174715749,
+        "within_group_ratio": 0.9618713332635138,
+        "coverage": 0.9
+      },
+      "f1": {
+        "n": 20,
+        "median_bias_um": -0.002115012781790604,
+        "bias_over_halfwidth": -0.25874328341089653,
+        "within_group_ratio": 1.2580766018235134,
+        "coverage": 0.85
+      },
+      "pooled_ratio": 1.7689024002607638,
+      "sign_flips_with_f_beta": true
     }
-  ],
-  "summary": {
-    "raw": {
-      "median_overconfidence_ratio": 1.0125142612961981,
-      "max_abs_bias_over_halfwidth": 0.259304956799946,
-      "coverage_all_radii": 0.8875,
-      "coverage_H1_radii": 0.9
-    },
-    "preprocessed": {
-      "median_overconfidence_ratio": 1.3877807188880942,
-      "max_abs_bias_over_halfwidth": 0.5076018246245619,
-      "coverage_all_radii": 0.78125,
-      "coverage_H1_radii": 0.7083333333333334
-    }
-  }
+  ]
 }

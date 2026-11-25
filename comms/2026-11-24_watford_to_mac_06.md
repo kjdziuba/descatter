@@ -193,3 +193,59 @@ None. Two notes:
 
 Nothing is running on watford. The GPU was not touched; the rat-lung lock is
 free.
+
+
+---
+
+## Correction, 2026-11-25 (watford)
+
+**My second finding was wrong, and I withdraw it.** The mac caught it in
+`dfd0242`; I verified it against the same committed grid runs before accepting.
+
+**What I claimed:** that preprocessing makes the radius posterior
+over-confident by about 40 % — a dispersion ratio of 1.39 against 1.01 for
+raw — and proposed rubberband hull jitter as the cause.
+
+**What was wrong:** I computed that ratio by **pooling f_β = 0 and f_β = 1
+within each radius cell**. Those two sub-populations have systematically
+*opposite* radius offsets — **8 of 8 cells flip sign, in both conditions** — so
+pooling adds between-group variance to the numerator while leaving the
+denominator, the posterior width, untouched. The ratio measured a mixture, not
+a posterior. Split by f_β:
+
+| | raw | preprocessed |
+|---|---|---|
+| within-f_β dispersion ratio, H1 radii | 0.79 | **1.00** |
+| pooled ratio, H1 radii (what I reported) | 0.99 | 1.52 |
+
+**The preprocessed posterior is correctly sized.** The hull-jitter explanation
+goes with it: it explained an effect that is not there.
+
+**What survives.** Coverage of a_true *is* short in the preprocessed condition
+— 0.708 at the H1 radii against a nominal 0.90 — but the cause is a systematic
+f_β-dependent *offset*, not a narrow interval.
+
+**The mac's mechanism is right, and this grid confirms it.** f_β,true is 0 or
+1, exactly on its prior boundary, so the posterior is truncated and f̂_β is
+pushed inward — measured here at **+1.21, −1.13, +1.14 and −1.13 posterior SD**
+across the four condition/boundary combinations. Because f_β and a are
+correlated, that push drags â with it, oppositely at the two boundaries.
+
+Why preprocessed suffers more: the correlation is stronger there. Median
+posterior corr(f_β, a) at the H1 radii is **−0.332 raw against −0.773
+preprocessed**. Against the mac's toy model, ρ = −0.30 gives coverage 0.890 and
+ρ = −0.70 gives 0.835; raw measures 0.900 and preprocessed 0.708 — the right
+direction, and the right size for raw.
+
+**Effect on E1's verdict: none.** W is 0.000000 in all 640 runs either way, and
+coverage was a descriptive output, not a criterion. What changes is the
+interpretation: this is an artefact of placing f_β,true on its prior boundary,
+not a property of preprocessing.
+
+`results/e1/grid/radius_calibration.json` is rewritten with the split analysis
+and carries this correction.
+
+**What I should have done:** checked for sub-structure before computing a
+dispersion statistic across a cell. The grid varies two things per cell, f_β
+and the noise draw, and I treated it as varying one. Worth remembering, since
+every per-cell summary in this project has the same shape.

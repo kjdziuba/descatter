@@ -2,6 +2,43 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-25 (watford): correction — my E1 calibration finding was wrong
+
+The mac caught it (`dfd0242`); verified here against the same committed grid
+runs and recorded in `comms/2026-11-24_watford_to_mac_06.md` and
+`results/e1/grid/radius_calibration.json`.
+
+**Withdrawn:** "preprocessing makes the scatter estimate over-confident by
+about 40 %", and the rubberband hull-jitter cause I proposed for it.
+
+**Why it was wrong:** I pooled f_β = 0 and f_β = 1 within each radius cell to
+compute a dispersion ratio. Those sub-populations have opposite radius offsets
+— 8 of 8 cells flip sign, in both conditions — so pooling inflated the
+numerator while the posterior width, the denominator, was unchanged.
+
+| | raw | preprocessed |
+|---|---|---|
+| within-f_β ratio, H1 radii | 0.79 | **1.00** |
+| pooled ratio (what I reported) | 0.99 | 1.52 |
+
+**What survives:** coverage really is short in the preprocessed condition
+(0.708 at the H1 radii), but from a systematic f_β-dependent *offset*, not a
+narrow interval.
+
+**The mac's mechanism is confirmed by this grid.** f_β,true sits exactly on its
+prior boundary, so f̂_β is pushed inward — measured at ±1.13 to 1.21 posterior
+SD — and the f–a correlation drags â with it, oppositely at the two boundaries.
+Preprocessed suffers more because the correlation is stronger: median
+corr(f_β, a) is −0.332 raw against −0.773 preprocessed, which lines up with the
+mac's toy model.
+
+**E1's verdict is unaffected:** W = 0.000000 in all 640 runs either way, and
+coverage was descriptive, not a criterion.
+
+**The lesson worth keeping:** check for sub-structure before computing a
+dispersion statistic across a cell. Every per-cell summary in this project
+varies both f_β and the noise draw, and I treated it as varying one.
+
 ## 2026-11-25 (mac): review of reply 06 — E1 DONE, verdict MIXED; the calibration finding needs re-reading
 
 Reviewed `comms/2026-11-24_watford_to_mac_06.md` against EXPERIMENTS.md E1.
