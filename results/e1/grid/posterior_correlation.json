@@ -1,0 +1,75 @@
+{
+  "purpose": "the two posterior measurements quoted in the 2026-11-25 correction to comms/2026-11-24_watford_to_mac_06.md",
+  "runs_inference": false,
+  "source": "saved posteriors from the E1 grid (150c117); nothing re-run",
+  "corr_f_beta_a": {
+    "raw": {
+      "median_corr_H1_radii_all_draws": -0.31866597352193987,
+      "n_posteriors_H1_all_draws": 120,
+      "median_corr_H1_radii_first5_per_cell": -0.3319738553471441,
+      "n_posteriors_H1_first5": 30,
+      "median_corr_all_radii": -0.32277912208634124,
+      "n_posteriors_all_radii": 320,
+      "iqr_H1_all_draws": [
+        -0.4002634481336664,
+        -0.256445651089123
+      ]
+    },
+    "preprocessed": {
+      "median_corr_H1_radii_all_draws": -0.7262407825918367,
+      "n_posteriors_H1_all_draws": 120,
+      "median_corr_H1_radii_first5_per_cell": -0.7733221814479809,
+      "n_posteriors_H1_first5": 30,
+      "median_corr_all_radii": -0.5625721389374536,
+      "n_posteriors_all_radii": 320,
+      "iqr_H1_all_draws": [
+        -0.8080584641108353,
+        -0.6144588484243254
+      ]
+    }
+  },
+  "f_beta_boundary_push": {
+    "raw_f0": {
+      "n": 60,
+      "median_f_beta_hat": 0.0005986293809741059,
+      "offset_from_truth": 0.0005986293809741059,
+      "offset_in_posterior_SD": 1.205723087298071,
+      "median_posterior_SD": 0.0004964899380964716
+    },
+    "raw_f1": {
+      "n": 60,
+      "median_f_beta_hat": 0.999242982497265,
+      "offset_from_truth": -0.0007570175027350468,
+      "offset_in_posterior_SD": -1.1272742534027997,
+      "median_posterior_SD": 0.0006715468755273237
+    },
+    "preprocessed_f0": {
+      "n": 60,
+      "median_f_beta_hat": 0.0014331402952460566,
+      "offset_from_truth": 0.0014331402952460566,
+      "offset_in_posterior_SD": 1.140012656195186,
+      "median_posterior_SD": 0.0012571266533383846
+    },
+    "preprocessed_f1": {
+      "n": 60,
+      "median_f_beta_hat": 0.9980468654958963,
+      "offset_from_truth": -0.0019531345041037262,
+      "offset_in_posterior_SD": -1.129815682643767,
+      "median_posterior_SD": 0.0017287195903790203
+    }
+  },
+  "note_on_the_original_numbers": "the correction quoted -0.332 (raw) and -0.773 (preprocessed) from the first 5 draws of each H1 cell. The all-draws values are reported alongside so the two can be compared; see 'agreement' below.",
+  "agreement": {
+    "raw": {
+      "quoted_in_correction": -0.332,
+      "all_draws": -0.31866597352193987,
+      "difference": 0.013334026478060146
+    },
+    "preprocessed": {
+      "quoted_in_correction": -0.773,
+      "all_draws": -0.7262407825918367,
+      "difference": 0.046759217408163356
+    }
+  },
+  "reading": "f_beta and a are far more strongly correlated in the preprocessed posterior than in the raw one. With f_beta,true on its prior boundary the posterior is truncated and f_beta_hat is pushed inward by about one posterior SD; that correlation is what drags a_hat with it, oppositely at the two boundaries, and why the same boundary effect costs the preprocessed condition more radius coverage."
+}
