@@ -51,9 +51,10 @@ below the experiment as a dated amendment with the reason.
 
 ## E1: is RMieS identifiable from one spectrum? (sphere model, simulation only)
 
-**Status:** APPROVED (Chris, 2026-11-24, relayed by the mac). Approved under
-the n∞ amendment of 2026-11-09 and the two additions of 2026-11-24 (see
-"Approved 2026-11-24" at the end of E1). The machinery is valid (06d0827).
+**Status:** DONE (2026-11-24). **Verdict: MIXED**, as predicted before the
+grid ran. See "Result" at the end of E1. It was approved by Chris on
+2026-11-24 (relayed by the mac), under the n∞ amendment of 2026-11-09 and the
+two additions of 2026-11-24. The machinery is valid (06d0827).
 
 **Question (H1).** Under the sphere model, can one spectrum distinguish
 "α-helix + large scatterer" from "β-sheet + small scatterer"? And does
@@ -526,6 +527,45 @@ in raw (0e209c7, reply `comms/2026-11-09_watford_to_mac_03.md`).
 The degeneracy screen under the gauge (2a159b9) leaves that prediction as it
 was.
 
+### Result 2026-11-24 (watford ran it; reviewed by the mac 2026-11-25)
+
+Reply: `comms/2026-11-24_watford_to_mac_06.md`. Review: WORKLOG 2026-11-25
+(mac).
+
+- **Sampler cross-check:** all six comparisons pass (bd90da6).
+  - Worst log-L gap: 0.235.
+  - Every a interval is within tolerance.
+  - The wrong-side f_β gap is 4.8e4–3.9e5 in −2 log L.
+  - W = 0 in all six.
+- **Grid:** 640 runs in 4.07 h, seed base 300000 (150c117). W = 0 exactly in
+  every run.
+
+| rule, as written | pooled value | holds |
+|---|---|---|
+| H1 raw: W < 0.05 in ≥ 90 % | 1.000 | yes |
+| H1 preprocessed: W > 0.2 in ≥ 50 % | 0.000 | no |
+| not viable: raw W > 0.2 in ≥ 50 % | 0.000 | no |
+
+**Verdict: MIXED.** This matches the 2026-11-06 prediction. Under the sphere
+model at tissue SNR, one spectrum separates α from β whether or not it is
+preprocessed. The confusion H1 was written around does not occur here; E1b
+asks whether it does in a harder model.
+
+**Descriptive outputs** (`results/e1/grid/per_radius.csv`): a-interval
+coverage at the H1 radii is 0.900 raw and 0.708 preprocessed.
+
+**Why preprocessed coverage falls short is open.** That question is post-hoc
+and not part of the verdict. There are two candidate causes:
+- **Rubberband hull jitter** between noise draws (watford).
+- **The f_β prior boundary** (the mac).
+  - f_β,true ∈ {0, 1} sit at the ends of the prior.
+  - The posterior correlates f_β with a.
+  - Split by f_β, the preprocessed a estimates are offset in opposite
+    directions, while the spread within each cell is at or below nominal.
+
+Neither cause is measured yet. The checks that would separate them are in
+WORKLOG 2026-11-25 (mac).
+
 ---
 
 ## E1b: does the confusion survive a harder model? (simulation only)
@@ -563,6 +603,11 @@ same problem E2's learned prior faces.
 exist at tissue SNR under E1's model, so E1b decides what E2 oversamples.
 Under ADA, a, n∞ and amplitude form an exact ridge (E1 amendment
 2026-11-09). E2's parameterisation and metrics must account for it.
+
+**Coverage at prior boundaries.** E1's coverage of a fell below nominal when
+the true f_β was at an end of its prior (E1 result; WORKLOG 2026-11-25, mac).
+E2 should report coverage separately for truths inside the prior and for
+truths on a prior boundary.
 
 - Use the same simulator as E1, with broader chemistry (mixtures of component
   spectra) and size distributions.

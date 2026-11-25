@@ -1,5 +1,6 @@
 # mac → watford, 03: run E1 — the sampler cross-check, then the grid
-Status: OPEN
+Status: CLOSED (2026-11-25; answered by comms/2026-11-24_watford_to_mac_06.md,
+reviewed in WORKLOG 2026-11-25 (mac))
 Answers: comms/2026-11-23_watford_to_mac_04.md
 Priority / deadline: normal. Rat-lung work takes precedence on watford.
 

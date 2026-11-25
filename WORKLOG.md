@@ -2,6 +2,108 @@
 
 Newest entry on top. Label each entry by machine: (mac), (watford) or (chat).
 
+## 2026-11-25 (mac): review of reply 06 — E1 DONE, verdict MIXED; the calibration finding needs re-reading
+
+Reviewed `comms/2026-11-24_watford_to_mac_06.md` against EXPERIMENTS.md E1.
+The review used the committed files: 661b163, bd90da6 and 150c117.
+
+**Confirmed as reported.**
+- **Cross-check** (`results/e1/crosscheck/crosscheck.json`): all six comparisons
+  pass, and every number in the reply's table matches the file.
+- **Verdict, recomputed from `grid.json`:**
+  - 640 runs, 320 per condition.
+  - The maximum W over all runs is exactly 0.
+  - Pooled at the H1 radii (120 per condition): frac(W < 0.05) = 1.000 raw;
+    frac(W > 0.2) = 0.000 preprocessed; the not-viable rule gives 0.000.
+  - **The verdict is MIXED, matching the prediction recorded on 2026-11-06.**
+- **Run settings:**
+  - Seed base 300000. Its seeds run 300000–307119 and don't overlap any
+    earlier E1 base.
+  - σ(a) is as in `sigma_table.json`.
+  - nlive 400, `rwalk`, `multi`, n∞ fixed at 1.40.
+  - Wall time 14,646 s (4.07 h).
+- **Code:** no change to `scripts/` or `descatter/` after 661b163. So the
+  grid and the cross-check ran the committed code.
+
+**Corrections and gaps.**
+1. **The calibration decomposition pools the two f_β values.** In
+   `radius_calibration.json` each cell's 40 draws mix f_β,true = 0 and 1.
+   Split by f_β (mac, recomputed from `grid.json`), z is the posterior median
+   of a minus a_true, in units of half-width/1.645:
+
+   | preprocessed | 3 µm, f_β=0 | 3 µm, f_β=1 | 3.5 µm, f_β=0 | 3.5 µm, f_β=1 | 4 µm, f_β=0 | 4 µm, f_β=1 |
+   |---|---|---|---|---|---|---|
+   | coverage | 0.75 | 0.85 | 0.65 | 0.60 | 0.65 | 0.75 |
+   | mean z | −0.79 | +0.84 | −1.14 | +1.04 | −1.19 | +0.86 |
+   | SD z | 1.02 | 0.94 | 0.69 | 1.01 | 0.73 | 0.93 |
+
+   - At the H1 radii the spread within each cell is at or below nominal (SD z
+     ≤ 1.02).
+   - The shortfall comes from offsets of opposite sign: a is low when
+     f_β = 0 and high when f_β = 1.
+   - Raw shows the same pattern at all 16 raw cells, but smaller: mean z
+     ranges from −0.27 to −0.86 at f_β = 0 and from +0.11 to +0.65 at
+     f_β = 1. Raw's SD z of about 0.8 offsets it, so coverage stays near 0.9.
+   - So "dispersion, not bias" does not hold, and the 1.39 "over-confidence
+     ratio" mostly measures the gap between the two f_β sub-populations.
+2. **The pattern fits the prior boundary better than hull jitter.**
+   - **Mechanism:**
+     - f_β,true ∈ {0, 1} sit on the ends of f_β's prior.
+     - The prior truncates the f_β posterior and pushes it inward.
+     - If the posterior correlates f_β with a, a moves with it, in opposite
+       directions at the two ends.
+     - The f_β posterior median sits 1.1–1.6 posterior SDs inside the
+       boundary in every cell.
+   - Rubberband hull jitter would add spread whatever f_β is. It would not
+     produce offsets that flip sign with f_β.
+   - **Toy check** (`scripts/toy_boundary_coverage.py`): a 2-D Gaussian
+     with the truth on a truncated boundary. At ρ(f_β, a) ≈ −0.9 to −0.95 it
+     gives coverage 0.64–0.72, mean z −1.0 to −1.1 and SD z 0.6–0.7. That is
+     close to the preprocessed cells above. At ρ ≈ −0.5 to −0.7 it gives
+     raw-like values.
+   - **This is inferred, not shown.** It predicts that the posterior
+     |corr(f_β, a)| is about 0.9 preprocessed and about 0.5–0.7 raw at the
+     H1 radii.
+3. **Real excess spread remains in a few cells:**
+   - preprocessed a = 5 µm, f_β = 1: SD z 2.25, coverage 0.40;
+   - a = 6 µm: SD z 1.16 (f_β = 0) and 1.25 (f_β = 1).
+
+   The boundary effect doesn't explain these. Hull jitter could still play a
+   part there.
+4. **"5.8σ below nominal on 20 draws"** is a binomial figure on 40 draws per
+   cell. On 20 draws it would be about 4σ.
+5. **The cross-check pointed the same way.** The sampler's a interval was
+   narrower than the profile interval in all six comparisons, by up to 12 %
+   in the preprocessed condition. That is within the 20 % tolerance, so the
+   cross-check passes; it is just consistent with truncation.
+6. **Provenance.** Both run.json files have `dirty: true` with no list of
+   which files were dirty. The code itself is unchanged (see above). From
+   now on, record the output of `git status --porcelain` in run.json.
+
+**What stands.**
+- The verdict and the pre-registered coverage numbers stand: raw 0.900 and
+  preprocessed 0.708 at the H1 radii. They are descriptive outputs.
+- The headline "preprocessing makes the scatter estimate over-confident by
+  40 %", and the rubberband explanation, are not supported as stated.
+- E1 can't say whether preprocessing costs radius calibration for chemistry
+  away from the prior boundary, which is the case that matters for tissue.
+
+**How to tell the two apart** (labelled post-hoc analysis, outside E1's
+verdict; not requested yet, Chris's call):
+- **(a) No new runs.** From the posterior samples in
+  `~/descatter_runs/e1_grid`, compute each run's posterior corr(f_β, a), and
+  check that it predicts the offsets' sign and size per cell.
+- **(b) About 1 h of CPU:**
+  - f_β,true = 0.5 at a ∈ {3, 3.5, 4} µm, 20 draws, both conditions;
+  - optionally, watford's fixed-baseline arm at f_β ∈ {0, 1}.
+
+  The boundary account predicts coverage of about 0.90 in both conditions at
+  f_β = 0.5. Hull jitter predicts the preprocessed shortfall persists.
+
+**E1 is DONE** (EXPERIMENTS.md updated). Request 03 is closed. The
+exploratory exact-Mie run still needs its own request. E2's outline gains a
+heads-up: coverage for truths on a prior boundary.
+
 ## 2026-11-24 (watford): E1 ran. Verdict MIXED, as predicted.
 
 Reply: `comms/2026-11-24_watford_to_mac_06.md`. Cross-check passed all six
